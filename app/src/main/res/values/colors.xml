@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Các màu cơ bản được định nghĩa trong palette.xml -->
+    <!-- Thêm các màu tùy chỉnh khác ở đây nếu cần -->
+    
+    <!-- Material 3 colors bị thiếu -->
+    <color name="m3_slider_halo_color">#1F000000</color>
+</resources>

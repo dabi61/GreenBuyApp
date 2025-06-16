@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">GreenBuyApp</string>
+    <string name="tai_khoan">Tài khoản</string>
+    <string name="mat_khau">Mật khẩu</string>
+    <string name="hoac_dang_nhap_voi">Hoặc đăng nhập với</string>
+    <string name="ban_chua_co_tai_khoan">Bạn chưa có tài khoản ? </string>
+    <string name="dang_ky">Đăng ký</string>
+    <string name="ban_da_co_tai_khoan">Bạn đã có tài khoản</string>
+    <string name="dang_nhap">Đăng nhập</string>
+    <string name="toi_dong_y_voi_cac_dieu_khoan_cua_greenbuy">Tôi đồng ý với các điều khoản của Greenbuy</string>
+</resources>
