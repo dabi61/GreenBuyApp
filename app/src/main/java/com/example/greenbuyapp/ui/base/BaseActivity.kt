@@ -19,7 +19,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
-import com.example.greenbuyapp.MainActivity
+import com.example.greenbuyapp.ui.main.MainActivity
 import com.example.greenbuyapp.R
 import com.example.greenbuyapp.domain.SharedPreferencesRepository
 import com.example.greenbuyapp.domain.login.TokenExpiredManager

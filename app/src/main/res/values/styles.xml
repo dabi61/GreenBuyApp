@@ -86,5 +86,15 @@
         <item name="cornerRadius">@dimen/_24sdp</item>
     </style>
 
+    <style name="AppTheme.Title.Collapsed" parent="android:TextAppearance">
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="AppTheme.Title.Expanded" parent="android:TextAppearance">
+        <item name="android:textSize">48sp</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
 
 </resources>

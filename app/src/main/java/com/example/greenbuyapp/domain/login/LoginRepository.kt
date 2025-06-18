@@ -19,32 +19,6 @@ class LoginRepository(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
-    val loginUrl: String
-        get() = "https://unsplash.com/oauth/authorize" +
-                "?client_id=${accessTokenProvider.clientId}" +
-                "&redirect_uri=resplash%3A%2F%2F$unsplashAuthCallback" +
-                "&response_type=code" +
-                "&scope=public+read_user+write_user+read_photos+write_photos" +
-                "+write_likes+write_followers+read_collections+write_collections"
-
-    suspend fun getAccessToken(code: String): Result<AccessToken> {
-        val result = safeApiCall(dispatcher) {
-            authorizationService.getAccessToken(
-                accessTokenProvider.clientId,
-                accessTokenProvider.clientSecret,
-                redirectUri,
-                code,
-                grantType
-            )
-        }
-
-        if (result is Result.Success) {
-            accessTokenProvider.saveAccessToken(result.value)
-        }
-
-        return result
-    }
-
     /**
      * Đăng nhập bằng username và password
      * @param username tên đăng nhập
@@ -198,11 +172,5 @@ class LoginRepository(
 
     fun getFullName() = accessTokenProvider.fullName
 
-    companion object {
 
-        const val unsplashAuthCallback = "unsplash-auth-callback"
-
-        private const val redirectUri = "resplash://$unsplashAuthCallback"
-        private const val grantType = "authorization_code"
-    }
 }

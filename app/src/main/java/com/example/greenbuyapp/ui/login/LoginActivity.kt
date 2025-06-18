@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.example.greenbuyapp.MainActivity
+import com.example.greenbuyapp.ui.main.MainActivity
 import com.example.greenbuyapp.ui.base.BaseActivity
 import com.example.greenbuyapp.R
 import com.example.greenbuyapp.databinding.ActivityLoginBinding

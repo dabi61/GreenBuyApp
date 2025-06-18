@@ -7,12 +7,10 @@ import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
 
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.example.greenbuyapp.MainActivity
 import com.example.greenbuyapp.R
 import com.example.greenbuyapp.databinding.ActivityRegisterBinding
 import com.example.greenbuyapp.ui.base.BaseActivity
 import com.example.greenbuyapp.ui.login.LoginActivity
-import com.example.greenbuyapp.ui.login.LoginUiState
 import com.example.greenbuyapp.util.setupActionBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -173,7 +171,7 @@ class RegisterActivity : BaseActivity(R.layout.activity_register) {
                 Log.e("RegisterActivity", "Error: ${state.message}")
             }
             is RegisterUiState.LoggedOut -> {
-
+                //Logout
             }
         }
     }

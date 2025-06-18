@@ -148,4 +148,9 @@ dependencies {
     //sdp
     implementation ("com.intuit.sdp:sdp-android:1.1.1")
 
+    //searchbar
+    implementation ("io.github.lapism:search:2.0.1")
+
+    //bottom navigation
+    implementation ("com.tbuonomo:morph-bottom-navigation:1.0.0")
 }
