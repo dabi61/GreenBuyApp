@@ -22,4 +22,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "GreenBuyApp"
 include(":app")
- 
+include(":morph-bottom-navigation")
+include(":morph-bottom-navigation-sample")

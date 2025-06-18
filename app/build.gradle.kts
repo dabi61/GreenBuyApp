@@ -51,6 +51,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation(project(":morph-bottom-navigation"))
+
 
 
     // Support libraries
@@ -151,6 +153,6 @@ dependencies {
     //searchbar
     implementation ("io.github.lapism:search:2.0.1")
 
-    //bottom navigation
-    implementation ("com.tbuonomo:morph-bottom-navigation:1.0.0")
+
+
 }

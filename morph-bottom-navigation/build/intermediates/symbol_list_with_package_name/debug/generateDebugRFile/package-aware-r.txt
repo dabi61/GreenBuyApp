@@ -1,0 +1,7 @@
+com.tbuonomo.morphbottomnavigation
+attr backgroundTint
+attr morphCornerRadius
+attr morphItemRadius
+attr morphVerticalOffset
+string app_name
+styleable MorphBottomNavigationView backgroundTint morphCornerRadius morphItemRadius morphVerticalOffset

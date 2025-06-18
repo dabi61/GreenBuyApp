@@ -1,0 +1,56 @@
+plugins {
+  id 'com.android.library'
+  id 'org.jetbrains.kotlin.android'
+  id 'kotlin-parcelize'
+  id 'maven-publish'
+}
+
+android {
+  namespace = "com.tbuonomo.morphbottomnavigation"
+  compileSdk = 35
+
+  defaultConfig {
+    minSdk = 24
+    targetSdk = 35
+
+    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    consumerProguardFiles("consumer-rules.pro")
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles(
+              getDefaultProguardFile("proguard-android-optimize.txt"),
+              "proguard-rules.pro"
+      )
+    }
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_11
+    targetCompatibility JavaVersion.VERSION_11
+  }
+
+  kotlinOptions {
+    jvmTarget = "11"
+  }
+
+  buildFeatures {
+    viewBinding = true
+  }
+}
+
+dependencies {
+  implementation "androidx.appcompat:appcompat:1.6.1"
+  implementation "com.google.android.material:material:1.11.0"
+  implementation "androidx.core:core-ktx:1.13.1"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0" // hoặc để tự resolve từ root project
+
+  testImplementation "junit:junit:4.13.2"
+  androidTestImplementation "androidx.test.ext:junit:1.1.5"
+  androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
+
+  // Nếu thư viện này cần thiết (vì bạn dùng `api`)
+  api 'com.tbuonomo:magicshapepath:1.0.0-alpha3'
+}

@@ -199,14 +199,15 @@
                 </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
+        <com.tbuonomo.morphbottomnavigation.MorphBottomNavigationView
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="@color/white"
-            app:itemIconTint="@color/main_color"
-            app:labelVisibilityMode="labeled"
-            app:elevation="8dp" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:menu="@menu/menu_home"
+            app:morphCornerRadius="128dp"
+            app:morphItemRadius="64dp"
+            app:morphVerticalOffset="8dp"
+            />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

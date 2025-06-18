@@ -1,0 +1,10 @@
+int attr backgroundTint 0x0
+int attr morphCornerRadius 0x0
+int attr morphItemRadius 0x0
+int attr morphVerticalOffset 0x0
+int string app_name 0x0
+int[] styleable MorphBottomNavigationView { 0x0, 0x0, 0x0, 0x0 }
+int styleable MorphBottomNavigationView_backgroundTint 0
+int styleable MorphBottomNavigationView_morphCornerRadius 1
+int styleable MorphBottomNavigationView_morphItemRadius 2
+int styleable MorphBottomNavigationView_morphVerticalOffset 3

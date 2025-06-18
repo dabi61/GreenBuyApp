@@ -1,0 +1,8 @@
+R_DEF: Internal format may change without notice
+local
+attr? backgroundTint
+attr? morphCornerRadius
+attr? morphItemRadius
+attr? morphVerticalOffset
+string app_name
+styleable MorphBottomNavigationView backgroundTint morphItemRadius morphVerticalOffset morphCornerRadius
