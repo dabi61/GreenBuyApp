@@ -152,5 +152,11 @@ dependencies {
     implementation ("io.github.lapism:search:2.0.1")
 
     //bottom navigation
-    implementation ("com.tbuonomo:morph-bottom-navigation:1.0.0")
+    implementation ("com.github.ibrahimsn98:SmoothBottomBar:1.7.9")
+
+    //viewpager + indicator
+    implementation ("com.github.zhpanvip:viewpagerindicator:1.2.3")
+
+    //Circle image view
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
 }

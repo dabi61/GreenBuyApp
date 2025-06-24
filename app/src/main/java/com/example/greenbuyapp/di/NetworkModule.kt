@@ -2,12 +2,15 @@ package com.example.greenbuyapp.di
 
 
 import com.example.greenbuyapp.data.authorization.AuthorizationService
+import com.example.greenbuyapp.data.product.ProductService
 import com.example.greenbuyapp.data.register.RegisterService
 import com.example.greenbuyapp.data.search.SearchService
 import com.example.greenbuyapp.data.user.UserService
 import com.example.greenbuyapp.domain.login.AccessTokenInterceptor
 import com.example.greenbuyapp.domain.login.AccessTokenProvider
 import com.example.greenbuyapp.domain.login.TokenExpiredManager
+import com.example.greenbuyapp.data.category.CategoryService
+import com.example.greenbuyapp.data.social.SocialService
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -31,13 +34,13 @@ val networkModule = module {
     single(createdAtStart = true) { TokenExpiredManager() }
     factory { createAccessTokenInterceptor(get(), get()) }
     factory { createConverterFactory() }
-//    factory { createService<PhotoService>(get(), get()) }
-//    factory { createService<CollectionService>(get(), get()) }
     factory { createService<UserService>(get(), get()) }
     factory { createService<SearchService>(get(), get()) }
     factory { createService<AuthorizationService>(get(), get(), UNSPLASH_BASE_URL) }
     factory { createService<RegisterService>(get(), get()) }
-//    factory { createDownloadService(get(), get()) }
+    factory { createService<ProductService>(get(), get()) }
+    factory { createService<CategoryService>(get(), get()) }
+    factory { createService<SocialService>(get(), get(), UNSPLASH_BASE_URL) }
 }
 
 private fun createOkHttpClient(accessTokenInterceptor: AccessTokenInterceptor): OkHttpClient {

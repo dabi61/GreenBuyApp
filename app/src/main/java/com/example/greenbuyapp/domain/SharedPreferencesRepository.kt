@@ -208,6 +208,7 @@ class SharedPreferencesRepository(context: Context) {
         sharedPreferences.registerOnSharedPreferenceChangeListener(sharedPreferenceChangedListener)
     }
 
+
     companion object {
 
         private const val PREFERENCE_LANGUAGE_KEY = "language"

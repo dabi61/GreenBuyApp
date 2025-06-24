@@ -1,4 +1,4 @@
-package com.example.greenbuyapp.domain
+package com.example.greenbuyapp.ui.base
 
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PageKeyedDataSource

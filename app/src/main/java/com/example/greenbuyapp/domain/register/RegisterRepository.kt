@@ -2,6 +2,7 @@ package com.example.greenbuyapp.domain.register
 
 import android.util.Log
 import com.example.greenbuyapp.data.register.RegisterService
+import com.example.greenbuyapp.data.register.model.RegisterRequest
 import com.example.greenbuyapp.data.register.model.RegisterResponse
 import com.example.greenbuyapp.util.Result
 import com.example.greenbuyapp.util.safeApiCall
@@ -61,11 +62,12 @@ class RegisterRepository(
         Log.d("RegisterRepository", "Trimmed Email: '$trimmedEmail'")
         Log.d("RegisterRepository", "Password: [HIDDEN]")
 
+
+        val request = RegisterRequest(trimmedUsername, trimmedEmail, password)
+
         val result = safeApiCall(dispatcher) {
             registerService.register(
-                username = trimmedUsername,
-                email = trimmedEmail,
-                password = password,
+                request
             )
         }
 

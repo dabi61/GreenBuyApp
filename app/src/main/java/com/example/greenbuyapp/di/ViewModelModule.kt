@@ -1,7 +1,10 @@
 package com.example.greenbuyapp.di
 
 
+import com.example.greenbuyapp.ui.home.HomeViewModel
 import com.example.greenbuyapp.ui.login.LoginViewModel
+import com.example.greenbuyapp.ui.product.ProductViewModel
+import com.example.greenbuyapp.ui.profile.ProfileViewModel
 import com.example.greenbuyapp.ui.register.RegisterViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -16,6 +19,9 @@ val viewModelModule = module {
 //    viewModel { EditProfileViewModel(get()) }
     viewModel { LoginViewModel(get()) }
     viewModel { RegisterViewModel(get())}
+    viewModel { HomeViewModel(get(), get()) }
+    viewModel { ProductViewModel(get()) }
+    viewModel { ProfileViewModel(get(), get(), get(), get()) }
 //    viewModel { SettingsViewModel(androidContext()) }
 //    viewModel { AutoWallpaperSettingsViewModel(get()) }
 //    viewModel { AutoWallpaperHistoryViewModel(get()) }

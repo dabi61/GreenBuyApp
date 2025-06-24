@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:name=".GreenBuyApplication"
         android:allowBackup="true"
@@ -29,16 +32,15 @@
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"></activity>
+        <activity
+            android:name=".ui.product.ProductActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.main.MainActivity" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
-        <provider
-            android:name="androidx.work.impl.WorkManagerInitializer"
-            android:authorities="${applicationId}.workmanager-init"
-            android:enabled="false"
-            android:exported="false" />
     </application>
 
 </manifest>

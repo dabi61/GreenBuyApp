@@ -14,7 +14,6 @@ import com.example.greenbuyapp.util.Result
 class LoginRepository(
     private val authorizationService: AuthorizationService,
     private val accessTokenProvider: AccessTokenProvider,
-    private val userService: UserService,
     private val tokenExpiredManager: TokenExpiredManager,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
@@ -125,40 +124,6 @@ class LoginRepository(
         return true
     }
 
-    suspend fun getMe(): Result<Me> {
-        val result = safeApiCall(dispatcher) {
-            userService.getUserPrivateProfile()
-        }
-
-        if (result is Result.Success) {
-            accessTokenProvider.saveUserProfile(result.value)
-        }
-
-        return result
-    }
-
-    suspend fun updateMe(
-        username: String?,
-        firstName: String?,
-        lastName: String?,
-        email: String?,
-        url: String?,
-        instagramUsername: String?,
-        location: String?,
-        bio: String?
-    ): Result<Me> {
-        val result = safeApiCall(dispatcher) {
-            userService.updateUserPrivateProfile(
-                username, firstName, lastName, email, url, instagramUsername, location, bio
-            )
-        }
-
-        if (result is Result.Success) {
-            accessTokenProvider.saveUserProfile(result.value)
-        }
-
-        return result
-    }
 
     fun isAuthorized() = accessTokenProvider.isAuthorized
 

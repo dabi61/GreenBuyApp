@@ -4,105 +4,103 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.lifecycleScope
-
-import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.greenbuyapp.R
 import com.example.greenbuyapp.databinding.ActivityRegisterBinding
 import com.example.greenbuyapp.ui.base.BaseActivity
 import com.example.greenbuyapp.ui.login.LoginActivity
 import com.example.greenbuyapp.util.setupActionBar
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class RegisterActivity : BaseActivity(R.layout.activity_register) {
+class RegisterActivity : BaseActivity<ActivityRegisterBinding>() {
     override val viewModel: RegisterViewModel by viewModel()
-    override val binding: ActivityRegisterBinding by viewBinding()
-
+    
+    override val binding: ActivityRegisterBinding by lazy {
+        ActivityRegisterBinding.inflate(layoutInflater)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Phải gọi setContentView trước khi gọi super.onCreate
+        setContentView(binding.root)
         super.onCreate(savedInstanceState)
 
         setupActionBar(R.id.toolbar) {
-            title = "Đăng nhập với tài khoản của bạn"
+            title = "Đăng ký tài khoản mới"
             setDisplayHomeAsUpEnabled(true)
         }
 
-        setupViews()
+        initViews()
         observeViewModel()
-
-
     }
 
-    private fun observeViewModel() {
-        lifecycleScope.launch {
-            // Observe login state
-            viewModel.registerState.collect { state ->
+    override fun observeViewModel() {
+        // Observe register state
+        launchWhenStarted {
+            (viewModel as RegisterViewModel).registerState.collect { state ->
                 handleRegisterState(state)
             }
         }
 
-        lifecycleScope.launch {
-            // Observe username error
-            viewModel.usernameError.collect { error ->
+        // Observe username error
+        launchWhenStarted {
+            (viewModel as RegisterViewModel).usernameError.collect { error ->
                 binding.tlUsername.error = error
             }
         }
 
-        lifecycleScope.launch {
-            // Observe email error
-            viewModel.emailError.collect { error ->
+        // Observe email error
+        launchWhenStarted {
+            (viewModel as RegisterViewModel).emailError.collect { error ->
                 binding.tlEmail.error = error
             }
         }
 
-        lifecycleScope.launch {
-            // Observe password error
-            viewModel.passwordError.collect { error ->
+        // Observe password error
+        launchWhenStarted {
+            (viewModel as RegisterViewModel).passwordError.collect { error ->
                 binding.tlPassword.error = error
             }
         }
 
-        lifecycleScope.launch {
-            // Observe terms error
-            viewModel.termsError.collect { error ->
+        // Observe terms error
+        launchWhenStarted {
+            (viewModel as RegisterViewModel).termsError.collect { error ->
                 if (error != null) {
                     showSnackbar(error)
                 }
             }
         }
 
-        lifecycleScope.launch {
-            // Observe username
-            viewModel.username.collect { username ->
+        // Observe username
+        launchWhenStarted {
+            (viewModel as RegisterViewModel).username.collect { username ->
                 if (binding.tlUsername.editText?.text?.toString() != username) {
                     binding.tlUsername.editText?.setText(username)
                 }
             }
         }
 
-        lifecycleScope.launch {
-            // Observe email
-            viewModel.email.collect { email ->
+        // Observe email
+        launchWhenStarted {
+            (viewModel as RegisterViewModel).email.collect { email ->
                 if (binding.tlEmail.editText?.text?.toString() != email) {
                     binding.tlEmail.editText?.setText(email)
                 }
             }
         }
 
-        lifecycleScope.launch {
-            // Observe password
-            viewModel.password.collect { password ->
+        // Observe password
+        launchWhenStarted {
+            (viewModel as RegisterViewModel).password.collect { password ->
                 if (binding.tlPassword.editText?.text?.toString() != password) {
                     binding.tlPassword.editText?.setText(password)
                 }
             }
         }
 
-        lifecycleScope.launch {
-            // Observe terms accepted
-            viewModel.isTermsAccepted.collect { isAccepted ->
+        // Observe terms accepted
+        launchWhenStarted {
+            (viewModel as RegisterViewModel).isTermsAccepted.collect { isAccepted ->
                 if (binding.cbRegister.isChecked != isAccepted) {
                     binding.cbRegister.isChecked = isAccepted
                 }
@@ -110,35 +108,38 @@ class RegisterActivity : BaseActivity(R.layout.activity_register) {
         }
     }
 
-    private fun setupViews() {
+    override fun initViews() {
         binding.tlUsername.requestFocus()
 
         // Setup text change listeners
         binding.tlUsername.editText?.addTextChangedListener { text ->
-            viewModel.onUsernameChanged(text?.toString() ?: "")
+            (viewModel as RegisterViewModel).onUsernameChanged(text?.toString() ?: "")
         }
 
         binding.tlPassword.editText?.addTextChangedListener { text ->
-            viewModel.onPasswordChanged(text?.toString() ?: "")
+            (viewModel as RegisterViewModel).onPasswordChanged(text?.toString() ?: "")
         }
 
         binding.tlEmail.editText?.addTextChangedListener { text ->
-            viewModel.onGmailChanged(text?.toString() ?: "")
+            (viewModel as RegisterViewModel).onGmailChanged(text?.toString() ?: "")
         }
 
         // Setup checkbox listener
         binding.cbRegister.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.onTermsAcceptedChanged(isChecked)
+            (viewModel as RegisterViewModel).onTermsAcceptedChanged(isChecked)
         }
 
-        // Setup login button
+        // Setup register button
         binding.btRegister.setOnClickListener {
-            viewModel.register()
+            (viewModel as RegisterViewModel).register()
         }
+        
+        // Setup login link
         binding.tvLinkQuest.setOnClickListener {
             navigateToLogin()
         }
     }
+    
     private fun setLoading(isLoading: Boolean) {
         binding.btRegister.isEnabled = !isLoading
         binding.tlUsername.isEnabled = !isLoading
@@ -164,6 +165,11 @@ class RegisterActivity : BaseActivity(R.layout.activity_register) {
             is RegisterUiState.Success -> {
                 setLoading(false)
                 showSnackbar("Đăng ký thành công!")
+                // Có thể thêm delay trước khi chuyển về màn hình đăng nhập
+                launchWhenStarted {
+                    kotlinx.coroutines.delay(1500)
+                    navigateToLogin()
+                }
             }
             is RegisterUiState.Error -> {
                 setLoading(false)
@@ -171,27 +177,26 @@ class RegisterActivity : BaseActivity(R.layout.activity_register) {
                 Log.e("RegisterActivity", "Error: ${state.message}")
             }
             is RegisterUiState.LoggedOut -> {
-                //Logout
+                // Không cần xử lý trong màn hình đăng ký
             }
         }
     }
+    
     private fun navigateToLogin() {
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
-        finish()
+        onBackPressed()
     }
+    
     override fun onBackPressed() {
         // Prevent going back if loading
-        if (viewModel.registerState.value !is RegisterUiState.Loading) {
+        if ((viewModel as RegisterViewModel).registerState.value !is RegisterUiState.Loading) {
             super.onBackPressed()
         }
     }
+    
     private fun showSnackbar(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
             .setAction("OK") {
-                viewModel.clearError()
-                onBackPressed()
+                (viewModel as RegisterViewModel).clearError()
             }
             .show()
     }

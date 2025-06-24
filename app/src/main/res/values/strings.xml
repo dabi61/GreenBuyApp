@@ -8,4 +8,11 @@
     <string name="ban_da_co_tai_khoan">Bạn đã có tài khoản</string>
     <string name="dang_nhap">Đăng nhập</string>
     <string name="toi_dong_y_voi_cac_dieu_khoan_cua_greenbuy">Tôi đồng ý với các điều khoản của Greenbuy</string>
+    <string name="trang_chu">Trang chủ</string>
+    <string name="mall">Mall</string>
+    <string name="shop_cua_toi">Shop của tôi</string>
+    <string name="thong_bao">Thông báo</string>
+    <string name="toi">Tôi</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

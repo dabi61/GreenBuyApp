@@ -87,11 +87,11 @@
     </style>
 
     <style name="AppTheme.Title.Collapsed" parent="android:TextAppearance">
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">0sp</item>
     </style>
 
     <style name="AppTheme.Title.Expanded" parent="android:TextAppearance">
-        <item name="android:textSize">48sp</item>
+        <item name="android:textSize">68sp</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

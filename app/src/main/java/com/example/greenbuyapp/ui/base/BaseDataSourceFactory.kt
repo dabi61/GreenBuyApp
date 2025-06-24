@@ -1,4 +1,4 @@
-package com.example.greenbuyapp.domain
+package com.example.greenbuyapp.ui.base
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.switchMap
@@ -6,6 +6,7 @@ import androidx.paging.Config
 import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import com.example.greenbuyapp.di.Properties
+import com.example.greenbuyapp.domain.Listing
 
 abstract class BaseDataSourceFactory<T> : DataSource.Factory<Int, T>() {
 

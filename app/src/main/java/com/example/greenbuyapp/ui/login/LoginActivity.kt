@@ -2,9 +2,8 @@ package com.example.greenbuyapp.ui.login
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.lifecycleScope
-import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.greenbuyapp.ui.main.MainActivity
 import com.example.greenbuyapp.ui.base.BaseActivity
 import com.example.greenbuyapp.R
@@ -12,40 +11,45 @@ import com.example.greenbuyapp.databinding.ActivityLoginBinding
 import com.example.greenbuyapp.ui.register.RegisterActivity
 import com.example.greenbuyapp.util.setupActionBar
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class LoginActivity : BaseActivity(R.layout.activity_login) {
+class LoginActivity : BaseActivity<ActivityLoginBinding>() {
 
     override val viewModel: LoginViewModel by viewModel()
-    override val binding: ActivityLoginBinding by viewBinding()
+    
+    override val binding: ActivityLoginBinding by lazy {
+        ActivityLoginBinding.inflate(layoutInflater)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Phải gọi setContentView trước khi gọi super.onCreate
+        setContentView(binding.root)
         super.onCreate(savedInstanceState)
 
         setupActionBar(R.id.toolbar) {
             title = "Đăng nhập với tài khoản của bạn"
         }
         
-        setupViews()
-        observeViewModel()
-        
         // Check if already logged in
-        if (viewModel.checkAuthStatus()) {
+        if ((viewModel as LoginViewModel).checkAuthStatus()) {
             navigateToMain()
         }
     }
 
-    private fun setupViews() {
+    override fun initViews() {
+
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+
+
         binding.tlUsername.requestFocus()
         
         // Setup text change listeners
         binding.tlUsername.editText?.addTextChangedListener { text ->
-            viewModel.onUsernameChanged(text?.toString() ?: "")
+            (viewModel as LoginViewModel).onUsernameChanged(text?.toString() ?: "")
         }
         
         binding.tlPassword.editText?.addTextChangedListener { text ->
-            viewModel.onPasswordChanged(text?.toString() ?: "")
+            (viewModel as LoginViewModel).onPasswordChanged(text?.toString() ?: "")
         }
 
         binding.tvLinkQuest.setOnClickListener {
@@ -55,7 +59,7 @@ class LoginActivity : BaseActivity(R.layout.activity_login) {
         
         // Setup login button
         binding.btLogin.setOnClickListener {
-            viewModel.login()
+            (viewModel as LoginViewModel).login()
         }
         
         // Setup forgot password
@@ -64,40 +68,40 @@ class LoginActivity : BaseActivity(R.layout.activity_login) {
         }
     }
 
-    private fun observeViewModel() {
-        lifecycleScope.launch {
-            // Observe login state
-            viewModel.loginState.collect { state ->
+    override fun observeViewModel() {
+        // Observe login state
+        launchWhenStarted {
+            (viewModel as LoginViewModel).loginState.collect { state ->
                 handleLoginState(state)
             }
         }
         
-        lifecycleScope.launch {
-            // Observe username error
-            viewModel.usernameError.collect { error ->
+        // Observe username error
+        launchWhenStarted {
+            (viewModel as LoginViewModel).usernameError.collect { error ->
                 binding.tlUsername.error = error
             }
         }
         
-        lifecycleScope.launch {
-            // Observe password error
-            viewModel.passwordError.collect { error ->
+        // Observe password error
+        launchWhenStarted {
+            (viewModel as LoginViewModel).passwordError.collect { error ->
                 binding.tlPassword.error = error
             }
         }
         
-        lifecycleScope.launch {
-            // Observe username
-            viewModel.username.collect { username ->
+        // Observe username
+        launchWhenStarted {
+            (viewModel as LoginViewModel).username.collect { username ->
                 if (binding.tlUsername.editText?.text?.toString() != username) {
                     binding.tlUsername.editText?.setText(username)
                 }
             }
         }
         
-        lifecycleScope.launch {
-            // Observe password
-            viewModel.password.collect { password ->
+        // Observe password
+        launchWhenStarted {
+            (viewModel as LoginViewModel).password.collect { password ->
                 if (binding.tlPassword.editText?.text?.toString() != password) {
                     binding.tlPassword.editText?.setText(password)
                 }
@@ -145,7 +149,7 @@ class LoginActivity : BaseActivity(R.layout.activity_login) {
     private fun showSnackbar(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
             .setAction("OK") { 
-                viewModel.clearError()
+                (viewModel as LoginViewModel).clearError()
             }
             .show()
     }
@@ -159,7 +163,7 @@ class LoginActivity : BaseActivity(R.layout.activity_login) {
 
     override fun onBackPressed() {
         // Prevent going back if loading
-        if (viewModel.loginState.value !is LoginUiState.Loading) {
+        if ((viewModel as LoginViewModel).loginState.value !is LoginUiState.Loading) {
             super.onBackPressed()
         }
     }

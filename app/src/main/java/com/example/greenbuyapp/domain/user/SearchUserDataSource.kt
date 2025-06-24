@@ -2,7 +2,7 @@ package com.example.greenbuyapp.domain.user
 
 import com.example.greenbuyapp.data.search.SearchService
 import com.example.greenbuyapp.data.user.model.User
-import com.example.greenbuyapp.domain.BaseDataSource
+import com.example.greenbuyapp.ui.base.BaseDataSource
 import kotlinx.coroutines.CoroutineScope
 
 class SearchUserDataSource(

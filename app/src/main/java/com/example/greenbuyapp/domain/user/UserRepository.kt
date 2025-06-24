@@ -3,6 +3,7 @@ package com.example.greenbuyapp.domain.user
 import com.example.greenbuyapp.data.search.SearchService
 import com.example.greenbuyapp.data.user.UserService
 import com.example.greenbuyapp.data.user.model.User
+import com.example.greenbuyapp.data.user.model.UserMeResponse
 import com.example.greenbuyapp.domain.Listing
 import com.example.greenbuyapp.util.safeApiCall
 import kotlinx.coroutines.CoroutineDispatcher
@@ -15,8 +16,9 @@ class UserRepository(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
-    suspend fun getUserPublicProfile(username: String) =
-        safeApiCall(dispatcher) { userService.getUserPublicProfile(username) }
+
+    suspend fun getUserMe() =
+        safeApiCall(dispatcher) { userService.getUserMe() }
 
     fun searchUsers(
         query: String,

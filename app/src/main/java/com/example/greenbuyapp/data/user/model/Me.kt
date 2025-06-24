@@ -1,7 +1,5 @@
 package com.example.greenbuyapp.data.user.model
 
-import com.example.greenbuyapp.data.user.model.Links
-import com.example.greenbuyapp.data.user.model.ProfileImage
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
