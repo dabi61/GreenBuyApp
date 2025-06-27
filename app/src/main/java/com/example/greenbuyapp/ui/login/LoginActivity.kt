@@ -26,6 +26,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
 
+
+
         setupActionBar(R.id.toolbar) {
             title = "Đăng nhập với tài khoản của bạn"
         }
@@ -39,7 +41,6 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
     override fun initViews() {
 
         window.statusBarColor = ContextCompat.getColor(this, R.color.white)
-
 
         binding.tlUsername.requestFocus()
         
@@ -148,6 +149,8 @@ class LoginActivity : BaseActivity<ActivityLoginBinding>() {
 
     private fun showSnackbar(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
+            .setTextColor(getColor(R.color.white))
+            .setActionTextColor(getColor(R.color.white))
             .setAction("OK") { 
                 (viewModel as LoginViewModel).clearError()
             }

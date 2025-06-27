@@ -7,4 +7,6 @@ import retrofit2.http.GET
 interface SocialService {
     @GET("api/user/follow/stats")
     suspend fun getFollowStats(): FollowStatsResponse
+
+
 }

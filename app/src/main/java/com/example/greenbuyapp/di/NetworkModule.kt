@@ -10,6 +10,7 @@ import com.example.greenbuyapp.domain.login.AccessTokenInterceptor
 import com.example.greenbuyapp.domain.login.AccessTokenProvider
 import com.example.greenbuyapp.domain.login.TokenExpiredManager
 import com.example.greenbuyapp.data.category.CategoryService
+import com.example.greenbuyapp.data.shop.ShopService
 import com.example.greenbuyapp.data.social.SocialService
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -41,6 +42,7 @@ val networkModule = module {
     factory { createService<ProductService>(get(), get()) }
     factory { createService<CategoryService>(get(), get()) }
     factory { createService<SocialService>(get(), get(), UNSPLASH_BASE_URL) }
+    factory { createService<ShopService>(get(), get()) }
 }
 
 private fun createOkHttpClient(accessTokenInterceptor: AccessTokenInterceptor): OkHttpClient {

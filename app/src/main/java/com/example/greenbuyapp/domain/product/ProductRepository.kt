@@ -4,13 +4,11 @@ import com.example.greenbuyapp.data.product.ProductService
 import com.example.greenbuyapp.data.product.model.Product
 import com.example.greenbuyapp.data.product.model.ProductAttributeList
 import com.example.greenbuyapp.data.product.model.ProductListResponse
-import com.example.greenbuyapp.data.product.model.TrendingProduct
 import com.example.greenbuyapp.data.product.model.TrendingProductResponse
-import com.example.greenbuyapp.domain.Listing
+import com.example.greenbuyapp.data.product.model.shopProducts
 import com.example.greenbuyapp.util.Result
 import com.example.greenbuyapp.util.safeApiCall
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
 class ProductRepository(
@@ -18,18 +16,33 @@ class ProductRepository(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
+    /**
+     * Lấy danh sách sản phẩm với StateFlow architecture
+     * @param page Số trang (mặc định là 1)
+     * @param limit Số lượng sản phẩm trên một trang (mặc định là 10)
+     * @param search Từ khóa tìm kiếm
+     * @param categoryId ID danh mục
+     * @param subCategoryId ID danh mục con
+     * @param shopId ID cửa hàng
+     * @param minPrice Giá tối thiểu
+     * @param maxPrice Giá tối đa
+     * @param sortBy Sắp xếp theo (mặc định: created_at)
+     * @param sortOrder Thứ tự sắp xếp (mặc định: desc)
+     * @param approvedOnly Chỉ lấy sản phẩm được duyệt (mặc định: true)
+     * @return Result<ProductListResponse> chứa danh sách sản phẩm
+     */
     suspend fun getProducts(
-        page: Int? = null,
-        limit: Int? = null,
+        page: Int = 1,
+        limit: Int = 10,
         search: String? = null,
         categoryId: Int? = null,
         subCategoryId: Int? = null,
         shopId: Int? = null,
         minPrice: Double? = null,
         maxPrice: Double? = null,
-        sortBy: String? = null,
-        sortOrder: String? = null,
-        approvedOnly: Boolean? = null
+        sortBy: String = "created_at",
+        sortOrder: String = "desc",
+        approvedOnly: Boolean = true
     ): Result<ProductListResponse> {
         return safeApiCall(dispatcher) {
             productService.getProducts(
@@ -77,30 +90,33 @@ class ProductRepository(
         }
     }
 
-    fun getProductsPaged(
+    /**
+     * Lấy sản phẩm theo ID
+     * @param productId ID của sản phẩm
+     * @return Result<ProductAttributeList> chứa danh sách attributes
+     */
+    suspend fun getProduct(productId: Int): Result<Product> {
+        return safeApiCall(dispatcher) {
+            productService.getProduct(productId)
+        }
+    }
+
+    /**
+     * Lấy danh sách sản phẩm theo shop id
+     * @param productId ID của sản phẩm
+     * @return Result<List<Product>> chứa danh sách product
+     */
+    suspend fun getProductsByShopId(
+        shopId: Int,
+        page: Int = 1,
+        limit: Int = 10,
         search: String? = null,
-        categoryId: Int? = null,
-        subCategoryId: Int? = null,
-        shopId: Int? = null,
-        minPrice: Double? = null,
-        maxPrice: Double? = null,
-        sortBy: String? = null,
-        sortOrder: String? = null,
-        approvedOnly: Boolean? = null,
-        scope: CoroutineScope
-    ): Listing<Product> {
-        return ProductDataSourceFactory(
-            productService = productService,
-            search = search,
-            categoryId = categoryId,
-            subCategoryId = subCategoryId,
-            shopId = shopId,
-            minPrice = minPrice,
-            maxPrice = maxPrice,
-            sortBy = sortBy,
-            sortOrder = sortOrder,
-            approvedOnly = approvedOnly,
-            scope = scope
-        ).createListing()
+        sortBy: String = "created_at",
+        sortOrder: String = "desc",
+        approvedOnly: Boolean = true
+    ): Result<ProductListResponse> {
+        return safeApiCall(dispatcher) {
+            productService.getProductsByShopId(shopId)
+        }
     }
 } 

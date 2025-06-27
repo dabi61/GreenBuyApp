@@ -76,29 +76,39 @@ class ProfileViewModel(
             _isLoading.value = true
             
             try {
+                println("👤 Loading user profile...")
+                
                 // Kiểm tra và ensure valid token trước khi gọi API
                 if (!loginRepository.ensureValidToken()) {
+                    println("❌ Token validation failed for user profile")
                     _userProfile.value = Result.Error(401, "Token không hợp lệ. Vui lòng đăng nhập lại.")
                     _authState.value = AuthState.NotAuthenticated
                     return@launch
                 }
                 
+                println("✅ Token valid, calling getUserMe API...")
                 val result = userRepository.getUserMe()
                 _userProfile.value = when (result) {
                     is Result.Success -> {
+                        println("✅ User profile loaded successfully")
                         _authState.value = AuthState.Authenticated
                         Result.Success(result.value.user)
                     }
                     is Result.Error -> {
+                        println("❌ User profile error: ${result.code} - ${result.error}")
                         if (result.code == 401) {
                             _authState.value = AuthState.NotAuthenticated
                         }
                         Result.Error(result.code, result.error)
                     }
-                    is Result.NetworkError -> Result.NetworkError
+                    is Result.NetworkError -> {
+                        println("🌐 User profile network error")
+                        Result.NetworkError
+                    }
                     is Result.Loading -> Result.Loading
                 }
             } catch (e: Exception) {
+                println("💥 User profile exception: ${e.message}")
                 _userProfile.value = Result.Error(null, e.message)
             } finally {
                 _isLoading.value = false
@@ -128,15 +138,18 @@ class ProfileViewModel(
 
     fun loadFollowStats() {
         viewModelScope.launch {
-            _isLoading.value = true
             try {
+                println("📊 Loading follow stats...")
+                
                 // Kiểm tra và ensure valid token trước khi gọi API
                 if (!loginRepository.ensureValidToken()) {
+                    println("❌ Token validation failed for follow stats")
                     _followStats.value = Result.Error(401, "Token không hợp lệ. Vui lòng đăng nhập lại.")
                     _authState.value = AuthState.NotAuthenticated
                     return@launch
                 }
                 
+                println("✅ Token valid, calling getFollowStats API...")
                 val result = followStatsRepository.getFollowStats()
                 println("🔍 FollowStats API result: $result")
                 _followStats.value = when (result) {
@@ -159,9 +172,8 @@ class ProfileViewModel(
                     is Result.Loading -> Result.Loading
                 }
             } catch (e: Exception) {
+                println("💥 FollowStats exception: ${e.message}")
                 _followStats.value = Result.Error(null, e.message)
-            } finally {
-                _isLoading.value = false
             }
         }
     }

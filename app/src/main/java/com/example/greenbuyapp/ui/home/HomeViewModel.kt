@@ -7,7 +7,6 @@ import com.example.greenbuyapp.data.category.model.Category
 import com.example.greenbuyapp.data.product.model.Product
 import com.example.greenbuyapp.data.product.model.TrendingProduct
 import com.example.greenbuyapp.data.product.model.TrendingProductResponse
-import com.example.greenbuyapp.domain.Listing
 import com.example.greenbuyapp.domain.category.CategoryRepository
 import com.example.greenbuyapp.domain.product.ProductRepository
 import com.example.greenbuyapp.util.Result
@@ -47,8 +46,6 @@ class HomeViewModel(
     private val _approvedOnly = MutableStateFlow(true)
     val approvedOnly: StateFlow<Boolean> = _approvedOnly.asStateFlow()
 
-    private var _productListing: Listing<Product>? = null
-
     // Trending products
     private val _trendingProducts = MutableStateFlow<List<TrendingProduct>>(emptyList())
     val trendingProducts: StateFlow<List<TrendingProduct>> = _trendingProducts.asStateFlow()
@@ -63,15 +60,45 @@ class HomeViewModel(
     private val _bannerItems = MutableStateFlow<List<Int>>(emptyList())
     val bannerItems: StateFlow<List<Int>> = _bannerItems.asStateFlow()
 
-    fun getProductListing(): Listing<Product> {
-        println("🔄 getProductListing() called")
-        if (_productListing == null) {
-            println("📦 Creating new product listing with params:")
+    // ✅ MODERN PRODUCTS ARCHITECTURE - StateFlow based
+    private val _products = MutableStateFlow<List<Product>>(emptyList())
+    val products: StateFlow<List<Product>> = _products.asStateFlow()
+    
+    private val _productsLoading = MutableStateFlow(false)
+    val productsLoading: StateFlow<Boolean> = _productsLoading.asStateFlow()
+    
+    private val _productsError = MutableStateFlow<String?>(null)
+    val productsError: StateFlow<String?> = _productsError.asStateFlow()
+    
+    // Current page for pagination
+    private var currentPage = 1
+    private var isLoadingMore = false
+    private var hasMoreProducts = true
+
+    /**
+     * ✅ MODERN: Load products với StateFlow architecture
+     */
+    fun loadProducts(isRefresh: Boolean = false) {
+        viewModelScope.launch {
+            // Nếu đang loading more thì không load nữa
+            if (isLoadingMore && !isRefresh) return@launch
+            
+            if (isRefresh) {
+                currentPage = 1
+                hasMoreProducts = true
+                _products.value = emptyList()
+            }
+            
+            _productsLoading.value = true
+            _productsError.value = null
+            
+            println("🛍️ Loading products - page: $currentPage, refresh: $isRefresh")
             println("   search: ${_searchQuery.value}")
             println("   categoryId: ${_categoryId.value}")
-            println("   approvedOnly: ${_approvedOnly.value}")
             
-            _productListing = productRepository.getProductsPaged(
+            when (val result = productRepository.getProducts(
+                page = currentPage,
+                limit = 10,
                 search = _searchQuery.value.takeIf { it.isNotBlank() },
                 categoryId = _categoryId.value,
                 subCategoryId = _subCategoryId.value,
@@ -80,13 +107,69 @@ class HomeViewModel(
                 maxPrice = _maxPrice.value,
                 sortBy = _sortBy.value,
                 sortOrder = _sortOrder.value,
-                approvedOnly = _approvedOnly.value,
-                scope = viewModelScope
-            )
-        } else {
-            println("♻️ Reusing existing product listing")
+                approvedOnly = _approvedOnly.value
+            )) {
+                is Result.Success -> {
+                    val newProducts = result.value.items
+                    
+                    _products.value = if (isRefresh) {
+                        newProducts
+                    } else {
+                        _products.value + newProducts
+                    }
+                    
+                    // Check if có thêm data không
+                    hasMoreProducts = newProducts.size == 10
+                    currentPage++
+                    
+                    println("✅ Products loaded: ${newProducts.size} new items, total: ${_products.value.size}")
+                }
+                is Result.Error -> {
+                    _productsError.value = result.error ?: "Lỗi tải sản phẩm"
+                    println("❌ Products error: ${result.error}")
+                }
+                is Result.NetworkError -> {
+                    _productsError.value = "Không có kết nối mạng"
+                    println("🌐 Products network error")
+                }
+                else -> {
+                    _productsError.value = "Lỗi không xác định"
+                    println("❓ Products unknown error")
+                }
+            }
+            
+            _productsLoading.value = false
         }
-        return _productListing!!
+    }
+    
+    /**
+     * Load more products cho infinite scrolling
+     */
+    fun loadMoreProducts() {
+        if (!hasMoreProducts || isLoadingMore || _productsLoading.value) {
+            println("🚫 Cannot load more: hasMore=$hasMoreProducts, isLoading=$isLoadingMore, loading=${_productsLoading.value}")
+            return
+        }
+        
+        isLoadingMore = true
+        viewModelScope.launch {
+            loadProducts(isRefresh = false)
+            isLoadingMore = false
+        }
+    }
+    
+    /**
+     * Refresh products
+     */
+    fun refreshProducts() {
+        loadProducts(isRefresh = true)
+    }
+    
+    /**
+     * Retry loading products
+     */
+    fun retryLoadProducts() {
+        loadProducts(isRefresh = true)
     }
 
     /**
@@ -197,15 +280,6 @@ class HomeViewModel(
             _approvedOnly.value = approvedOnly
             refreshProducts()
         }
-    }
-
-    fun refreshProducts() {
-        _productListing = null
-        // The listing will be recreated on next getProductListing() call
-    }
-
-    fun retryFailedRequest() {
-        _productListing?.retry?.invoke()
     }
 
     private val _categories = MutableStateFlow<List<Category>>(emptyList())

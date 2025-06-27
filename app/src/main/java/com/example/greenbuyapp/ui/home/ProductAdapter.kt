@@ -2,7 +2,7 @@ package com.example.greenbuyapp.ui.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -12,9 +12,13 @@ import com.example.greenbuyapp.databinding.ItemProductBinding
 import java.text.NumberFormat
 import java.util.*
 
+/**
+ * ✅ MODERN ProductAdapter: Support List<Product> cho StateFlow architecture
+ * Replaced PagedListAdapter với ListAdapter để flexible hơn
+ */
 class ProductAdapter(
     private val onProductClick: (Product) -> Unit = {}
-) : PagedListAdapter<Product, ProductAdapter.ProductViewHolder>(ProductDiffCallback()) {
+) : ListAdapter<Product, ProductAdapter.ProductViewHolder>(ProductDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
         val binding = ItemProductBinding.inflate(
@@ -27,10 +31,10 @@ class ProductAdapter(
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = getItem(position)
-        if (product != null) {
-            holder.bind(product, onProductClick)
-        }
+        holder.bind(product, onProductClick)
     }
+
+
 
     class ProductViewHolder(
         private val binding: ItemProductBinding

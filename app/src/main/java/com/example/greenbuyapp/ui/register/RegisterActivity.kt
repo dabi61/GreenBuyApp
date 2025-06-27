@@ -3,11 +3,13 @@ package com.example.greenbuyapp.ui.register
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import com.example.greenbuyapp.R
 import com.example.greenbuyapp.databinding.ActivityRegisterBinding
 import com.example.greenbuyapp.ui.base.BaseActivity
 import com.example.greenbuyapp.ui.login.LoginActivity
+import com.example.greenbuyapp.ui.login.LoginViewModel
 import com.example.greenbuyapp.util.setupActionBar
 import com.google.android.material.snackbar.Snackbar
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -109,6 +111,10 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding>() {
     }
 
     override fun initViews() {
+
+        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+
+
         binding.tlUsername.requestFocus()
 
         // Setup text change listeners
@@ -192,9 +198,11 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding>() {
             super.onBackPressed()
         }
     }
-    
+
     private fun showSnackbar(message: String) {
         Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG)
+            .setTextColor(getColor(R.color.white))
+            .setActionTextColor(getColor(R.color.white))
             .setAction("OK") {
                 (viewModel as RegisterViewModel).clearError()
             }

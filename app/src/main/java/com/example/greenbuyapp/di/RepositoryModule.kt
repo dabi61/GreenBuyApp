@@ -5,6 +5,7 @@ import com.example.greenbuyapp.domain.category.CategoryRepository
 import com.example.greenbuyapp.domain.login.LoginRepository
 import com.example.greenbuyapp.domain.product.ProductRepository
 import com.example.greenbuyapp.domain.register.RegisterRepository
+import com.example.greenbuyapp.domain.shop.ShopRepository
 import com.example.greenbuyapp.domain.social.FollowStatsRepository
 import com.example.greenbuyapp.domain.user.UserRepository
 import org.koin.dsl.module
@@ -19,6 +20,7 @@ val repositoryModule = module {
     single(createdAtStart = true) { ProductRepository(get()) }
     single(createdAtStart = true) { CategoryRepository(get()) }
     single(createdAtStart = true) { FollowStatsRepository(get()) }
+    single(createdAtStart = true) { ShopRepository(get(), get()) }
 
 //    single(createdAtStart = true) { BillingRepository(androidApplication()) }
 //

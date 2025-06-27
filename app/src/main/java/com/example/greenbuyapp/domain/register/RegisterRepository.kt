@@ -63,11 +63,11 @@ class RegisterRepository(
         Log.d("RegisterRepository", "Password: [HIDDEN]")
 
 
-        val request = RegisterRequest(trimmedUsername, trimmedEmail, password)
-
         val result = safeApiCall(dispatcher) {
             registerService.register(
-                request
+                username = trimmedUsername,
+                email = trimmedEmail,
+                password = password
             )
         }
 

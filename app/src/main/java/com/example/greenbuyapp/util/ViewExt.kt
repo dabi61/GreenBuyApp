@@ -6,9 +6,22 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.view.WindowInsets
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
+import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
+import com.example.greenbuyapp.R
 import com.google.android.material.snackbar.Snackbar
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import android.graphics.Bitmap
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 fun View.showSnackBar(
     message: String,
@@ -119,4 +132,330 @@ fun View.requestApplyInsetsWhenAttached() {
             override fun onViewDetachedFromWindow(v: View) = Unit
         })
     }
+}
+
+
+
+/**
+ * Base URL cho avatar images
+ */
+private const val BASE_AVATAR_URL = "https://www.utt-school.site"
+
+/**
+ * Load avatar với circle crop (mặc định)
+ */
+fun ImageView.loadAvatar(
+    avatarPath: String?,
+    @DrawableRes placeholder: Int = R.drawable.avatar_blank,
+    @DrawableRes error: Int = R.drawable.avatar_blank
+) {
+    loadImage(
+        imagePath = avatarPath,
+        placeholder = placeholder,
+        error = error,
+        transform = ImageTransform.CIRCLE
+    )
+}
+
+/**
+ * Load avatar với rounded corners
+ */
+fun ImageView.loadAvatarRounded(
+    avatarPath: String?,
+    cornerRadius: Int = 16,
+    @DrawableRes placeholder: Int = R.drawable.avatar_blank,
+    @DrawableRes error: Int = R.drawable.avatar_blank
+) {
+    loadImage(
+        imagePath = avatarPath,
+        placeholder = placeholder,
+        error = error,
+        transform = ImageTransform.ROUNDED,
+        cornerRadius = cornerRadius
+    )
+}
+
+/**
+ * Load avatar không transform (hình chữ nhật)
+ */
+fun ImageView.loadAvatarSquare(
+    avatarPath: String?,
+    @DrawableRes placeholder: Int = R.drawable.avatar_blank,
+    @DrawableRes error: Int = R.drawable.avatar_blank
+) {
+    loadImage(
+        imagePath = avatarPath,
+        placeholder = placeholder,
+        error = error,
+        transform = ImageTransform.NONE
+    )
+}
+
+/**
+ * Hàm chung để load image với comprehensive error handling
+ */
+private fun ImageView.loadImage(
+    imagePath: String?,
+    @DrawableRes placeholder: Int,
+    @DrawableRes error: Int,
+    transform: ImageTransform,
+    cornerRadius: Int = 8
+) {
+    if (!imagePath.isNullOrEmpty()) {
+        val imageUrl = buildImageUrl(imagePath)
+        
+        // ✅ Check if it's SVG file
+        if (isSvgFile(imageUrl)) {
+            println("⚠️ SVG file detected, using placeholder: $imageUrl")
+            setImageResource(placeholder)
+            return
+        }
+        
+        val requestOptions = createRequestOptions(transform, cornerRadius, placeholder, error)
+        
+        println("🖼️ Loading image:")
+        println("   Original path: $imagePath")
+        println("   Full URL: $imageUrl")
+
+        Glide.with(context)
+            .asBitmap() // ✅ Force bitmap decode only
+            .load(imageUrl)
+            .apply(requestOptions)
+            .listener(object : RequestListener<Bitmap> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Bitmap>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    println("❌ Image load failed for: $imageUrl")
+                    println("   Error: ${e?.message}")
+                    
+                    post { setImageResource(error) }
+                    return true
+                }
+                
+                override fun onResourceReady(
+                    resource: Bitmap?,
+                    model: Any?,
+                    target: Target<Bitmap>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    println("✅ Image loaded successfully: $imageUrl")
+                    return false
+                }
+            })
+            .into(this)
+    } else {
+        setImageResource(error)
+    }
+}
+
+/**
+ * Check if URL is SVG file
+ */
+private fun isSvgFile(url: String): Boolean {
+    return url.lowercase().contains(".svg")
+}
+
+/**
+ * Enhanced URL validation
+ */
+private fun isValidImagePath(path: String): Boolean {
+    if (path.isBlank()) return false
+    
+    val lowerPath = path.lowercase()
+    
+    // ✅ SVG is now considered invalid for bitmap loading
+    if (lowerPath.contains(".svg")) {
+        return false
+    }
+    
+    // Valid bitmap image extensions
+    val imageExtensions = listOf(".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp")
+    val hasValidExtension = imageExtensions.any { lowerPath.endsWith(it) }
+    
+    // Suspicious content
+    val suspiciousContent = listOf(".mp4", ".avi", ".mov", ".mkv", "video/")
+    val hasSuspiciousContent = suspiciousContent.any { lowerPath.contains(it) }
+    
+    return hasValidExtension && !hasSuspiciousContent
+}
+
+/**
+ * Load image với URL (với enhanced error handling)
+ */
+fun ImageView.loadUrl(
+    imageUrl: String?,
+    @DrawableRes placeholder: Int = R.drawable.pic_item_product,
+    @DrawableRes error: Int = R.drawable.pic_item_product,
+    transform: ImageTransform = ImageTransform.NONE,
+    cornerRadius: Int = 8
+) {
+    if (!imageUrl.isNullOrEmpty()) {
+        val requestOptions = createRequestOptions(transform, cornerRadius, placeholder, error)
+        
+        println("🖼️ Loading URL: $imageUrl")
+
+        Glide.with(context)
+            .asBitmap() // ✅ Force bitmap decode
+            .load(imageUrl)
+            .apply(requestOptions)
+            .listener(object : RequestListener<Bitmap> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<Bitmap>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    println("❌ URL load failed: $imageUrl")
+                    println("   Error: ${e?.message}")
+                    e?.rootCauses?.forEach { cause ->
+                        println("   Root cause: ${cause.message}")
+                    }
+                    
+                    post { setImageResource(error) }
+                    return true
+                }
+                
+                override fun onResourceReady(
+                    resource: Bitmap?,
+                    model: Any?,
+                    target: Target<Bitmap>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    println("✅ URL loaded successfully: $imageUrl")
+                    return false
+                }
+            })
+            .into(this)
+    } else {
+        setImageResource(error)
+    }
+}
+
+/**
+ * Enhanced URL building with validation
+ */
+private fun buildImageUrl(imagePath: String): String {
+    val fullUrl = if (imagePath.startsWith("http")) {
+        imagePath
+    } else {
+        "$BASE_AVATAR_URL$imagePath"
+    }
+    
+    // ✅ Validate URL format
+    if (!isValidImagePath(imagePath)) {
+        println("⚠️ Potentially invalid image path: $imagePath")
+    }
+    
+    return fullUrl
+}
+
+/**
+ * Enhanced request options with better error handling
+ */
+private fun createRequestOptions(
+    transform: ImageTransform,
+    cornerRadius: Int,
+    @DrawableRes placeholder: Int,
+    @DrawableRes error: Int
+): RequestOptions {
+    val options = RequestOptions()
+        .placeholder(placeholder)
+        .error(error)
+        .timeout(15000) // ✅ 15 second timeout
+        .diskCacheStrategy(DiskCacheStrategy.ALL) // ✅ Cache everything
+        .skipMemoryCache(false) // ✅ Use memory cache
+
+    return when (transform) {
+        ImageTransform.CIRCLE -> options.transform(CircleCrop())
+        ImageTransform.ROUNDED -> options.transform(RoundedCorners(cornerRadius))
+        ImageTransform.NONE -> options
+    }
+}
+
+/**
+ * Enum cho các loại transform image
+ */
+enum class ImageTransform {
+    NONE,       // Không transform
+    CIRCLE,     // Hình tròn
+    ROUNDED     // Góc bo tròn
+}
+
+/**
+ * Extension function để set placeholder khi loading
+ */
+fun ImageView.setPlaceholder(@DrawableRes drawableRes: Int) {
+    setImageResource(drawableRes)
+}
+
+/**
+ * Extension function để clear image (set về placeholder)
+ */
+fun ImageView.clearImage(@DrawableRes placeholder: Int = R.drawable.avatar_blank) {
+    Glide.with(context).clear(this)
+    setImageResource(placeholder)
+}
+
+/**
+ * Safe load với SVG detection
+ */
+fun ImageView.safeLoadImage(
+    imageUrl: String?,
+    @DrawableRes placeholder: Int = R.drawable.pic_item_product,
+    @DrawableRes error: Int = R.drawable.pic_item_product,
+    transform: ImageTransform = ImageTransform.NONE,
+    cornerRadius: Int = 8
+) {
+    if (imageUrl.isNullOrEmpty()) {
+        setImageResource(error)
+        return
+    }
+    
+    // ✅ Check for problematic file types
+    val lowerUrl = imageUrl.lowercase()
+    if (lowerUrl.contains(".svg") || 
+        lowerUrl.contains("video") || 
+        lowerUrl.contains(".mp4") ||
+        lowerUrl.contains(".avi")) {
+        
+        println("⚠️ Unsupported file type detected: $imageUrl")
+        setImageResource(placeholder)
+        return
+    }
+    
+    val requestOptions = createRequestOptions(transform, cornerRadius, placeholder, error)
+    
+    Glide.with(context)
+        .asBitmap()
+        .load(imageUrl)
+        .apply(requestOptions)
+        .listener(object : RequestListener<Bitmap> {
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any?,
+                target: Target<Bitmap>?,
+                isFirstResource: Boolean
+            ): Boolean {
+                println("❌ Safe load failed: $imageUrl")
+                post { setImageResource(error) }
+                return true
+            }
+            
+            override fun onResourceReady(
+                resource: Bitmap?,
+                model: Any?,
+                target: Target<Bitmap>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
+                println("✅ Safe load success: $imageUrl")
+                return false
+            }
+        })
+        .into(this)
 }

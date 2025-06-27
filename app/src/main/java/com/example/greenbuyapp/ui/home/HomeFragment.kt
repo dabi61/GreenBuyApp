@@ -48,19 +48,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
 
     override fun initView() {
         // Khởi tạo các view và thiết lập sự kiện
-
         try {
             setupRecyclerView()
             setupBanner()
             setupSearchView()
             
-            // ✅ Load categories khi init
+            // Load categories khi init
             viewModel.loadCategories()
             
-            // ✅ Force load products
+            // Load products với StateFlow architecture
             println("🚀 Triggering product loading...")
-            val productListing = viewModel.getProductListing()
-            println("📋 Product listing created: ${productListing}")
+            viewModel.loadProducts(isRefresh = true)
             
             // Load trending products
             viewModel.loadTrendingProducts()
@@ -74,7 +72,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     override fun observeViewModel() {
-        // Observe các LiveData/Flow từ ViewModel
+        // Observe các StateFlow từ ViewModel
         try {
             observeProducts()
             observeCategories()
@@ -92,7 +90,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             println("🔍 Product object: $product")
             println("🔍 Product ID being passed: ${product.product_id}")
             
-            val intent = ProductActivity.createIntent(requireContext(), product.product_id)
+            val intent = ProductActivity.createIntent(requireContext(), product.product_id, product.shop_id, product.description)
             println("🔍 Intent created: $intent")
             println("🔍 Intent extras after creation: ${intent.extras}")
             
@@ -188,59 +186,41 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
     }
     
+    /**
+     * Observe products với StateFlow architecture
+     */
     private fun observeProducts() {
-        try {
-            println("🔭 Starting observeProducts()")
-            val productListing = viewModel.getProductListing()
-            
-            // Observe product list
-            productListing.pagedList.observe(viewLifecycleOwner, Observer { pagedList ->
-                try {
-                    println("📦 Products pagedList updated: ${pagedList?.size ?: 0} items")
-                    productAdapter.submitList(pagedList)
-                    
-                    // Debug: Print first few products
-                    pagedList?.take(3)?.forEach { product ->
-                        println("   Product: ${product.name}")
-                    }
-                } catch (e: Exception) {
-                    println("❌ Error updating product list: $e")
-                    e.printStackTrace()
+        // Observe product data
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.products.collect { products ->
+                println("🛍️ Products updated: ${products.size} items")
+                productAdapter.submitList(products)
+                
+                // Debug: Print first few products
+                products.take(3).forEach { product ->
+                    println("   Product: ${product.name}")
                 }
-            })
-            
-            // Observe network state
-            productListing.networkState.observe(viewLifecycleOwner, Observer { networkState ->
-                try {
-                    println("🌐 Products networkState: $networkState")
-                    when (networkState) {
-                        is NetworkState.LOADING -> {
-                            println("⏳ Products loading...")
-                        }
-                        is NetworkState.ERROR -> {
-                            println("❌ Products error: ${networkState.message}")
-                        }
-                        is NetworkState.SUCCESS -> {
-                            println("✅ Products loaded successfully")
-                        }
-                        is NetworkState.EMPTY -> {
-                            println("📭 Products empty")
-                        }
-                    }
-                } catch (e: Exception) {
-                    println("❌ Error in networkState: $e")
-                    e.printStackTrace()
+            }
+        }
+        
+        // Observe loading state  
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.productsLoading.collect { isLoading ->
+                println("⏳ Products loading: $isLoading")
+                // TODO: Show/hide loading indicator
+                // binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+            }
+        }
+        
+        // Observe error state
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.productsError.collect { error ->
+                error?.let {
+                    println("❌ Products error: $it")
+                    // TODO: Show error message và retry button
+                    // Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                 }
-            })
-            
-            // Observe refresh state
-            productListing.refreshState.observe(viewLifecycleOwner, Observer { refreshState ->
-                println("🔄 Products refreshState: $refreshState")
-            })
-            
-        } catch (e: Exception) {
-            println("❌ Error in observeProducts: $e")
-            e.printStackTrace()
+            }
         }
     }
 
@@ -248,7 +228,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         // Observe categories data using StateFlow
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.categories.collect { categories ->
-                // ✅ Update category RecyclerView
                 categoryAdapter.submitList(categories)
                 
                 // Tạm thời log để test

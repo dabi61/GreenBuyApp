@@ -11,6 +11,8 @@ interface RegisterService {
 
     @POST("api/user/register")
     suspend fun register(
-        @Body request: RegisterRequest
+        @Query("username") username: String,
+        @Query("email") email: String,
+        @Query("password") password: String
     ): RegisterResponse
 }

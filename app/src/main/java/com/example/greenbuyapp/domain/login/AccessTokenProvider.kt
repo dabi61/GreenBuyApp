@@ -75,8 +75,12 @@ class AccessTokenProvider(context: Context) {
         putString(ACCESS_TOKEN_KEY, loginResponse.access_token)
         putString(REFRESH_TOKEN_KEY, loginResponse.refresh_token)
         putString(TOKEN_TYPE_KEY, loginResponse.token_type)
-        val expiryTime = System.currentTimeMillis() + (60 * 60 * 1000)
+        
+        val expiresInSeconds = loginResponse.expires_in ?: 1800 // Default 1 hour nếu không có
+        val expiryTime = System.currentTimeMillis() + (expiresInSeconds * 1000L)
         putLong(TOKEN_EXPIRES_AT_KEY, expiryTime)
+        
+        println("💾 Token saved - expires in: ${expiresInSeconds}s, expiry time: $expiryTime")
     }
 
     fun saveUserProfile(me: Me) = sharedPreferences.edit {
@@ -87,11 +91,22 @@ class AccessTokenProvider(context: Context) {
 
     fun isTokenExpired(): Boolean {
         val expiryTime = sharedPreferences.getLong(TOKEN_EXPIRES_AT_KEY, 0)
-        return if (expiryTime > 0) {
-            System.currentTimeMillis() >= expiryTime
+        val currentTime = System.currentTimeMillis()
+        
+        // Thêm buffer 5 phút (300,000ms) để refresh token trước khi thật sự expired
+        val bufferTime = 5 * 60 * 1000L
+        val isExpired = if (expiryTime > 0) {
+            currentTime >= (expiryTime - bufferTime)
         } else {
             false
         }
+        
+        if (isExpired) {
+            val remainingTime = (expiryTime - currentTime) / 1000
+            println("⏰ Token expired check: expired=$isExpired, remaining=${remainingTime}s")
+        }
+        
+        return isExpired
     }
 
     fun simulateTokenExpired() {

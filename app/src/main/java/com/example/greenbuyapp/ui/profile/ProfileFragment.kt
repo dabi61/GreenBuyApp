@@ -15,6 +15,8 @@ import com.example.greenbuyapp.ui.base.BaseFragment
 import com.example.greenbuyapp.ui.login.LoginActivity
 import com.example.greenbuyapp.ui.main.MainActivity
 import com.example.greenbuyapp.util.Result
+import com.example.greenbuyapp.util.loadAvatar
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
@@ -88,7 +90,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
         }
     }
     
-//    private fun isFragmentSafe(): Boolean {
+//    override fun isFragmentSafe(): Boolean {
 //        return isAdded && !isRemoving && !isDetached && activity != null && !requireActivity().isFinishing
 //    }
 
@@ -128,18 +130,41 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
                 
                 when (state) {
                     is AuthState.Unknown -> {
+                        println("🔄 Auth state: Unknown")
                         // Initial state, do nothing
                     }
                     is AuthState.Authenticated -> {
-                        // User is authenticated, load profile and follow stats
-                        viewModel.loadUserProfile()
-                        viewModel.loadFollowStats()
+                        println("✅ Auth state: Authenticated - loading profile data...")
+                        
+                        // Serialize việc load data thay vì gọi đồng thời để tránh race condition
+                        loadProfileDataSequentially()
                     }
                     is AuthState.NotAuthenticated -> {
+                        println("❌ Auth state: Not Authenticated")
                         // User not authenticated, redirect to login
                         showLoginRequiredDialog()
                     }
                 }
+            }
+        }
+    }
+    
+    /**
+     * Load profile data một cách tuần tự để tránh race condition
+     */
+    private fun loadProfileDataSequentially() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                // Load user profile trước
+                viewModel.loadUserProfile()
+                
+                // Đợi user profile complete, sau đó load follow stats
+                // Có thể thêm delay nhỏ để đảm bảo API call trước hoàn thành
+                kotlinx.coroutines.delay(500)
+                viewModel.loadFollowStats()
+                
+            } catch (e: Exception) {
+                println("💥 Error loading profile data: ${e.message}")
             }
         }
     }
@@ -245,7 +270,11 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
 //            tvTitleFollowing.text = "Email"
 
             // Hiển thị avatar
-            loadUserAvatar(user.avatar)
+            binding.ivAvatar.loadAvatar(
+                avatarPath =  user.avatar,
+                placeholder =  R.drawable.avatar_blank,
+                error =  R.drawable.avatar_blank
+            )
         }
         
         // Log thông tin để debug
@@ -291,24 +320,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
         }
     }
 
-    private fun loadUserAvatar(avatarPath: String?) {
-        if (!avatarPath.isNullOrEmpty()) {
-            val avatarUrl = if (avatarPath.startsWith("http")) {
-                avatarPath
-            } else {
-                "https://www.utt-school.site$avatarPath"
-            }
-            
-            Glide.with(this@ProfileFragment)
-                .load(avatarUrl)
-                .placeholder(R.drawable.avatar_blank)
-                .error(R.drawable.avatar_blank)
-                .circleCrop() // Làm tròn avatar
-                .into(binding.ivAvatar)
-        } else {
-            binding.ivAvatar.setImageResource(R.drawable.avatar_blank)
-        }
-    }
 
 
     private fun formatBirthDate(birthDate: String?): String {
@@ -446,9 +457,6 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
             .setMessage("Bạn có chắc muốn đăng xuất?")
             .setPositiveButton("Đăng xuất") { _, _ ->
                 viewModel.logout()
-            }
-            .setNegativeButton("Hủy") { dialog, _ ->
-                dialog.dismiss()
             }
             .setOnDismissListener {
                 logoutDialog = null

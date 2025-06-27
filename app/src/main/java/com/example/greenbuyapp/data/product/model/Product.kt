@@ -30,3 +30,18 @@ data class TrendingProduct(
     val sub_category_id: Int,
     val create_at: String
 ) : Parcelable
+
+
+@Parcelize
+@JsonClass(generateAdapter = true)
+data class shopProducts(
+    val shop_id: Int,
+    val sub_category_id: Int,
+    val name: String,
+    val description: String,
+    val cover: String?,
+    val price: Double,
+    val product_id: Int,
+    val approved_by: Boolean?,
+    val create_at: String
+) : Parcelable

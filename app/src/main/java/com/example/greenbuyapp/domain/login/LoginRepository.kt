@@ -18,6 +18,10 @@ class LoginRepository(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
+    // Synchronization object để tránh multiple refresh token calls
+    @Volatile
+    private var isRefreshing = false
+
     /**
      * Đăng nhập bằng username và password
      * @param username tên đăng nhập
@@ -108,19 +112,40 @@ class LoginRepository(
      */
     suspend fun ensureValidToken(): Boolean {
         if (!isAuthorized()) {
+            println("🔒 Not authorized, returning false")
             return false
         }
 
         if (accessTokenProvider.isTokenExpired()) {
-            return when (val refreshResult = refreshAccessToken()) {
-                is Result.Success -> true
-                else -> {
-                    // Refresh failed, tokens already cleared in refreshAccessToken()
-                    false
+            println("⏰ Token expired, attempting refresh...")
+            
+            // Avoid multiple refresh calls
+            if (isRefreshing) {
+                println("🔄 Already refreshing, waiting...")
+                // Wait a bit for the ongoing refresh
+                kotlinx.coroutines.delay(1000)
+                return isAuthorized() && !accessTokenProvider.isTokenExpired()
+            }
+            
+            return try {
+                isRefreshing = true
+                when (val refreshResult = refreshAccessToken()) {
+                    is Result.Success -> {
+                        println("✅ Token refresh successful")
+                        true
+                    }
+                    else -> {
+                        println("❌ Token refresh failed: $refreshResult")
+                        // Refresh failed, tokens already cleared in refreshAccessToken()
+                        false
+                    }
                 }
+            } finally {
+                isRefreshing = false
             }
         }
 
+        println("✅ Token still valid")
         return true
     }
 

@@ -4,6 +4,15 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.IOException
+import android.content.Context
+import android.net.Uri
+import android.provider.MediaStore
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 
 sealed class NetworkState {
     object EMPTY : NetworkState()
@@ -46,3 +55,58 @@ private val HttpException.errorBody: String?
     } catch (exception: Exception) {
         null
     }
+
+/**
+ * Utility functions for multipart requests
+ */
+object MultipartUtils {
+    
+    /**
+     * Tạo RequestBody từ string cho text fields
+     */
+    fun createTextPart(text: String): RequestBody {
+        return text.toRequestBody("text/plain".toMediaType())
+    }
+    
+    /**
+     * Tạo MultipartBody.Part từ File cho image upload
+     */
+    fun createImagePart(partName: String, file: File): MultipartBody.Part {
+        val requestFile = file.asRequestBody("image/*".toMediaType())
+        return MultipartBody.Part.createFormData(partName, file.name, requestFile)
+    }
+    
+    /**
+     * Tạo MultipartBody.Part từ Uri cho image upload
+     */
+    fun createImagePart(context: Context, partName: String, uri: Uri): MultipartBody.Part? {
+        return try {
+            val file = uriToFile(context, uri)
+            createImagePart(partName, file)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+    
+    /**
+     * Convert Uri thành File
+     */
+    private fun uriToFile(context: Context, uri: Uri): File {
+        val cursor = context.contentResolver.query(uri, null, null, null, null)
+        cursor?.use {
+            val nameIndex = it.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)
+            it.moveToFirst()
+            val name = it.getString(nameIndex)
+            
+            val file = File(context.cacheDir, name)
+            context.contentResolver.openInputStream(uri)?.use { input ->
+                file.outputStream().use { output ->
+                    input.copyTo(output)
+                }
+            }
+            return file
+        }
+        throw IllegalArgumentException("Cannot convert URI to File")
+    }
+}

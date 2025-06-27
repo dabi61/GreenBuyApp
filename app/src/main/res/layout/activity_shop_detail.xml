@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.shop.shopDetail.ShopDetailActivity">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/main_color"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_10sdp">
+
+            <EditText
+                android:id="@+id/sv_product"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/ic_back"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0.1"
+                android:padding="@dimen/_8sdp"
+                app:layout_constraintHorizontal_bias="0"
+                android:textSize="16sp"
+                android:background="@drawable/background_search_bar"
+                android:drawableStart="@drawable/ic_search"
+                android:drawableTint="@color/main_color"
+                android:textColor="@color/black"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:textColorHint="@color/grey_700"
+                android:hint="Tìm kiếm sản phẩm trong shop" />
+
+
+
+            <ImageView
+                android:id="@+id/ic_back"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toTopOf="@id/sv_product"
+                app:layout_constraintBottom_toBottomOf="@id/sv_product"
+                app:layout_constraintStart_toStartOf="parent"
+                android:src="@drawable/ic_back"
+                />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_shop"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="@dimen/_60sdp"
+                app:layout_constraintTop_toBottomOf="@id/ic_back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.05"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_12sdp"
+                android:src="@drawable/avatar_blank"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <TextView
+                android:id="@+id/tv_shop_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/iv_shop"
+                app:layout_constraintTop_toTopOf="@id/iv_shop"
+                app:layout_constraintEnd_toStartOf="@id/bt_follow"
+                app:layout_constraintHorizontal_bias="0"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:textSize="@dimen/_12sdp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:text="INCERUN Official Store"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/bt_follow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="@id/iv_shop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:cornerRadius="@dimen/_8sdp"
+                app:backgroundTint="@color/white"
+                android:textColor="@color/red_600"
+                android:textAllCaps="false"
+                android:text="Theo dõi"/>
+
+            <ImageView
+                android:id="@+id/iv_star"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="@id/tv_shop_name"
+                app:layout_constraintTop_toBottomOf="@id/tv_shop_name"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:src="@drawable/ic_star"/>
+
+            <TextView
+                android:id="@+id/tv_star"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/iv_star"
+                app:layout_constraintTop_toTopOf="@id/iv_star"
+                app:layout_constraintBottom_toBottomOf="@id/iv_star"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp"
+                android:text="4.6"/>
+
+            <View
+                android:id="@+id/gl_1"
+                android:layout_width="@dimen/_1sdp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toEndOf="@id/tv_star"
+                app:layout_constraintTop_toTopOf="@id/tv_star"
+                app:layout_constraintBottom_toBottomOf="@id/tv_star"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:background="@color/white" />
+
+            <TextView
+                android:id="@+id/tv_follower"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/gl_1"
+                app:layout_constraintTop_toTopOf="@id/gl_1"
+                app:layout_constraintBottom_toBottomOf="@id/gl_1"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp"
+                android:text="120,5k người theo dõi"/>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_product"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/cl_header"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:paddingTop="@dimen/_12sdp"
+        android:paddingBottom="@dimen/_12sdp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
