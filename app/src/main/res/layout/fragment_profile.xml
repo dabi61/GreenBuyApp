@@ -241,7 +241,7 @@
                 android:id="@+id/iv_star"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_star"
+                android:src="@drawable/ic_smile_star"
                 app:layout_constraintEnd_toEndOf="@id/tv_item_4"
                 app:layout_constraintStart_toStartOf="@id/tv_item_4"
                 app:layout_constraintTop_toTopOf="@id/iv_confirm" />
