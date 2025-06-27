@@ -12,16 +12,22 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.transition.Visibility
+import androidx.viewpager2.widget.ViewPager2
 import com.example.greenbuyapp.R
 import com.example.greenbuyapp.databinding.FragmentHomeBinding
 import com.example.greenbuyapp.databinding.FragmentShopBinding
 import com.example.greenbuyapp.ui.base.BaseFragment
+import com.example.greenbuyapp.ui.home.BannerAdapter
 import com.example.greenbuyapp.util.ImageTransform
 import com.example.greenbuyapp.util.loadAvatar
 import com.example.greenbuyapp.util.loadUrl
+import com.zhpan.indicator.enums.IndicatorSlideMode
+import com.zhpan.indicator.enums.IndicatorStyle
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.Timer
+import java.util.TimerTask
 
 
 /**
@@ -30,7 +36,13 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
 
     override val viewModel: ShopViewModel by viewModel()
-    
+
+    private lateinit var bannerAdapter: BannerAdapter
+    // Auto scroll timer cho banner
+    private var bannerTimer: Timer? = null
+    private var isUserScrolling = false
+
+
     // ✅ Photo picker launcher
     private val photoPicker = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia()
@@ -51,6 +63,8 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
     }
 
     override fun initView() {
+        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.white)
+
         runCatching {
             viewModel.checkShop()
             viewModel.shopInfo()
@@ -58,8 +72,13 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
             onClickWelcome()
             setupAvatarPicker()
             setupCreateShopButton()
+            setupBanner()
+
+
+            viewModel.loadBannerItems()
         }
     }
+
 
     private fun onClickWelcome() {
         binding.apply {
@@ -75,6 +94,78 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
         observeCombinedShopState()
         observeCreateShopState()
         observeErrorMessage()
+        observeBanner()
+        observeShopInfo()
+    }
+
+    private fun observeShopInfo() {
+        // Observe categories data using StateFlow
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.shopInfo.collect { shop ->
+                binding.apply {
+                    ivAvatar.loadAvatar(
+                        avatarPath = shop?.avatar,
+                        placeholder = R.drawable.avatar_blank,
+                        error = R.drawable.avatar_blank,
+                    )
+                    tvNameDashboard.text = shop?.name
+                    tvShopIdDashboard.text = "greenbuy.site/" + shop?.id
+                }
+            }
+        }
+    }
+
+    private fun setupBanner() {
+        // Setup banner adapter
+        bannerAdapter = BannerAdapter { banner ->
+            // Handle banner click
+            println("Banner clicked: ${banner}")
+            // TODO: Handle banner action
+        }
+
+        // Setup ViewPager2
+        binding.bannerView.apply {
+            adapter = bannerAdapter
+            offscreenPageLimit = 3
+
+            // Register page change callback để detect user scrolling
+            registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                override fun onPageScrollStateChanged(state: Int) {
+                    super.onPageScrollStateChanged(state)
+                    isUserScrolling = when (state) {
+                        ViewPager2.SCROLL_STATE_DRAGGING -> {
+                            stopAutoScroll()
+                            true
+                        }
+                        ViewPager2.SCROLL_STATE_IDLE -> {
+                            startAutoScroll()
+                            false
+                        }
+                        else -> isUserScrolling
+                    }
+                }
+
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    // Update indicator
+                    binding.indicatorView.onPageSelected(position)
+                }
+            })
+        }
+
+        // Setup indicator
+        binding.indicatorView.apply {
+            setSlideMode(IndicatorSlideMode.WORM)
+            setIndicatorStyle(IndicatorStyle.ROUND_RECT)
+            setSliderColor(
+                ContextCompat.getColor(requireContext(), R.color.grey_400),
+                ContextCompat.getColor(requireContext(), R.color.green_900)
+            )
+            setSliderWidth(30f)
+            setSliderHeight(12f)
+            setSlideMode(IndicatorSlideMode.WORM)
+            setupWithViewPager(binding.bannerView)
+        }
     }
 
 
@@ -317,15 +408,51 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
         println("🏪 Creating shop: name=$name, phone=$phoneNumber, avatar=${selectedAvatarUri != null}")
     }
     
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        
-        // Khởi tạo các view và thiết lập sự kiện
-        initViews()
-    }
+
     
-    private fun initViews() {
-        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.white)
+
+    private fun observeBanner() {
+        // Observe banner items
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.bannerItems.collect { bannerItems ->
+                bannerAdapter.submitList(bannerItems)
+
+                // Setup indicator với số lượng items
+                if (bannerItems.isNotEmpty()) {
+                    binding.indicatorView.setPageSize(bannerItems.size)
+                    startAutoScroll()
+                }
+
+                println("Banner items updated: ${bannerItems.size}")
+            }
+        }
+    }
+    /**
+     * Bắt đầu auto scroll cho banner
+     */
+    private fun startAutoScroll() {
+        stopAutoScroll() // Stop existing timer first
+
+        bannerTimer = Timer()
+        bannerTimer?.schedule(object : TimerTask() {
+            override fun run() {
+                activity?.runOnUiThread {
+                    if (!isUserScrolling && bannerAdapter.itemCount > 0) {
+                        val currentItem = binding.bannerView.currentItem
+                        val nextItem = (currentItem + 1) % bannerAdapter.itemCount
+                        binding.bannerView.setCurrentItem(nextItem, true)
+                    }
+                }
+            }
+        }, 2000, 2000) // Auto scroll mỗi 3 giây
+    }
+
+    /**
+     * Dừng auto scroll
+     */
+    private fun stopAutoScroll() {
+        bannerTimer?.cancel()
+        bannerTimer = null
     }
 
 }

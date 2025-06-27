@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.greenbuyapp.R
 import com.example.greenbuyapp.data.shop.model.Shop
 import com.example.greenbuyapp.domain.shop.ShopRepository
 import com.example.greenbuyapp.util.Result
@@ -23,6 +24,10 @@ class ShopViewModel(
     val isShop: StateFlow<Role?> = _isShop.asStateFlow()
 
     // Shop state
+    private val _shopInfo = MutableStateFlow<Shop?>(null)
+    val shopInfo: StateFlow<Shop?> = _shopInfo.asStateFlow()
+
+    // Shop state
     private val _shop = MutableStateFlow<Result<Shop>?>(null)
     val shop: StateFlow<Result<Shop>?> = _shop.asStateFlow()
 
@@ -38,6 +43,9 @@ class ShopViewModel(
     private val _errorMessage = MutableStateFlow<String?>(null)
     val errorMessage: StateFlow<String?> = _errorMessage.asStateFlow()
 
+    // Banner items
+    private val _bannerItems = MutableStateFlow<List<Int>>(emptyList())
+    val bannerItems: StateFlow<List<Int>> = _bannerItems.asStateFlow()
 
     /**
      * Check isShop từ API
@@ -79,7 +87,20 @@ class ShopViewModel(
             }
         }
     }
+    /**
+     * Load banner items - có thể từ API hoặc dữ liệu cố định
+     */
+    fun loadBannerItems() {
+        // Tạo dữ liệu banner mẫu với 3 ảnh
+        val bannerData = listOf(
+            R.drawable.banner_1,
+            R.drawable.banner_1,
+            R.drawable.banner_1
+        )
 
+        _bannerItems.value = bannerData
+        println("✅ Banner items loaded: ${bannerData.size} items")
+    }
 
     /**
      * Check Shop Info từ API
@@ -89,7 +110,7 @@ class ShopViewModel(
             try {
                 when(val result = shopRepository.getMyShop()) {
                     is Result.Success -> {
-                        _shop.value = result
+                        _shopInfo.value = result.value
                         _isShopInfo.value = true
                         return@launch
                     }

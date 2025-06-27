@@ -86,6 +86,21 @@
         <item name="cornerRadius">@dimen/_24sdp</item>
     </style>
 
+    <style name="GreenBuy.Button.Outline" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <!-- Màu viền và ripple -->
+        <item name="strokeColor">@color/main_color</item>
+        <item name="strokeWidth">1dp</item>
+
+        <!-- Màu nền (phải là transparent với outlined) -->
+        <item name="backgroundTint">@android:color/transparent</item>
+
+        <!-- Màu chữ -->
+        <item name="android:textColor">@color/main_color</item>
+
+        <!-- Bo góc -->
+        <item name="cornerRadius">@dimen/_24sdp</item>
+    </style>
+
     <style name="AppTheme.Title.Collapsed" parent="android:TextAppearance">
         <item name="android:textSize">0sp</item>
     </style>

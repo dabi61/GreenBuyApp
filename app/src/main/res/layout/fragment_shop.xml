@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/bt_welcome"
@@ -185,16 +185,6 @@
                 android:enabled="true"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_dashboard"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -214,6 +204,337 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:textColor="@color/white"
             android:text="ADMIN"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_dashboard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/backgroundLight">
+
+        <!-- Toolbar -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar_dashboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar_dashboard"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/white"
+                app:title="Shop của tôi"
+                app:titleTextColor="@color/black"
+                app:navigationIconTint="@color/black" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_shop"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_70sdp"
+            app:layout_constraintTop_toBottomOf="@id/app_bar_dashboard"
+            app:cardCornerRadius="@dimen/_8sdp"
+            android:layout_margin="@dimen/_8sdp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_avatar_dashboard"
+                    android:layout_width="@dimen/_50sdp"
+                    android:layout_height="@dimen/_50sdp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginStart="@dimen/_12sdp"
+                    android:src="@drawable/avatar_blank"/>
+                <TextView
+                    android:id="@+id/tv_name_dashboard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toEndOf="@id/iv_avatar_dashboard"
+                    app:layout_constraintTop_toTopOf="@id/iv_avatar_dashboard"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_16sdp"
+                    android:textStyle="bold"
+                    android:text="Name"/>
+
+                <TextView
+                    android:id="@+id/tv_shop_id_dashboard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/tv_name_dashboard"
+                    app:layout_constraintStart_toStartOf="@id/tv_name_dashboard"
+                    android:textColor="@color/grey_600"
+                    android:text="greenbuy.site/name"
+                    />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/bt_shop_dashboard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintHorizontal_bias="0.95"
+                    app:cornerRadius="@dimen/_4sdp"
+                    android:textColor="@color/main_color"
+                    android:text="Xem Shop"
+                    android:textAllCaps="false"
+                    android:textStyle="bold"
+                    style="@style/GreenBuy.Button.Outline"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_banner"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_90sdp"
+            app:layout_constraintTop_toBottomOf="@id/cv_shop"
+            app:cardCornerRadius="@dimen/_8sdp"
+            android:layout_margin="@dimen/_8sdp"
+            app:cardBackgroundColor="@color/main_color">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/banner_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/banner_1"/>
+        </androidx.cardview.widget.CardView>
+
+        <com.zhpan.indicator.IndicatorView
+            android:id="@+id/indicator_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            app:layout_constraintBottom_toBottomOf="@id/cv_banner"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:elevation="@dimen/_10sdp"
+            android:layout_margin="@dimen/_10sdp" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_dashboard"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_100sdp"
+            app:layout_constraintTop_toBottomOf="@id/cv_banner"
+            app:cardCornerRadius="@dimen/_8sdp"
+            android:layout_margin="@dimen/_8sdp"
+            app:cardBackgroundColor="@color/white">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tv_title_dashboard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_margin="@dimen/_8sdp"
+                    android:textSize="@dimen/_12sdp"
+                    android:textStyle="bold"
+                    android:text="Đơn hàng"/>
+
+                <TextView
+                    android:id="@+id/tv_history_dashboard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_title_dashboard"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_title_dashboard"
+                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:textColor="@color/grey_600"
+                    android:textSize="@dimen/_9sdp"
+                    android:text="Xem lịch sử đơn hàng"/>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_item_1"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_title_dashboard"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintHeight_percent="0.6"
+                    app:layout_constraintDimensionRatio="1.05:1"
+                    app:cardBackgroundColor="@color/backgroundLight"
+                    android:layout_margin="@dimen/_8sdp"
+                    app:cardCornerRadius="@dimen/_8sdp"
+                    app:cardElevation="1dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <TextView
+                            android:id="@+id/tv_item_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintVertical_bias="0.35"
+                            android:textSize="@dimen/_14sdp"
+                            android:textStyle="bold"
+                            android:text="0"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toBottomOf="@id/tv_item_2"
+                            app:layout_constraintStart_toStartOf="@id/tv_item_2"
+                            app:layout_constraintEnd_toEndOf="@id/tv_item_2"
+                            android:textColor="@color/grey_700"
+                            android:textSize="@dimen/_8sdp"
+                            android:text="Chờ lấy hàng"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_item_2"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_title_dashboard"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/cv_item_1"
+                    app:layout_constraintEnd_toStartOf="@id/cv_item_3"
+                    app:layout_constraintHeight_percent="0.6"
+                    app:layout_constraintDimensionRatio="1.05:1"
+                    app:cardBackgroundColor="@color/backgroundLight"
+                    app:cardCornerRadius="@dimen/_8sdp"
+                    app:cardElevation="1dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <TextView
+                            android:id="@+id/tv_item_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintVertical_bias="0.35"
+                            android:textSize="@dimen/_14sdp"
+                            android:textStyle="bold"
+                            android:text="0"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toBottomOf="@id/tv_item_1"
+                            app:layout_constraintStart_toStartOf="@id/tv_item_1"
+                            app:layout_constraintEnd_toEndOf="@id/tv_item_1"
+                            android:textColor="@color/grey_700"
+                            android:textSize="@dimen/_8sdp"
+                            android:text="Đơn hủy"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_item_3"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_title_dashboard"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/cv_item_4"
+                    app:layout_constraintStart_toEndOf="@id/cv_item_2"
+                    app:layout_constraintHeight_percent="0.6"
+                    app:layout_constraintDimensionRatio="1.05:1"
+                    app:cardBackgroundColor="@color/backgroundLight"
+                    app:cardCornerRadius="@dimen/_8sdp"
+                    app:cardElevation="1dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <TextView
+                            android:id="@+id/tv_item_3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintVertical_bias="0.35"
+                            android:textSize="@dimen/_14sdp"
+                            android:textStyle="bold"
+                            android:text="0"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toBottomOf="@id/tv_item_3"
+                            app:layout_constraintStart_toStartOf="@id/tv_item_3"
+                            app:layout_constraintEnd_toEndOf="@id/tv_item_3"
+                            android:textColor="@color/grey_700"
+                            android:textSize="@dimen/_8sdp"
+                            android:textAlignment="center"
+                            android:text="Trả hàng/ Hoàn tiền"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_item_4"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintTop_toBottomOf="@id/tv_title_dashboard"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHeight_percent="0.6"
+                    app:layout_constraintDimensionRatio="1.05:1"
+                    app:cardBackgroundColor="@color/backgroundLight"
+                    android:layout_margin="@dimen/_8sdp"
+                    app:cardCornerRadius="@dimen/_8sdp"
+                    app:cardElevation="1dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <TextView
+                            android:id="@+id/tv_item_4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintVertical_bias="0.35"
+                            android:textSize="@dimen/_14sdp"
+                            android:textStyle="bold"
+                            android:text="0"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintTop_toBottomOf="@id/tv_item_4"
+                            app:layout_constraintStart_toStartOf="@id/tv_item_4"
+                            app:layout_constraintEnd_toEndOf="@id/tv_item_4"
+                            android:textColor="@color/grey_700"
+                            android:textSize="@dimen/_8sdp"
+                            android:textAlignment="center"
+                            android:text="Phản hồi đánh giá"/>
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
