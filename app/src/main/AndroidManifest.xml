@@ -18,6 +18,9 @@
         android:theme="@style/GreenBuy.Theme.DayNight"
         tools:targetApi="31">
         <activity
+            android:name=".ui.shop.dashboard.ShopDashboardDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.shop.shopDetail.ShopDetailActivity"
             android:exported="false" />
         <activity

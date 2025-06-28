@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.greenbuyapp.R
+import com.example.greenbuyapp.data.shop.model.MyShopStats
 import com.example.greenbuyapp.data.shop.model.Shop
 import com.example.greenbuyapp.domain.shop.ShopRepository
 import com.example.greenbuyapp.util.Result
@@ -46,6 +47,10 @@ class ShopViewModel(
     // Banner items
     private val _bannerItems = MutableStateFlow<List<Int>>(emptyList())
     val bannerItems: StateFlow<List<Int>> = _bannerItems.asStateFlow()
+
+    // My Shop Stats
+    private val _myShopStats = MutableStateFlow<MyShopStats?>(null)
+    val myShopStats: StateFlow<MyShopStats?> = _myShopStats.asStateFlow()
 
     /**
      * Check isShop từ API
@@ -226,6 +231,30 @@ class ShopViewModel(
                 _createShopState.value = CreateShopUiState.Error(errorMsg)
                 _errorMessage.value = errorMsg
                 println("💥 $errorMsg")
+            }
+        }
+    }
+
+    /**
+     * Lay thong ke shop tu api
+     */
+    fun getMyShopStats() {
+        viewModelScope.launch {
+            val result = shopRepository.getMyShopStats()
+            when(result) {
+                is Result.Success -> {
+                    _myShopStats.value = result.value
+                }
+                is Result.Error -> {
+                    val errorMsg = "Lỗi tải thông tin thống kê cửa hàng: ${result.error}"
+                    println("❌ $errorMsg")
+                }
+                is Result.NetworkError -> {
+                    val errorMsg = "Lỗi mạng, vui lòng kiểm tra kết nối"
+                    println("🌐 $errorMsg")
+                }
+                is Result.Loading -> {
+                }
             }
         }
     }

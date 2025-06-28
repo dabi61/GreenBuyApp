@@ -407,7 +407,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottom_nav_container"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_50sdp"
+        android:layout_height="@dimen/_40sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -441,7 +441,7 @@
             app:layout_constraintStart_toStartOf="@id/tv_message"
             app:layout_constraintEnd_toEndOf="@id/tv_message"
             app:layout_constraintBottom_toTopOf="@id/tv_message"
-            android:layout_marginBottom="@dimen/_4sdp"
+            android:layout_marginBottom="@dimen/_2sdp"
             android:src="@drawable/ic_message"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -476,7 +476,7 @@
                 app:layout_constraintStart_toStartOf="@id/tv_add_to_cart"
                 app:layout_constraintEnd_toEndOf="@id/tv_add_to_cart"
                 app:layout_constraintBottom_toTopOf="@id/tv_add_to_cart"
-                android:layout_marginBottom="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_2sdp"
                 android:src="@drawable/ic_cart"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -498,7 +498,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.85"
+                app:layout_constraintVertical_bias="0.9"
                 android:textColor="@color/white"/>
 
             <TextView
@@ -510,10 +510,9 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/_16sdp"
                 android:textStyle="bold"
-                android:layout_marginBottom="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_2sdp"
                 android:text="Mua hàng"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout> 

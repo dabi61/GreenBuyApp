@@ -8,14 +8,14 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/backgroundLight">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_heading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            android:background="@color/white">
+            app:layout_constraintStart_toStartOf="parent">
 
             <TextView
                 android:id="@+id/tv_title"
@@ -69,7 +69,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_12sdp"
-            app:layout_constraintTop_toBottomOf="@id/cl_heading">
+            app:layout_constraintTop_toBottomOf="@id/cl_heading"
+            >
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/iv_avatar"
@@ -139,156 +140,174 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.cardview.widget.CardView
             android:id="@+id/cl_state"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_90sdp"
             android:layout_marginTop="@dimen/_30sdp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cl_profile">
+            app:layout_constraintTop_toBottomOf="@id/cl_profile"
+            app:cardCornerRadius="@dimen/_8sdp"
+            android:layout_margin="@dimen/_8sdp">
 
-            <TextView
-                android:id="@+id/tv_title_state"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Đơn mua"
-                android:textSize="@dimen/_16sdp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tv_history"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Xem lịch sử mua hàng >"
-                android:textSize="@dimen/_12sdp"
-                app:layout_constraintBottom_toBottomOf="@id/tv_title_state"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.9"
-                app:layout_constraintStart_toStartOf="parent"
-                android:textColor="@color/grey_600"
-                app:layout_constraintTop_toTopOf="@id/tv_title_state" />
+                <TextView
+                    android:id="@+id/tv_title_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đơn mua"
+                    android:textSize="@dimen/_16sdp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="@dimen/_4sdp"/>
 
-            <ImageView
-                android:id="@+id/iv_confirm"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:src="@drawable/ic_confirm"
-                app:layout_constraintEnd_toEndOf="@id/tv_item_1"
-                app:layout_constraintStart_toStartOf="@id/tv_item_1"
-                app:layout_constraintTop_toBottomOf="@id/tv_title_state" />
+                <TextView
+                    android:id="@+id/tv_history"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Xem lịch sử mua hàng"
+                    android:textSize="@dimen/_10sdp"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_title_state"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.95"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:textColor="@color/grey_600"
+                    app:layout_constraintTop_toTopOf="@id/tv_title_state" />
+
+                <ImageView
+                    android:id="@+id/iv_confirm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:src="@drawable/ic_confirm"
+                    app:layout_constraintEnd_toEndOf="@id/tv_item_1"
+                    app:layout_constraintStart_toStartOf="@id/tv_item_1"
+                    app:layout_constraintTop_toBottomOf="@id/tv_title_state" />
 
 
-            <TextView
-                android:id="@+id/tv_item_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chờ xác nhận"
-                app:layout_constraintEnd_toStartOf="@id/tv_item_2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/iv_confirm" />
+                <TextView
+                    android:id="@+id/tv_item_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chờ xác nhận"
+                    app:layout_constraintEnd_toStartOf="@id/tv_item_2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/iv_confirm" />
 
-            <TextView
-                android:id="@+id/tv_item_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chờ lấy hàng"
-                app:layout_constraintEnd_toStartOf="@id/tv_item_3"
-                app:layout_constraintStart_toEndOf="@id/tv_item_1"
-                app:layout_constraintTop_toBottomOf="@id/iv_wait" />
+                <TextView
+                    android:id="@+id/tv_item_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chờ lấy hàng"
+                    app:layout_constraintEnd_toStartOf="@id/tv_item_3"
+                    app:layout_constraintStart_toEndOf="@id/tv_item_1"
+                    app:layout_constraintTop_toBottomOf="@id/iv_wait" />
 
-            <ImageView
-                android:id="@+id/iv_wait"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_wait"
-                app:layout_constraintEnd_toEndOf="@id/tv_item_2"
-                app:layout_constraintStart_toStartOf="@id/tv_item_2"
-                app:layout_constraintTop_toTopOf="@id/iv_confirm" />
+                <ImageView
+                    android:id="@+id/iv_wait"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_wait"
+                    app:layout_constraintEnd_toEndOf="@id/tv_item_2"
+                    app:layout_constraintStart_toStartOf="@id/tv_item_2"
+                    app:layout_constraintTop_toTopOf="@id/iv_confirm" />
 
-            <TextView
-                android:id="@+id/tv_item_3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Chờ giao hàng"
-                app:layout_constraintEnd_toStartOf="@id/tv_item_4"
-                app:layout_constraintStart_toEndOf="@id/tv_item_2"
-                app:layout_constraintTop_toBottomOf="@id/iv_shipping" />
+                <TextView
+                    android:id="@+id/tv_item_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Chờ giao hàng"
+                    app:layout_constraintEnd_toStartOf="@id/tv_item_4"
+                    app:layout_constraintStart_toEndOf="@id/tv_item_2"
+                    app:layout_constraintTop_toBottomOf="@id/iv_shipping" />
 
-            <ImageView
-                android:id="@+id/iv_shipping"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_shipping"
-                app:layout_constraintEnd_toEndOf="@id/tv_item_3"
-                app:layout_constraintStart_toStartOf="@id/tv_item_3"
-                app:layout_constraintTop_toTopOf="@id/iv_confirm" />
+                <ImageView
+                    android:id="@+id/iv_shipping"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_shipping"
+                    app:layout_constraintEnd_toEndOf="@id/tv_item_3"
+                    app:layout_constraintStart_toStartOf="@id/tv_item_3"
+                    app:layout_constraintTop_toTopOf="@id/iv_confirm" />
 
-            <TextView
-                android:id="@+id/tv_item_4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Đánh giá"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/tv_item_3"
-                app:layout_constraintTop_toBottomOf="@id/iv_star" />
+                <TextView
+                    android:id="@+id/tv_item_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đánh giá"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/tv_item_3"
+                    app:layout_constraintTop_toBottomOf="@id/iv_star" />
 
-            <ImageView
-                android:id="@+id/iv_star"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_smile_star"
-                app:layout_constraintEnd_toEndOf="@id/tv_item_4"
-                app:layout_constraintStart_toStartOf="@id/tv_item_4"
-                app:layout_constraintTop_toTopOf="@id/iv_confirm" />
+                <ImageView
+                    android:id="@+id/iv_star"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_smile_star"
+                    app:layout_constraintEnd_toEndOf="@id/tv_item_4"
+                    app:layout_constraintStart_toStartOf="@id/tv_item_4"
+                    app:layout_constraintTop_toTopOf="@id/iv_confirm" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
             android:id="@+id/cl_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cl_state"
-            android:layout_marginTop="@dimen/_40sdp">
+            android:layout_marginTop="@dimen/_40sdp"
+            app:cardCornerRadius="@dimen/_8sdp"
+            android:layout_margin="@dimen/_8sdp">
 
-            <TextView
-                android:id="@+id/tv_title_util"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tiện ích"
-                android:textSize="@dimen/_16sdp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_util"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_title_util"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:background="@color/white"
-                android:overScrollMode="never"
-                android:nestedScrollingEnabled="false"
-                android:paddingBottom="16dp"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                tools:itemCount="9"
-                tools:listitem="@layout/item_util"
-                tools:spanCount="3" />
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tv_title_util"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tiện ích"
+                    android:textSize="@dimen/_16sdp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="@dimen/_8sdp"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_util"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_title_util"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:background="@color/white"
+                    android:overScrollMode="never"
+                    android:nestedScrollingEnabled="false"
+                    android:paddingBottom="16dp"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    tools:itemCount="9"
+                    tools:listitem="@layout/item_util"
+                    tools:spanCount="3" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
 
 
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

@@ -1,5 +1,6 @@
 package com.example.greenbuyapp.data.shop
 
+import com.example.greenbuyapp.data.shop.model.MyShopStats
 import com.example.greenbuyapp.data.shop.model.Shop
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -20,6 +21,9 @@ interface ShopService {
     @GET("api/shops/me")
     suspend fun getMyShop(): Shop
 
+    @GET("api/shops/me/stats")
+    suspend fun getMyShopStats(): MyShopStats
+
     /**
      * Tạo shop mới với multipart form-data
      * @param name Tên shop (text field)
@@ -37,4 +41,7 @@ interface ShopService {
         @Part("is_online") isOnline: RequestBody,
         @Part avatar: MultipartBody.Part?
     ): Shop
+
+    
+
 }

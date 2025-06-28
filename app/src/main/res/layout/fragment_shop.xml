@@ -211,7 +211,8 @@
         android:id="@+id/cl_dashboard"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/backgroundLight">
+        android:background="@color/backgroundLight"
+        android:visibility="visible">
 
         <!-- Toolbar -->
         <com.google.android.material.appbar.AppBarLayout
@@ -482,7 +483,7 @@
                             android:textColor="@color/grey_700"
                             android:textSize="@dimen/_8sdp"
                             android:textAlignment="center"
-                            android:text="Trả hàng/ Hoàn tiền"/>
+                            android:text="Tổng số đơn hàng"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -530,5 +531,90 @@
                 </androidx.cardview.widget.CardView>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_func_dashboard"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_70sdp"
+            app:layout_constraintTop_toBottomOf="@id/cv_dashboard"
+            app:cardCornerRadius="@dimen/_8sdp"
+            android:layout_margin="@dimen/_8sdp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/iv_func_item_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_smile_star"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/iv_func_item_2"
+                    app:layout_constraintHorizontal_bias="0.3"
+                    app:layout_constraintVertical_bias="0.3"
+                    />
+
+                <ImageView
+                    android:id="@+id/iv_func_item_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_smile_star"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/iv_func_item_1"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_func_item_1"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+
+                <ImageView
+                    android:id="@+id/iv_func_item_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_smile_star"
+                    app:layout_constraintStart_toEndOf="@id/iv_func_item_2"
+                    app:layout_constraintTop_toTopOf="@id/iv_func_item_2"
+                    app:layout_constraintBottom_toBottomOf="@id/iv_func_item_2"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.7"/>
+
+                <TextView
+                    android:id="@+id/tv_func_item_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="@id/iv_func_item_1"
+                    app:layout_constraintEnd_toEndOf="@id/iv_func_item_1"
+                    app:layout_constraintTop_toBottomOf="@id/iv_func_item_1"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:textSize="@dimen/_8sdp"
+                    android:textColor="@color/grey_700"
+                    android:text="Sản phẩm của tôi"/>
+
+                <TextView
+                    android:id="@+id/tv_func_item_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="@id/iv_func_item_2"
+                    app:layout_constraintEnd_toEndOf="@id/iv_func_item_2"
+                    app:layout_constraintTop_toBottomOf="@id/iv_func_item_2"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:textSize="@dimen/_8sdp"
+                    android:textColor="@color/grey_700"
+                    android:text="Tài chính"/>
+
+                <TextView
+                    android:id="@+id/tv_func_item_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="@id/iv_func_item_3"
+                    app:layout_constraintEnd_toEndOf="@id/iv_func_item_3"
+                    app:layout_constraintTop_toBottomOf="@id/iv_func_item_3"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:textSize="@dimen/_8sdp"
+                    android:textColor="@color/grey_700"
+                    android:text="Hiệu quả bán hàng"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

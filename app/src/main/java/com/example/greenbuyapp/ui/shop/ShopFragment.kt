@@ -18,11 +18,13 @@ import com.example.greenbuyapp.databinding.FragmentHomeBinding
 import com.example.greenbuyapp.databinding.FragmentShopBinding
 import com.example.greenbuyapp.ui.base.BaseFragment
 import com.example.greenbuyapp.ui.home.BannerAdapter
+import com.example.greenbuyapp.ui.shop.shopDetail.ShopDetailActivity
 import com.example.greenbuyapp.util.ImageTransform
 import com.example.greenbuyapp.util.loadAvatar
 import com.example.greenbuyapp.util.loadUrl
 import com.zhpan.indicator.enums.IndicatorSlideMode
 import com.zhpan.indicator.enums.IndicatorStyle
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -74,8 +76,19 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
             setupCreateShopButton()
             setupBanner()
 
-
+            viewModel.getMyShopStats()
             viewModel.loadBannerItems()
+
+            openDashboardDetail()
+        }
+    }
+
+    private fun openDashboardDetail() {
+        binding.apply {
+            cvItem1.setOnClickListener {
+                val intent = ShopDetailActivity.createIntent(this@ProductActivity, shopId)
+                startActivity(intent)
+            }
         }
     }
 
@@ -96,6 +109,20 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
         observeErrorMessage()
         observeBanner()
         observeShopInfo()
+        observeMyShopStats()
+    }
+
+    private fun observeMyShopStats() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.myShopStats.collect { shopStats ->
+                binding.apply {
+                    tvItem1.text = shopStats?.pending_pickup.toString()
+                    tvItem2.text = shopStats?.cancelled_orders.toString()
+                    tvItem3.text = shopStats?.total_orders.toString()
+                    tvItem4.text = shopStats?.ratings_count.toString()
+                }
+            }
+        }
     }
 
     private fun observeShopInfo() {

@@ -16,3 +16,18 @@ data class Shop (
     val is_online: Boolean,
     val create_at: String
 ) : Parcelable
+
+
+@Parcelize
+@JsonClass(generateAdapter = true)
+data class MyShopStats (
+    val shop_id: Int,
+    val shop_name: String,
+    val pending_pickup: Int,
+    val cancelled_orders: Int,
+    val ratings_count: Int,
+    val total_orders: Int,
+    val delivered_orders: Int,
+    val average_rating: Float,
+    val stats_generated_at: String
+) : Parcelable

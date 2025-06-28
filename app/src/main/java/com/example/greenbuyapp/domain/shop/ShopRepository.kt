@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.example.greenbuyapp.data.product.model.Product
 import com.example.greenbuyapp.data.shop.ShopService
+import com.example.greenbuyapp.data.shop.model.MyShopStats
 import com.example.greenbuyapp.data.shop.model.Shop
 import com.example.greenbuyapp.data.user.UserService
 import com.example.greenbuyapp.data.user.model.ChangeRoleRequest
@@ -105,6 +106,10 @@ class ShopRepository(
         }
     }
 
-    
+    suspend fun getMyShopStats() : Result<MyShopStats> {
+        return safeApiCall(dispatcher) {
+            shopService.getMyShopStats()
+        }
+    }
 
 }
