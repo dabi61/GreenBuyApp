@@ -355,7 +355,7 @@ private fun buildImageUrl(imagePath: String): String {
 }
 
 /**
- * Enhanced request options with better error handling
+ * ✅ Enhanced request options với ANR prevention
  */
 private fun createRequestOptions(
     transform: ImageTransform,
@@ -366,9 +366,11 @@ private fun createRequestOptions(
     val options = RequestOptions()
         .placeholder(placeholder)
         .error(error)
-        .timeout(15000) // ✅ 15 second timeout
-        .diskCacheStrategy(DiskCacheStrategy.ALL) // ✅ Cache everything
+        .timeout(10000) // ✅ Giảm timeout xuống 10s để tránh ANR
+        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) // ✅ Smart caching
         .skipMemoryCache(false) // ✅ Use memory cache
+        .dontAnimate() // ✅ Disable animation để tăng performance
+        .override(800, 800) // ✅ Giới hạn kích thước để tránh OOM
 
     return when (transform) {
         ImageTransform.CIRCLE -> options.transform(CircleCrop())

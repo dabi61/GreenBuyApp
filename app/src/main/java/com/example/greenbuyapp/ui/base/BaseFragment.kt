@@ -119,6 +119,13 @@ abstract class BaseFragment<VB : ViewBinding, VM : ViewModel> : Fragment() {
         return isAdded && !isRemoving && !isDetached && activity != null && 
                !requireActivity().isFinishing && !requireActivity().isDestroyed
     }
+    
+    /**
+     * ✅ Check if ViewBinding is initialized
+     */
+    protected fun isBindingInitialized(): Boolean {
+        return _binding != null
+    }
 
     override fun onDetach() {
         super.onDetach()

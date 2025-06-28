@@ -4,8 +4,10 @@ import android.content.Context
 import android.net.Uri
 import com.example.greenbuyapp.data.product.model.Product
 import com.example.greenbuyapp.data.shop.ShopService
-import com.example.greenbuyapp.data.shop.model.MyShopStats
+import com.example.greenbuyapp.data.shop.model.OrderDetail
+import com.example.greenbuyapp.data.shop.model.OrderStats
 import com.example.greenbuyapp.data.shop.model.Shop
+import com.example.greenbuyapp.data.shop.model.ShopOrderResponse
 import com.example.greenbuyapp.data.user.UserService
 import com.example.greenbuyapp.data.user.model.ChangeRoleRequest
 import com.example.greenbuyapp.data.user.model.UserMeResponse
@@ -106,9 +108,30 @@ class ShopRepository(
         }
     }
 
-    suspend fun getMyShopStats() : Result<MyShopStats> {
+    suspend fun getMyShopStats() : Result<OrderStats> {
         return safeApiCall(dispatcher) {
             shopService.getMyShopStats()
+        }
+    }
+
+    suspend fun getShopOrders(
+        statusFilter: Int? = null,
+        page: Int = 1,
+        limit: Int = 10,
+        dateFrom: String? = null,
+        dateTo: String? = null
+    ) : Result<ShopOrderResponse> {
+        return safeApiCall(dispatcher) {
+            shopService.getShopOrders(statusFilter, page, limit, dateFrom, dateTo)
+        }
+    }
+
+    /**
+     * Lấy chi tiết đơn hàng theo ID
+     */
+    suspend fun getOrderDetail(orderId: Int): Result<OrderDetail> {
+        return safeApiCall(dispatcher) {
+            shopService.getOrderDetail(orderId)
         }
     }
 

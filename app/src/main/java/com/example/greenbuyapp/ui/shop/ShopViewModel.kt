@@ -5,7 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.greenbuyapp.R
-import com.example.greenbuyapp.data.shop.model.MyShopStats
+import com.example.greenbuyapp.data.shop.model.OrderStats
 import com.example.greenbuyapp.data.shop.model.Shop
 import com.example.greenbuyapp.domain.shop.ShopRepository
 import com.example.greenbuyapp.util.Result
@@ -49,8 +49,8 @@ class ShopViewModel(
     val bannerItems: StateFlow<List<Int>> = _bannerItems.asStateFlow()
 
     // My Shop Stats
-    private val _myShopStats = MutableStateFlow<MyShopStats?>(null)
-    val myShopStats: StateFlow<MyShopStats?> = _myShopStats.asStateFlow()
+    private val _myShopStats = MutableStateFlow<OrderStats?>(null)
+    val myShopStats: StateFlow<OrderStats?> = _myShopStats.asStateFlow()
 
     /**
      * Check isShop từ API

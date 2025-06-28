@@ -18,6 +18,7 @@ import com.example.greenbuyapp.databinding.FragmentHomeBinding
 import com.example.greenbuyapp.databinding.FragmentShopBinding
 import com.example.greenbuyapp.ui.base.BaseFragment
 import com.example.greenbuyapp.ui.home.BannerAdapter
+import com.example.greenbuyapp.ui.shop.dashboard.ShopDashboardDetailActivity
 import com.example.greenbuyapp.ui.shop.shopDetail.ShopDetailActivity
 import com.example.greenbuyapp.util.ImageTransform
 import com.example.greenbuyapp.util.loadAvatar
@@ -28,9 +29,9 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.Timer
-import java.util.TimerTask
-
+import android.graphics.drawable.GradientDrawable
+import android.os.Handler
+import android.os.Looper
 
 /**
  * Fragment hiển thị màn hình shop
@@ -40,10 +41,10 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
     override val viewModel: ShopViewModel by viewModel()
 
     private lateinit var bannerAdapter: BannerAdapter
-    // Auto scroll timer cho banner
-    private var bannerTimer: Timer? = null
+    // ✅ Sử dụng Handler thay vì Timer để tránh ANR
+    private val bannerHandler = Handler(Looper.getMainLooper())
+    private var bannerRunnable: Runnable? = null
     private var isUserScrolling = false
-
 
     // ✅ Photo picker launcher
     private val photoPicker = registerForActivityResult(
@@ -65,6 +66,9 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
     }
 
     override fun initView() {
+        // ✅ Null check cho activity
+        if (!isAdded || activity == null) return
+        
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.white)
 
         runCatching {
@@ -80,14 +84,67 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
             viewModel.loadBannerItems()
 
             openDashboardDetail()
+        }.onFailure { e ->
+            println("❌ Error in initView: ${e.message}")
         }
     }
 
     private fun openDashboardDetail() {
         binding.apply {
+            // Chờ lấy hàng (position 1 - CONFIRMED)
             cvItem1.setOnClickListener {
-                val intent = ShopDetailActivity.createIntent(this@ProductActivity, shopId)
-                startActivity(intent)
+                // ✅ Null check trước khi start activity
+                if (isAdded && activity != null) {
+                    try {
+                        val intent = ShopDashboardDetailActivity.createIntent(requireActivity(), 1)
+                        startActivity(intent)
+                        println("✅ Opened ShopDashboardDetail with position 1 (Chờ lấy hàng)")
+                    } catch (e: Exception) {
+                        println("❌ Error opening shop dashboard: ${e.message}")
+                    }
+                }
+            }
+            
+            // Đơn hủy (position 4 - CANCELLED)
+            cvItem2.setOnClickListener {
+                // ✅ Null check trước khi start activity
+                if (isAdded && activity != null) {
+                    try {
+                        val intent = ShopDashboardDetailActivity.createIntent(requireActivity(), 4)
+                        startActivity(intent)
+                        println("✅ Opened ShopDashboardDetail with position 4 (Đơn hủy)")
+                    } catch (e: Exception) {
+                        println("❌ Error opening shop dashboard: ${e.message}")
+                    }
+                }
+            }
+
+            // Tổng số đơn hàng (position 0 - PENDING) 
+            cvItem3.setOnClickListener {
+                // ✅ Null check trước khi start activity
+                if (isAdded && activity != null) {
+                    try {
+                        val intent = ShopDashboardDetailActivity.createIntent(requireActivity(), 0)
+                        startActivity(intent)
+                        println("✅ Opened ShopDashboardDetail with position 0 (Chờ xác nhận)")
+                    } catch (e: Exception) {
+                        println("❌ Error opening shop dashboard: ${e.message}")
+                    }
+                }
+            }
+
+            // Đánh giá (position 3 - DELIVERED)
+            cvItem4.setOnClickListener {
+                // ✅ Null check trước khi start activity
+                if (isAdded && activity != null) {
+                    try {
+                        val intent = ShopDashboardDetailActivity.createIntent(requireActivity(), 3)
+                        startActivity(intent)
+                        println("✅ Opened ShopDashboardDetail with position 3 (Đã giao)")
+                    } catch (e: Exception) {
+                        println("❌ Error opening shop dashboard: ${e.message}")
+                    }
+                }
             }
         }
     }
@@ -116,10 +173,11 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.myShopStats.collect { shopStats ->
                 binding.apply {
-                    tvItem1.text = shopStats?.pending_pickup.toString()
-                    tvItem2.text = shopStats?.cancelled_orders.toString()
-                    tvItem3.text = shopStats?.total_orders.toString()
-                    tvItem4.text = shopStats?.ratings_count.toString()
+                    // ✅ Mapping với OrderStats API mới
+                    tvItem1.text = shopStats?.pendingOrders.toString() // pending_orders thay vì pending_pickup
+                    tvItem2.text = shopStats?.cancelledOrders.toString() // cancelled_orders
+                    tvItem3.text = shopStats?.totalOrders.toString() // total_orders
+                    tvItem4.text = shopStats?.pendingRatings.toString() // pending_ratings thay vì ratings_count
                 }
             }
         }
@@ -143,6 +201,9 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
     }
 
     private fun setupBanner() {
+        // ✅ Null check
+        if (!isAdded || activity == null) return
+        
         // Setup banner adapter
         bannerAdapter = BannerAdapter { banner ->
             // Handle banner click
@@ -174,8 +235,10 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
 
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
-                    // Update indicator
-                    binding.indicatorView.onPageSelected(position)
+                    // ✅ Null check cho binding
+                    if (isAdded && isBindingInitialized()) {
+                        binding.indicatorView.onPageSelected(position)
+                    }
                 }
             })
         }
@@ -228,6 +291,8 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
             }
             uiState.isShop == Role.SELLER && uiState.isShopInfo == true -> {
                 // Seller with shop info
+                viewModel.shopInfo()
+                viewModel.getMyShopStats()
                 setUpViews(3)
                 println("📊 User has shop - showing dashboard")
             }
@@ -309,6 +374,8 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
             ivAvatar.setImageResource(R.drawable.avatar_blank)
         }
         selectedAvatarUri = null
+        // ✅ Clear avatar error state
+        setAvatarError(false)
     }
 
     private fun setUpViews(viewId: Int) {
@@ -378,11 +445,35 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
     }
     
     /**
+     * Hiển thị/ẩn viền đỏ cho avatar khi có lỗi
+     */
+    private fun setAvatarError(hasError: Boolean) {
+        if (hasError) {
+            // Tạo viền đỏ cho avatar
+            val errorBorder = GradientDrawable().apply {
+                shape = GradientDrawable.OVAL
+                setStroke(6, ContextCompat.getColor(requireContext(), R.color.red))
+                setColor(ContextCompat.getColor(requireContext(), android.R.color.transparent))
+            }
+            binding.ivAvatar.background = errorBorder
+            
+            Toast.makeText(context, "❌ Vui lòng chọn ảnh avatar cho cửa hàng", Toast.LENGTH_SHORT).show()
+            println("❌ Avatar validation failed - no image selected")
+        } else {
+            // Xóa viền đỏ
+            binding.ivAvatar.background = null
+        }
+    }
+
+    /**
      * Xử lý ảnh được chọn từ photo picker
      */
     private fun handleSelectedImage(uri: Uri?) {
         if (uri != null) {
             selectedAvatarUri = uri
+            
+            // ✅ Xóa error state khi đã chọn avatar
+            setAvatarError(false)
             
             // ✅ Hiển thị ảnh lên avatar sử dụng ViewExt - dùng loadUrl cho local Uri
             binding.ivAvatar.loadUrl(
@@ -408,7 +499,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
         val phoneNumber = binding.etPhoneNumber.text.toString().trim()
         val isAgreed = binding.cbRegister.isChecked
         
-        // ✅ Validation
+        // ✅ Validation bao gồm cả avatar
         when {
             name.isEmpty() -> {
                 binding.etName.error = "Vui lòng nhập tên cửa hàng"
@@ -418,11 +509,18 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
                 binding.etPhoneNumber.error = "Vui lòng nhập số điện thoại"
                 return
             }
+            selectedAvatarUri == null -> {
+                setAvatarError(true)
+                return
+            }
             !isAgreed -> {
                 Toast.makeText(context, "Vui lòng đồng ý với điều khoản", Toast.LENGTH_SHORT).show()
                 return
             }
         }
+        
+        // ✅ Clear avatar error nếu validation passed
+        setAvatarError(false)
         
         // ✅ Gọi API tạo shop
         viewModel.createShop(
@@ -439,47 +537,92 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
     
 
     private fun observeBanner() {
+        // ✅ Null check trước khi observe
+        if (!isAdded) return
+        
         // Observe banner items
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.bannerItems.collect { bannerItems ->
-                bannerAdapter.submitList(bannerItems)
+                // ✅ Null check trong collect
+                if (isAdded && isBindingInitialized() && ::bannerAdapter.isInitialized) {
+                    bannerAdapter.submitList(bannerItems)
 
-                // Setup indicator với số lượng items
-                if (bannerItems.isNotEmpty()) {
-                    binding.indicatorView.setPageSize(bannerItems.size)
-                    startAutoScroll()
+                    // Setup indicator với số lượng items
+                    if (bannerItems.isNotEmpty()) {
+                        binding.indicatorView.setPageSize(bannerItems.size)
+                        startAutoScroll()
+                    }
+
+                    println("Banner items updated: ${bannerItems.size}")
                 }
-
-                println("Banner items updated: ${bannerItems.size}")
             }
         }
     }
+    
     /**
-     * Bắt đầu auto scroll cho banner
+     * ✅ Bắt đầu auto scroll với Handler thay vì Timer
      */
     private fun startAutoScroll() {
-        stopAutoScroll() // Stop existing timer first
+        // ✅ Null checks
+        if (!isAdded || activity == null || !isBindingInitialized() || !::bannerAdapter.isInitialized) {
+            return
+        }
+        
+        stopAutoScroll() // Stop existing handler first
 
-        bannerTimer = Timer()
-        bannerTimer?.schedule(object : TimerTask() {
+        bannerRunnable = object : Runnable {
             override fun run() {
-                activity?.runOnUiThread {
-                    if (!isUserScrolling && bannerAdapter.itemCount > 0) {
+                try {
+                    // ✅ Kiểm tra lifecycle trước khi update UI
+                    if (isAdded && activity != null && !isUserScrolling && 
+                        isBindingInitialized() && bannerAdapter.itemCount > 0) {
+                        
                         val currentItem = binding.bannerView.currentItem
                         val nextItem = (currentItem + 1) % bannerAdapter.itemCount
                         binding.bannerView.setCurrentItem(nextItem, true)
+                        
+                        // ✅ Schedule next scroll
+                        bannerHandler.postDelayed(this, 3000) // 3 giây
                     }
+                } catch (e: Exception) {
+                    println("❌ Error in banner auto scroll: ${e.message}")
                 }
             }
-        }, 2000, 2000) // Auto scroll mỗi 3 giây
+        }
+        
+        bannerRunnable?.let { runnable ->
+            bannerHandler.postDelayed(runnable, 3000)
+        }
     }
 
     /**
-     * Dừng auto scroll
+     * ✅ Dừng auto scroll với Handler
      */
     private fun stopAutoScroll() {
-        bannerTimer?.cancel()
-        bannerTimer = null
+        bannerRunnable?.let { runnable ->
+            bannerHandler.removeCallbacks(runnable)
+        }
+        bannerRunnable = null
+    }
+    
+    // ✅ Thêm lifecycle methods để quản lý timer
+    override fun onResume() {
+        super.onResume()
+        if (::bannerAdapter.isInitialized && bannerAdapter.itemCount > 0) {
+            startAutoScroll()
+        }
+    }
+    
+    override fun onPause() {
+        super.onPause()
+        stopAutoScroll()
+    }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        stopAutoScroll()
+        // ✅ Clear handler để tránh memory leak
+        bannerHandler.removeCallbacksAndMessages(null)
     }
 
 }

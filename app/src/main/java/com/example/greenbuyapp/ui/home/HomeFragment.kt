@@ -19,8 +19,8 @@ import com.zhpan.indicator.enums.IndicatorSlideMode
 import com.zhpan.indicator.enums.IndicatorStyle
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.util.Timer
-import java.util.TimerTask
+import android.os.Handler
+import android.os.Looper
 
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     // TODO: Rename and change types of parameters
@@ -33,8 +33,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private lateinit var trendingAdapter: TrendingAdapter
     private lateinit var bannerAdapter: BannerAdapter
     
-    // Auto scroll timer cho banner
-    private var bannerTimer: Timer? = null
+    // ✅ Sử dụng Handler thay vì Timer để tránh ANR
+    private val bannerHandler = Handler(Looper.getMainLooper())
+    private var bannerRunnable: Runnable? = null
     private var isUserScrolling = false
 
     override fun getLayoutResourceId(): Int = R.layout.fragment_home
@@ -128,6 +129,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun setupBanner() {
+        // ✅ Null check
+        if (!isAdded || activity == null) return
+        
         // Setup banner adapter
         bannerAdapter = BannerAdapter { banner ->
             // Handle banner click
@@ -159,8 +163,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
-                    // Update indicator
-                    binding.indicatorView.onPageSelected(position)
+                    // ✅ Null check cho binding
+                    if (isAdded && isBindingInitialized()) {
+                        binding.indicatorView.onPageSelected(position)
+                    }
                 }
             })
         }
@@ -296,53 +302,79 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun observeBanner() {
+        // ✅ Null check trước khi observe
+        if (!isAdded) return
+        
         // Observe banner items
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.bannerItems.collect { bannerItems ->
-                bannerAdapter.submitList(bannerItems)
-                
-                // Setup indicator với số lượng items
-                if (bannerItems.isNotEmpty()) {
-                    binding.indicatorView.setPageSize(bannerItems.size)
-                    startAutoScroll()
+                // ✅ Null check trong collect
+                if (isAdded && isBindingInitialized() && ::bannerAdapter.isInitialized) {
+                    bannerAdapter.submitList(bannerItems)
+                    
+                    // Setup indicator với số lượng items
+                    if (bannerItems.isNotEmpty()) {
+                        binding.indicatorView.setPageSize(bannerItems.size)
+                        startAutoScroll()
+                    }
+                    
+                    println("Banner items updated: ${bannerItems.size}")
                 }
-                
-                println("Banner items updated: ${bannerItems.size}")
             }
         }
     }
 
     /**
-     * Bắt đầu auto scroll cho banner
+     * ✅ Bắt đầu auto scroll với Handler thay vì Timer
      */
     private fun startAutoScroll() {
-        stopAutoScroll() // Stop existing timer first
+        // ✅ Null checks
+        if (!isAdded || activity == null || !isBindingInitialized() || !::bannerAdapter.isInitialized) {
+            return
+        }
         
-        bannerTimer = Timer()
-        bannerTimer?.schedule(object : TimerTask() {
+        stopAutoScroll() // Stop existing handler first
+
+        bannerRunnable = object : Runnable {
             override fun run() {
-                activity?.runOnUiThread {
-                    if (!isUserScrolling && bannerAdapter.itemCount > 0) {
+                try {
+                    // ✅ Kiểm tra lifecycle trước khi update UI
+                    if (isAdded && activity != null && !isUserScrolling && 
+                        isBindingInitialized() && bannerAdapter.itemCount > 0) {
+                        
                         val currentItem = binding.bannerView.currentItem
                         val nextItem = (currentItem + 1) % bannerAdapter.itemCount
                         binding.bannerView.setCurrentItem(nextItem, true)
+                        
+                        // ✅ Schedule next scroll
+                        bannerHandler.postDelayed(this, 3000) // 3 giây
                     }
+                } catch (e: Exception) {
+                    println("❌ Error in banner auto scroll: ${e.message}")
                 }
             }
-        }, 2000, 2000) // Auto scroll mỗi 3 giây
+        }
+        
+        bannerRunnable?.let { runnable ->
+            bannerHandler.postDelayed(runnable, 3000)
+        }
     }
 
     /**
-     * Dừng auto scroll
+     * ✅ Dừng auto scroll với Handler
      */
     private fun stopAutoScroll() {
-        bannerTimer?.cancel()
-        bannerTimer = null
+        bannerRunnable?.let { runnable ->
+            bannerHandler.removeCallbacks(runnable)
+        }
+        bannerRunnable = null
     }
 
     override fun onResume() {
         super.onResume()
-        startAutoScroll()
+        if (::bannerAdapter.isInitialized && bannerAdapter.itemCount > 0) {
+            startAutoScroll()
+        }
     }
     
     override fun onPause() {
@@ -353,6 +385,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun onDestroy() {
         super.onDestroy()
         stopAutoScroll()
+        // ✅ Clear handler để tránh memory leak
+        bannerHandler.removeCallbacksAndMessages(null)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

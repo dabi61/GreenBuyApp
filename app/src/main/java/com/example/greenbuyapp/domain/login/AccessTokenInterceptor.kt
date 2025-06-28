@@ -90,7 +90,7 @@ class AccessTokenInterceptor(
     }
 
     /**
-     * Thử refresh token sử dụng AuthorizationService
+     * ✅ Thử refresh token với IO dispatcher để tránh ANR
      */
     private fun tryRefreshToken(): Boolean {
         if (isRefreshing) return false
@@ -112,8 +112,8 @@ class AccessTokenInterceptor(
                 grant_type = "refresh_token"
             )
             
-            // Thực hiện request đồng bộ sử dụng runBlocking
-            val loginResponse = runBlocking {
+            // ✅ Thực hiện request trên IO dispatcher để tránh block main thread
+            val loginResponse = runBlocking(Dispatchers.IO) {
                 authService.refreshToken(refreshRequest)
             }
             

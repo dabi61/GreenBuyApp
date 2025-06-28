@@ -21,6 +21,10 @@
             android:name=".ui.shop.dashboard.ShopDashboardDetailActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.shop.orderDetail.OrderDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.shop.dashboard.ShopDashboardDetailActivity" />
+        <activity
             android:name=".ui.shop.shopDetail.ShopDetailActivity"
             android:exported="false" />
         <activity

@@ -1,7 +1,9 @@
 package com.example.greenbuyapp.data.shop
 
-import com.example.greenbuyapp.data.shop.model.MyShopStats
+import com.example.greenbuyapp.data.shop.model.OrderDetail
+import com.example.greenbuyapp.data.shop.model.OrderStats
 import com.example.greenbuyapp.data.shop.model.Shop
+import com.example.greenbuyapp.data.shop.model.ShopOrderResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.GET
@@ -21,8 +23,28 @@ interface ShopService {
     @GET("api/shops/me")
     suspend fun getMyShop(): Shop
 
-    @GET("api/shops/me/stats")
-    suspend fun getMyShopStats(): MyShopStats
+    @GET("api/order/shop-stats")
+    suspend fun getMyShopStats(): OrderStats
+
+    /**
+     * Lấy danh sách đơn hàng của shop
+     */
+    @GET("api/order/shop-orders")
+    suspend fun getShopOrders(
+        @Query("status_filter") statusFilter: Int? = null,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 10,
+        @Query("date_from") dateFrom: String? = null,
+        @Query("date_to") dateTo: String? = null
+    ): ShopOrderResponse
+
+    /**
+     * Lấy chi tiết đơn hàng theo ID
+     */
+    @GET("api/order/{order_id}")
+    suspend fun getOrderDetail(
+        @Path("order_id") orderId: Int
+    ): OrderDetail
 
     /**
      * Tạo shop mới với multipart form-data
@@ -42,6 +64,5 @@ interface ShopService {
         @Part avatar: MultipartBody.Part?
     ): Shop
 
-    
 
 }
