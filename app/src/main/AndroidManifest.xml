@@ -25,6 +25,18 @@
             android:exported="false"
             android:parentActivityName=".ui.shop.dashboard.ShopDashboardDetailActivity" />
         <activity
+            android:name=".ui.shop.productManagement.ProductManagementActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.main.MainActivity" />
+        <activity
+            android:name=".ui.shop.addProduct.AddProductActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.shop.productManagement.ProductManagementActivity" />
+        <activity
+            android:name=".ui.shop.addProduct.ProductVariantActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.shop.addProduct.AddProductActivity" />
+        <activity
             android:name=".ui.shop.shopDetail.ShopDetailActivity"
             android:exported="false" />
         <activity

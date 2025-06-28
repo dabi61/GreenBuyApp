@@ -19,6 +19,7 @@ import com.example.greenbuyapp.databinding.FragmentShopBinding
 import com.example.greenbuyapp.ui.base.BaseFragment
 import com.example.greenbuyapp.ui.home.BannerAdapter
 import com.example.greenbuyapp.ui.shop.dashboard.ShopDashboardDetailActivity
+import com.example.greenbuyapp.ui.shop.productManagement.ProductManagementActivity
 import com.example.greenbuyapp.ui.shop.shopDetail.ShopDetailActivity
 import com.example.greenbuyapp.util.ImageTransform
 import com.example.greenbuyapp.util.loadAvatar
@@ -79,6 +80,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
             setupAvatarPicker()
             setupCreateShopButton()
             setupBanner()
+            setupProductManagement()
 
             viewModel.getMyShopStats()
             viewModel.loadBannerItems()
@@ -155,6 +157,24 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
             btWelcome.setOnClickListener {
                 viewModel.changeRole()
                 Toast.makeText(context, "${viewModel.isShop.value}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    /**
+     * Setup product management click listener
+     */
+    private fun setupProductManagement() {
+        binding.ivFuncItem1.setOnClickListener {
+            // ✅ Null check trước khi start activity
+            if (isAdded && activity != null) {
+                try {
+                    val intent = ProductManagementActivity.createIntent(requireActivity())
+                    startActivity(intent)
+                    println("✅ Opened ProductManagementActivity")
+                } catch (e: Exception) {
+                    println("❌ Error opening product management: ${e.message}")
+                }
             }
         }
     }

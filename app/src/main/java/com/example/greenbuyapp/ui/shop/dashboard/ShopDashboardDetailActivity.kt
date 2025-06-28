@@ -46,7 +46,7 @@ class ShopDashboardDetailActivity : BaseActivity<ActivityShopDashboardDetailBind
         setupToolbar()
         setupViewPager()
         setupTabLayout()
-        
+
         // Set initial position if specified
         if (initialPosition > 0 && initialPosition < orderPagerAdapter.itemCount) {
             binding.viewPager.setCurrentItem(initialPosition, false)

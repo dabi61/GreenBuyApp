@@ -165,7 +165,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     super.onPageSelected(position)
                     // ✅ Null check cho binding
                     if (isAdded && isBindingInitialized()) {
-                        binding.indicatorView.onPageSelected(position)
+                    binding.indicatorView.onPageSelected(position)
                     }
                 }
             })
@@ -310,15 +310,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             viewModel.bannerItems.collect { bannerItems ->
                 // ✅ Null check trong collect
                 if (isAdded && isBindingInitialized() && ::bannerAdapter.isInitialized) {
-                    bannerAdapter.submitList(bannerItems)
-                    
-                    // Setup indicator với số lượng items
-                    if (bannerItems.isNotEmpty()) {
-                        binding.indicatorView.setPageSize(bannerItems.size)
-                        startAutoScroll()
-                    }
-                    
-                    println("Banner items updated: ${bannerItems.size}")
+                bannerAdapter.submitList(bannerItems)
+                
+                // Setup indicator với số lượng items
+                if (bannerItems.isNotEmpty()) {
+                    binding.indicatorView.setPageSize(bannerItems.size)
+                    startAutoScroll()
+                }
+                
+                println("Banner items updated: ${bannerItems.size}")
                 }
             }
         }
@@ -373,7 +373,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun onResume() {
         super.onResume()
         if (::bannerAdapter.isInitialized && bannerAdapter.itemCount > 0) {
-            startAutoScroll()
+        startAutoScroll()
         }
     }
     

@@ -14,8 +14,23 @@ data class Product(
     val cover: String?,
     val shop_id: Int,
     val sub_category_id: Int,
-    val is_approved: Boolean,
-    val create_at: String
+    val is_approved: Boolean? = null,  // Cho phép null từ API
+    val approval_note: String? = null,
+    val create_at: String,
+    val stock_info: StockInfo? = null
+) : Parcelable {
+    
+    // Helper property để xử lý logic approval
+    val isApproved: Boolean
+        get() = is_approved == true
+}
+
+@Parcelize
+@JsonClass(generateAdapter = true)
+data class StockInfo(
+    val total_quantity: Int,
+    val variant_count: Int,
+    val status: String
 ) : Parcelable
 
 @Parcelize

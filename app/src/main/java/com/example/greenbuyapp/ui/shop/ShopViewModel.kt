@@ -35,7 +35,7 @@ class ShopViewModel(
     // isShop have info state
     private val _isShopInfo = MutableStateFlow<Boolean?>(null)
     val isShopInfo: StateFlow<Boolean?> = _isShopInfo.asStateFlow()
-    
+
     // Create shop state
     private val _createShopState = MutableStateFlow<CreateShopUiState>(CreateShopUiState.Idle)
     val createShopState: StateFlow<CreateShopUiState> = _createShopState.asStateFlow()

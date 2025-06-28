@@ -6,6 +6,13 @@ import com.example.greenbuyapp.data.product.model.ProductAttributeList
 import com.example.greenbuyapp.data.product.model.ProductListResponse
 import com.example.greenbuyapp.data.product.model.TrendingProductResponse
 import com.example.greenbuyapp.data.product.model.shopProducts
+import com.example.greenbuyapp.data.product.model.InventoryStatsResponse
+import com.example.greenbuyapp.data.product.model.ProductsByStatusResponse
+import com.example.greenbuyapp.data.product.model.CreateProductResponse
+import com.example.greenbuyapp.data.product.model.CreateAttributeResponse
+import com.example.greenbuyapp.util.MultipartUtils
+import android.content.Context
+import android.net.Uri
 import com.example.greenbuyapp.util.Result
 import com.example.greenbuyapp.util.safeApiCall
 import kotlinx.coroutines.CoroutineDispatcher
@@ -117,6 +124,111 @@ class ProductRepository(
     ): Result<ProductListResponse> {
         return safeApiCall(dispatcher) {
             productService.getProductsByShopId(shopId)
+        }
+    }
+
+    /**
+     * Lấy thống kê inventory của shop hiện tại
+     * @return Result<InventoryStatsResponse> chứa thống kê inventory
+     */
+    suspend fun getInventoryStats(): Result<InventoryStatsResponse> {
+        return safeApiCall(dispatcher) {
+            productService.getInventoryStats()
+        }
+    }
+
+    /**
+     * Lấy sản phẩm theo trạng thái
+     * @param status Trạng thái sản phẩm (in_stock, out_of_stock, pending_approval)
+     * @param page Số trang (mặc định là 1)
+     * @param limit Số lượng sản phẩm trên một trang (mặc định là 10)
+     * @param search Từ khóa tìm kiếm
+     * @return Result<ProductsByStatusResponse> chứa danh sách sản phẩm theo trạng thái
+     */
+    suspend fun getProductsByStatus(
+        status: String,
+        page: Int = 1,
+        limit: Int = 10,
+        search: String? = null
+    ): Result<ProductsByStatusResponse> {
+        return safeApiCall(dispatcher) {
+            productService.getProductsByStatus(status, page, limit, search)
+        }
+    }
+
+    /**
+     * Tạo sản phẩm mới
+     * @param context Context để xử lý Uri
+     * @param name Tên sản phẩm
+     * @param description Mô tả sản phẩm
+     * @param price Giá sản phẩm
+     * @param subCategoryId ID danh mục con
+     * @param coverUri Uri của ảnh cover
+     * @return Result<CreateProductResponse> chứa thông tin sản phẩm đã tạo
+     */
+    suspend fun createProduct(
+        context: Context,
+        name: String,
+        description: String,
+        price: Double,
+        subCategoryId: Int,
+        coverUri: Uri
+    ): Result<CreateProductResponse> {
+        return safeApiCall(dispatcher) {
+            val namePart = MultipartUtils.createTextPart(name)
+            val descriptionPart = MultipartUtils.createTextPart(description)
+            val pricePart = MultipartUtils.createTextPart(price.toString())
+            val subCategoryPart = MultipartUtils.createTextPart(subCategoryId.toString())
+            val coverPart = MultipartUtils.createImagePart(context, "cover", coverUri)
+                ?: throw IllegalArgumentException("Cannot create image part from Uri")
+
+            productService.createProduct(
+                name = namePart,
+                description = descriptionPart,
+                price = pricePart,
+                subCategoryId = subCategoryPart,
+                cover = coverPart
+            )
+        }
+    }
+
+    /**
+     * Tạo attribute cho sản phẩm
+     * @param context Context để xử lý Uri
+     * @param productId ID sản phẩm
+     * @param color Màu sắc
+     * @param size Kích thước
+     * @param price Giá
+     * @param quantity Số lượng
+     * @param imageUri Uri của ảnh
+     * @return Result<CreateAttributeResponse> chứa thông tin attribute đã tạo
+     */
+    suspend fun createAttribute(
+        context: Context,
+        productId: Int,
+        color: String,
+        size: String,
+        price: Double,
+        quantity: Int,
+        imageUri: Uri
+    ): Result<CreateAttributeResponse> {
+        return safeApiCall(dispatcher) {
+            val productIdPart = MultipartUtils.createTextPart(productId.toString())
+            val colorPart = MultipartUtils.createTextPart(color)
+            val sizePart = MultipartUtils.createTextPart(size)
+            val pricePart = MultipartUtils.createTextPart(price.toString())
+            val quantityPart = MultipartUtils.createTextPart(quantity.toString())
+            val imagePart = MultipartUtils.createImagePart(context, "image", imageUri)
+                ?: throw IllegalArgumentException("Cannot create image part from Uri")
+
+            productService.createAttribute(
+                productId = productIdPart,
+                color = colorPart,
+                size = sizePart,
+                price = pricePart,
+                quantity = quantityPart,
+                image = imagePart
+            )
         }
     }
 } 
