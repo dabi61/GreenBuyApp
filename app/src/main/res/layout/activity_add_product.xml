@@ -161,24 +161,30 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Sub Category ID -->
+            <!-- Sub Category Dropdown -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/til_sub_category"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="ID danh mục con"
+                android:hint="Chọn danh mục con"
+                app:endIconMode="dropdown_menu"
                 app:layout_constraintTop_toBottomOf="@id/til_price"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_sub_category_id"
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/et_sub_category"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:maxLines="1" />
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:cursorVisible="false"
+                    android:maxLines="1"
+                    android:textSize="16sp"
+                    android:textColor="@color/black" />
 
             </com.google.android.material.textfield.TextInputLayout>
 

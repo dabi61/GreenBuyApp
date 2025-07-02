@@ -14,6 +14,7 @@ import com.example.greenbuyapp.data.user.model.UserMe
 import com.example.greenbuyapp.ui.base.BaseFragment
 import com.example.greenbuyapp.ui.login.LoginActivity
 import com.example.greenbuyapp.ui.main.MainActivity
+import com.example.greenbuyapp.ui.profile.orders.CustomerOrderActivity
 import com.example.greenbuyapp.util.Result
 import com.example.greenbuyapp.util.loadAvatar
 import kotlinx.coroutines.delay
@@ -47,6 +48,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
     override fun initView() {
         try {
             setUpUtilProfile()
+            setupClickListeners()
             setupLogoutAction()
             viewModel.loadUtilProfile()
             
@@ -96,16 +98,119 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
 
 
     private fun setUpUtilProfile() {
-        // Setup banner adapter
+        // Setup util adapter
         utilAdapter = UtilAdapter { utilProfile ->
-            // Handle banner click
-            println("Banner clicked: ${utilProfile}")
-            // TODO: Handle banner action
+            // Handle util item click
+            handleUtilItemClick(utilProfile)
         }
 
         binding.rvUtil.apply {
             layoutManager = GridLayoutManager(context, 3)
             adapter = utilAdapter
+        }
+    }
+    
+    /**
+     * Setup click listeners for UI elements
+     */
+    private fun setupClickListeners() {
+        // Click listener cho "Xem lịch sử mua hàng"
+        binding.tvHistory.setOnClickListener {
+            navigateToCustomerOrders()
+        }
+        
+        // Click listeners cho các icon trạng thái đơn hàng
+        binding.ivConfirm.setOnClickListener {
+            navigateToCustomerOrders(0) // CONFIRMED tab - "Đã xác nhận"
+        }
+        
+        binding.ivWait.setOnClickListener {
+            navigateToCustomerOrders(2) // SHIPPED tab - "Đang giao" 
+        }
+        
+        binding.ivShipping.setOnClickListener {
+            navigateToCustomerOrders(3) // DELIVERED tab - "Đã giao"
+        }
+        
+        // Click listeners cho text labels (optional)
+        binding.tvItem1.setOnClickListener {
+            navigateToCustomerOrders(0) // PENDING tab - "Chờ xác nhận"
+        }
+        
+        binding.tvItem2.setOnClickListener {
+            navigateToCustomerOrders(2) // CONFIRMED tab - "Đã xác nhận"
+        }
+        
+        binding.tvItem3.setOnClickListener {
+            navigateToCustomerOrders(3) // SHIPPED tab - "Đang giao"
+        }
+        
+    
+    }
+    
+    /**
+     * Navigate to Customer Orders Activity
+     */
+    private fun navigateToCustomerOrders(position: Int = 0) {
+        // Check if user is authenticated
+        if (viewModel.authState.value is AuthState.Authenticated) {
+            try {
+                val intent = CustomerOrderActivity.createIntent(requireContext(), position)
+                startActivity(intent)
+                println("📱 Navigating to customer orders at position: $position")
+            } catch (e: Exception) {
+                println("❌ Error navigating to customer orders: ${e.message}")
+                showError("Lỗi khi mở trang đơn hàng")
+            }
+        } else {
+            showLoginRequiredDialog()
+        }
+    }
+    
+    /**
+     * Handle click on util items
+     */
+    private fun handleUtilItemClick(utilProfile: UtilProfile) {
+        when (utilProfile.title) {
+            "Yêu thích" -> {
+                // Navigate to favorites
+                println("📱 Navigating to favorites")
+            }
+            "Đánh giá của tôi" -> {
+                // Navigate to reviews
+                println("📱 Navigating to reviews")
+            }
+            "Tư cách thành viên" -> {
+                // Navigate to membership
+                println("📱 Navigating to membership")
+            }
+            "Trung tâm trợ giúp" -> {
+                // Navigate to help center
+                println("📱 Navigating to help center")
+            }
+            "Top cửa hàng" -> {
+                // Navigate to top shops
+                println("📱 Navigating to top shops")
+            }
+            "Cửa hàng theo dõi" -> {
+                // Navigate to followed shops
+                println("📱 Navigating to followed shops")
+            }
+            "Giỏ hàng" -> {
+                // Navigate to cart
+                println("📱 Navigating to cart")
+            }
+            "Chat" -> {
+                // Navigate to chat
+                println("📱 Navigating to chat")
+            }
+            "Khuyến mãi" -> {
+                // Navigate to promotions
+                println("📱 Navigating to promotions")
+            }
+            else -> {
+                println("📱 Unknown util item: ${utilProfile.title}")
+            }
         }
     }
 

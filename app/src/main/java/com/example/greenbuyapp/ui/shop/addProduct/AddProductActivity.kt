@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.greenbuyapp.R
+import com.example.greenbuyapp.data.category.model.SubCategory
 import com.example.greenbuyapp.databinding.ActivityAddProductBinding
 import com.example.greenbuyapp.ui.base.BaseActivity
 import com.example.greenbuyapp.util.ImageTransform
@@ -26,6 +27,8 @@ class AddProductActivity : BaseActivity<ActivityAddProductBinding>() {
     }
 
     private var selectedCoverUri: Uri? = null
+    private var selectedSubCategory: SubCategory? = null
+    private lateinit var subCategoryAdapter: SubCategoryAdapter
 
     // Photo picker launcher
     private val photoPicker = registerForActivityResult(
@@ -48,11 +51,13 @@ class AddProductActivity : BaseActivity<ActivityAddProductBinding>() {
     override fun initViews() {
         setupToolbar()
         setupCoverImagePicker()
+        setupSubCategoryDropdown()
         setupNextButton()
     }
 
     override fun observeViewModel() {
         observeAddProductState()
+        observeSubCategories()
         observeErrorMessages()
     }
 
@@ -65,6 +70,34 @@ class AddProductActivity : BaseActivity<ActivityAddProductBinding>() {
     private fun setupCoverImagePicker() {
         binding.cvCoverImage.setOnClickListener {
             openPhotoPicker()
+        }
+    }
+
+    private fun setupSubCategoryDropdown() {
+        // Initialize with empty adapter
+        subCategoryAdapter = SubCategoryAdapter(this, emptyList())
+        binding.etSubCategory.setAdapter(subCategoryAdapter)
+        
+        // Handle item selection
+        binding.etSubCategory.setOnItemClickListener { _, _, position, _ ->
+            val selectedSubCat = subCategoryAdapter.getItem(position)
+            selectedSubCategory = selectedSubCat
+            selectedSubCat?.let {
+                // Set the display text to subcategory name
+                binding.etSubCategory.setText(it.name, false)
+                
+                // Clear any previous error
+                binding.tilSubCategory.error = null
+                
+                // Update ViewModel
+                viewModel.selectSubCategory(it)
+                println("📂 User selected subcategory: ${it.name} (ID: ${it.id})")
+            }
+        }
+        
+        // Handle dropdown arrow click
+        binding.tilSubCategory.setEndIconOnClickListener {
+            binding.etSubCategory.showDropDown()
         }
     }
 
@@ -107,7 +140,6 @@ class AddProductActivity : BaseActivity<ActivityAddProductBinding>() {
         val name = binding.etName.text.toString().trim()
         val description = binding.etDescription.text.toString().trim()
         val priceText = binding.etPrice.text.toString().trim()
-        val subCategoryIdText = binding.etSubCategoryId.text.toString().trim()
 
         // Validation
         when {
@@ -123,8 +155,8 @@ class AddProductActivity : BaseActivity<ActivityAddProductBinding>() {
                 binding.etPrice.error = "Vui lòng nhập giá sản phẩm"
                 return
             }
-            subCategoryIdText.isEmpty() -> {
-                binding.etSubCategoryId.error = "Vui lòng nhập ID danh mục con"
+            selectedSubCategory == null -> {
+                binding.tilSubCategory.error = "Vui lòng chọn danh mục con"
                 return
             }
             selectedCoverUri == null -> {
@@ -132,6 +164,9 @@ class AddProductActivity : BaseActivity<ActivityAddProductBinding>() {
                 return
             }
         }
+
+        // Clear error if validation passes
+        binding.tilSubCategory.error = null
 
         // Parse numbers
         val price = try {
@@ -141,12 +176,7 @@ class AddProductActivity : BaseActivity<ActivityAddProductBinding>() {
             return
         }
 
-        val subCategoryId = try {
-            subCategoryIdText.toInt()
-        } catch (e: NumberFormatException) {
-            binding.etSubCategoryId.error = "ID danh mục con phải là số nguyên"
-            return
-        }
+        val subCategoryId = selectedSubCategory!!.id
 
         // Create product
         viewModel.createProduct(
@@ -158,7 +188,7 @@ class AddProductActivity : BaseActivity<ActivityAddProductBinding>() {
             coverUri = selectedCoverUri!!
         )
         
-        println("🏭 Creating product: $name, price: $price, subCategoryId: $subCategoryId")
+        println("🏭 Creating product: $name, price: $price, subCategoryId: $subCategoryId, subCategoryName: ${selectedSubCategory!!.name}")
     }
 
     private fun observeAddProductState() {
@@ -195,6 +225,42 @@ class AddProductActivity : BaseActivity<ActivityAddProductBinding>() {
         }
     }
 
+    private fun observeSubCategories() {
+        lifecycleScope.launch {
+            viewModel.subCategories.collect { subCategories ->
+                // Update adapter with new data
+                subCategoryAdapter = SubCategoryAdapter(this@AddProductActivity, subCategories)
+                binding.etSubCategory.setAdapter(subCategoryAdapter)
+                
+                println("📂 Loaded ${subCategories.size} subcategories for dropdown")
+            }
+        }
+        
+        lifecycleScope.launch {
+            viewModel.subCategoriesLoading.collect { isLoading ->
+                binding.tilSubCategory.isEnabled = !isLoading
+                if (isLoading) {
+                    binding.etSubCategory.setText("Đang tải danh mục...")
+                } else {
+                    // Chỉ clear text nếu chưa có subcategory được chọn
+                    if (selectedSubCategory == null && binding.etSubCategory.text.toString() == "Đang tải danh mục...") {
+                        binding.etSubCategory.setText("")
+                    }
+                }
+            }
+        }
+        
+        // Observe selected subcategory from ViewModel
+        lifecycleScope.launch {
+            viewModel.selectedSubCategory.collect { subCategory ->
+                if (subCategory != null && subCategory != selectedSubCategory) {
+                    selectedSubCategory = subCategory
+                    binding.etSubCategory.setText(subCategory.name, false)
+                }
+            }
+        }
+    }
+
     private fun observeErrorMessages() {
         lifecycleScope.launch {
             viewModel.errorMessage.collect { message ->
@@ -218,5 +284,7 @@ class AddProductActivity : BaseActivity<ActivityAddProductBinding>() {
         super.onDestroy()
         // Reset ViewModel state when activity is destroyed
         viewModel.resetState()
+        // Clear selected subcategory
+        selectedSubCategory = null
     }
 } 

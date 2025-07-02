@@ -21,6 +21,14 @@
             android:name=".ui.shop.dashboard.ShopDashboardDetailActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.profile.orders.CustomerOrderActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.main.MainActivity" />
+        <activity
+            android:name=".ui.profile.orders.CustomerOrderDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.profile.orders.CustomerOrderActivity" />
+        <activity
             android:name=".ui.shop.orderDetail.OrderDetailActivity"
             android:exported="false"
             android:parentActivityName=".ui.shop.dashboard.ShopDashboardDetailActivity" />

@@ -4,9 +4,11 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.greenbuyapp.data.category.model.SubCategory
 import com.example.greenbuyapp.data.product.model.CreateAttributeResponse
 import com.example.greenbuyapp.data.product.model.CreateProductResponse
 import com.example.greenbuyapp.data.product.model.ProductVariant
+import com.example.greenbuyapp.domain.category.CategoryRepository
 import com.example.greenbuyapp.domain.product.ProductRepository
 import com.example.greenbuyapp.util.Result
 import kotlinx.coroutines.flow.*
@@ -29,7 +31,8 @@ sealed class AddVariantUiState {
 }
 
 class AddProductViewModel(
-    private val productRepository: ProductRepository
+    private val productRepository: ProductRepository,
+    private val categoryRepository: CategoryRepository
 ) : ViewModel() {
 
     // UI State cho việc tạo sản phẩm
@@ -52,12 +55,71 @@ class AddProductViewModel(
     private val _variants = MutableStateFlow<List<ProductVariant>>(listOf(ProductVariant()))
     val variants: StateFlow<List<ProductVariant>> = _variants.asStateFlow()
 
+    // SubCategories state
+    private val _subCategories = MutableStateFlow<List<SubCategory>>(emptyList())
+    val subCategories: StateFlow<List<SubCategory>> = _subCategories.asStateFlow()
+    
+    private val _subCategoriesLoading = MutableStateFlow(false)
+    val subCategoriesLoading: StateFlow<Boolean> = _subCategoriesLoading.asStateFlow()
+    
+    private val _selectedSubCategory = MutableStateFlow<SubCategory?>(null)
+    val selectedSubCategory: StateFlow<SubCategory?> = _selectedSubCategory.asStateFlow()
+
     // Counter để track số variants đã tạo thành công
     private val _completedVariants = MutableStateFlow(0)
     private val _totalVariants = MutableStateFlow(0)
 
     // Mutex để synchronize variant updates
     private val variantUpdateMutex = Mutex()
+
+    init {
+        // Load subcategories khi ViewModel được khởi tạo
+        loadSubCategories()
+    }
+
+    /**
+     * Load danh sách subcategories
+     */
+    fun loadSubCategories() {
+        viewModelScope.launch {
+            _subCategoriesLoading.value = true
+            
+            when (val result = categoryRepository.getSubCategories()) {
+                is Result.Success -> {
+                    _subCategories.value = result.value
+                    println("✅ Loaded ${result.value.size} subcategories")
+                }
+                is Result.Error -> {
+                    _errorMessage.value = "Lỗi tải danh mục: ${result.error}"
+                    println("❌ Error loading subcategories: ${result.error}")
+                }
+                is Result.NetworkError -> {
+                    _errorMessage.value = "Lỗi kết nối mạng khi tải danh mục"
+                    println("❌ Network error loading subcategories")
+                }
+                is Result.Loading -> {
+                    // Already handled by _subCategoriesLoading
+                }
+            }
+            
+            _subCategoriesLoading.value = false
+        }
+    }
+
+    /**
+     * Chọn subcategory
+     */
+    fun selectSubCategory(subCategory: SubCategory) {
+        _selectedSubCategory.value = subCategory
+        println("📂 Selected subcategory: ${subCategory.name} (ID: ${subCategory.id})")
+    }
+
+    /**
+     * Clear selected subcategory
+     */
+    fun clearSelectedSubCategory() {
+        _selectedSubCategory.value = null
+    }
 
     /**
      * Tạo sản phẩm mới
@@ -337,7 +399,8 @@ class AddProductViewModel(
         _variants.value = listOf(ProductVariant())
         _completedVariants.value = 0
         _totalVariants.value = 0
-    }
+        _selectedSubCategory.value = null
+    }   
 
     /**
      * Set product ID

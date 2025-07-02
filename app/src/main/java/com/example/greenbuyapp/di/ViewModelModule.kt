@@ -11,6 +11,8 @@ import com.example.greenbuyapp.ui.shop.addProduct.AddProductViewModel
 import com.example.greenbuyapp.ui.shop.dashboard.ShopDashboardDetailViewModel
 import com.example.greenbuyapp.ui.shop.orderDetail.OrderDetailViewModel
 import com.example.greenbuyapp.ui.shop.productManagement.ProductManagementViewModel
+import com.example.greenbuyapp.ui.profile.orders.CustomerOrderDetailViewModel
+import com.example.greenbuyapp.ui.profile.orders.CustomerOrderViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
@@ -31,7 +33,9 @@ val viewModelModule = module {
     viewModel { ShopDashboardDetailViewModel(get()) }
     viewModel { OrderDetailViewModel(get()) }
     viewModel { ProductManagementViewModel(get()) }
-    viewModel { AddProductViewModel(get()) }
+    viewModel { AddProductViewModel(get(), get()) }
+    viewModel { CustomerOrderViewModel(get()) }
+    viewModel { CustomerOrderDetailViewModel(get()) }
 
 //    viewModel { SettingsViewModel(androidContext()) }
 //    viewModel { AutoWallpaperSettingsViewModel(get()) }

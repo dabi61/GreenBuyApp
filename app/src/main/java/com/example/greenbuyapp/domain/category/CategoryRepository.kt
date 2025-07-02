@@ -2,6 +2,7 @@ package com.example.greenbuyapp.domain.category
 
 import com.example.greenbuyapp.data.category.CategoryService
 import com.example.greenbuyapp.data.category.model.Category
+import com.example.greenbuyapp.data.category.model.SubCategory
 import com.example.greenbuyapp.util.Result
 import com.example.greenbuyapp.util.safeApiCall
 import kotlinx.coroutines.CoroutineDispatcher
@@ -14,6 +15,12 @@ class CategoryRepository(
     suspend fun getCategories(): Result<List<Category>> {
         return safeApiCall(dispatcher) {
             categoryService.getCategories()
+        }
+    }
+    
+    suspend fun getSubCategories(): Result<List<SubCategory>> {
+        return safeApiCall(dispatcher) {
+            categoryService.getSubCategories()
         }
     }
 }
