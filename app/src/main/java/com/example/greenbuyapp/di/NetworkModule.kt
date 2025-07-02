@@ -2,6 +2,7 @@ package com.example.greenbuyapp.di
 
 
 import com.example.greenbuyapp.data.authorization.AuthorizationService
+import com.example.greenbuyapp.data.cart.CartService
 import com.example.greenbuyapp.data.product.ProductService
 import com.example.greenbuyapp.data.register.RegisterService
 import com.example.greenbuyapp.data.search.SearchService
@@ -43,6 +44,7 @@ val networkModule = module {
     factory { createService<CategoryService>(get(), get()) }
     factory { createService<SocialService>(get(), get(), UNSPLASH_BASE_URL) }
     factory { createService<ShopService>(get(), get()) }
+    factory { createService<CartService>(get(), get()) }
 }
 
 private fun createOkHttpClient(accessTokenInterceptor: AccessTokenInterceptor): OkHttpClient {

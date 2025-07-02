@@ -73,6 +73,7 @@
             app:layout_constraintTop_toBottomOf="@id/cl_heading"
             app:cardCornerRadius="@dimen/_8sdp"
             android:layout_margin="@dimen/_8sdp"
+            app:cardBackgroundColor="@color/white"
             >
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -163,7 +164,8 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@color/white">
 
                 <TextView
                     android:id="@+id/tv_title_state"
@@ -281,7 +283,8 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@color/white">
 
                 <TextView
                     android:id="@+id/tv_title_util"

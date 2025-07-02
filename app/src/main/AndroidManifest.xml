@@ -66,6 +66,14 @@
             android:name=".ui.product.ProductActivity"
             android:exported="false"
             android:parentActivityName=".ui.main.MainActivity" />
+        <activity
+            android:name=".ui.cart.CartActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.main.MainActivity" />
+        <activity
+            android:name=".ui.order.OrderConfirmActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.cart.CartActivity" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

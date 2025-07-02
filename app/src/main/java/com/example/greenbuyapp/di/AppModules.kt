@@ -8,5 +8,4 @@ val appModules = listOf(
     repositoryModule,
     storageModule,
     managerModule,
-    workerModule
 )

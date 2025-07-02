@@ -240,7 +240,8 @@
             android:layout_height="@dimen/_70sdp"
             app:layout_constraintTop_toBottomOf="@id/app_bar_dashboard"
             app:cardCornerRadius="@dimen/_8sdp"
-            android:layout_margin="@dimen/_8sdp">
+            android:layout_margin="@dimen/_8sdp"
+            app:cardBackgroundColor="@color/white">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -538,7 +539,8 @@
             android:layout_height="@dimen/_70sdp"
             app:layout_constraintTop_toBottomOf="@id/cv_dashboard"
             app:cardCornerRadius="@dimen/_8sdp"
-            android:layout_margin="@dimen/_8sdp">
+            android:layout_margin="@dimen/_8sdp"
+            app:cardBackgroundColor="@color/white">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

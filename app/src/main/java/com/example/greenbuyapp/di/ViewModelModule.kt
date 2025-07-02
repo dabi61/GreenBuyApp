@@ -1,6 +1,7 @@
 package com.example.greenbuyapp.di
 
 
+import com.example.greenbuyapp.ui.cart.CartViewModel
 import com.example.greenbuyapp.ui.home.HomeViewModel
 import com.example.greenbuyapp.ui.login.LoginViewModel
 import com.example.greenbuyapp.ui.product.ProductViewModel
@@ -36,6 +37,7 @@ val viewModelModule = module {
     viewModel { AddProductViewModel(get(), get()) }
     viewModel { CustomerOrderViewModel(get()) }
     viewModel { CustomerOrderDetailViewModel(get()) }
+    viewModel { CartViewModel(get()) }
 
 //    viewModel { SettingsViewModel(androidContext()) }
 //    viewModel { AutoWallpaperSettingsViewModel(get()) }

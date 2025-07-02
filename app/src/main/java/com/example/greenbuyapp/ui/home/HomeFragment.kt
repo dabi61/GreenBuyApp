@@ -14,6 +14,7 @@ import com.example.greenbuyapp.R
 import com.example.greenbuyapp.databinding.FragmentHomeBinding
 import com.example.greenbuyapp.ui.base.BaseFragment
 import com.example.greenbuyapp.ui.product.ProductActivity
+import com.example.greenbuyapp.ui.cart.CartActivity
 import com.example.greenbuyapp.util.NetworkState
 import com.zhpan.indicator.enums.IndicatorSlideMode
 import com.zhpan.indicator.enums.IndicatorStyle
@@ -189,6 +190,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun setupSearchView() {
         binding.svProduct.addTextChangedListener { text ->
             viewModel.updateSearchQuery(text?.toString() ?: "")
+        }
+        
+        // Setup cart button click
+        binding.icCart.setOnClickListener {
+            val intent = CartActivity.createIntent(requireContext())
+            startActivity(intent)
+            println("🛒 Opening CartActivity")
         }
     }
     
