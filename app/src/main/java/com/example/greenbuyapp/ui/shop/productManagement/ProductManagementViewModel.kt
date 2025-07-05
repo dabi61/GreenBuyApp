@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.greenbuyapp.data.product.model.Product
 import com.example.greenbuyapp.data.product.model.ProductStatus
 import com.example.greenbuyapp.data.product.model.InventoryStatsResponse
+import com.example.greenbuyapp.data.product.model.InventoryStatsSummary
 import com.example.greenbuyapp.domain.product.ProductRepository
 import com.example.greenbuyapp.util.Result
 import kotlinx.coroutines.flow.*
@@ -25,6 +26,9 @@ class ProductManagementViewModel(
     // Product counts for each status
     private val _productCounts = MutableStateFlow(ProductCounts())
     val productCounts: StateFlow<ProductCounts> = _productCounts.asStateFlow()
+
+    // ✅ Cache StateFlow instances
+    private val _productsByStatus = mutableMapOf<ProductStatus, MutableStateFlow<List<Product>>>()
 
     init {
         loadMyProducts()
@@ -72,57 +76,30 @@ class ProductManagementViewModel(
      * Get products by status using API
      */
     fun getProductsByStatus(status: ProductStatus): StateFlow<List<Product>> {
-        // Tạo StateFlow mới cho mỗi status
-        val statusFlow = MutableStateFlow<List<Product>>(emptyList())
-        
-        // Load products khi StateFlow được tạo
-        viewModelScope.launch {
-            loadProductsByStatus(status, statusFlow)
-        }
-        
-        return statusFlow.asStateFlow()
+        return _productsByStatus.getOrPut(status) {
+            MutableStateFlow<List<Product>>(emptyList()).also { flow ->
+                loadProductsByStatus(status, flow)
+            }
+        }.asStateFlow()
     }
 
     /**
      * Load products by status from API
      */
-    private suspend fun loadProductsByStatus(status: ProductStatus, statusFlow: MutableStateFlow<List<Product>>) {
-        runCatching {
-            val apiStatus = status.apiValue
-            
-            when (val result = productRepository.getProductsByStatus(apiStatus)) {
-                is Result.Success -> {
-                    val products = result.value.items
-                    println("🔍 API Request - by-status: requesting status='${apiStatus}' for ${status.displayName}")
-                    println("🔍 API Response - by-status: received ${products.size} products")
-                    products.forEach { product ->
-                        println("   📦 Product: ${product.name}, is_approved=${product.is_approved}, isApproved=${product.isApproved}, stock_status=${product.stock_info?.status}")
-                    }
-                    statusFlow.value = products
-                    println("✅ Loaded ${products.size} products for status: ${status.displayName}")
-                }
-                is Result.Error -> {
-                    _errorMessage.value = "Lỗi khi tải sản phẩm ${status.displayName}: ${result.error}"
-                    println("❌ Error loading products for ${status.displayName}: ${result.error}")
-                }
-                is Result.Loading -> {
-                    // Loading state can be handled if needed
-                }
-                is Result.NetworkError -> {
-                    _errorMessage.value = "Lỗi kết nối mạng khi tải sản phẩm ${status.displayName}"
-                    println("❌ Network error loading products for ${status.displayName}")
-                }
+    private fun loadProductsByStatus(status: ProductStatus, flow: MutableStateFlow<List<Product>>) {
+        viewModelScope.launch {
+            // ✅ Convert ProductStatus enum to String using apiValue
+            when (val result = productRepository.getProductsByStatus(status.apiValue)) {
+                is Result.Success -> flow.value = result.value.items
+                else -> flow.value = emptyList()
             }
-        }.onFailure { exception ->
-            _errorMessage.value = "Lỗi khi tải sản phẩm ${status.displayName}: ${exception.message}"
-            println("❌ Error loading products for ${status.displayName}: ${exception.message}")
         }
     }
 
     /**
      * Update product counts from API stats
      */
-    private fun updateProductCountsFromAPI(stats: com.example.greenbuyapp.data.product.model.InventoryStatsSummary) {
+    private fun updateProductCountsFromAPI(stats: InventoryStatsSummary) {
         val counts = ProductCounts(
             inStock = stats.in_stock,
             outOfStock = stats.out_of_stock,
@@ -139,7 +116,55 @@ class ProductManagementViewModel(
         _errorMessage.value = null
     }
 
+    /**
+     * ✅ Reload products for specific status
+     */
+    fun reloadProductsByStatus(status: ProductStatus) {
+        viewModelScope.launch {
+            _isLoading.value = true
+            
+            // Get existing StateFlow or create new one
+            val flow = _productsByStatus.getOrPut(status) {
+                MutableStateFlow<List<Product>>(emptyList())
+            }
+            
+            // ✅ Force reload from API - Convert enum to String
+            when (val result = productRepository.getProductsByStatus(status.apiValue)) {
+                is Result.Success -> {
+                    flow.value = result.value.items
+                    println("✅ Reloaded products for ${status.displayName}: ${result.value.items.size}")
+                }
+                is Result.Error -> {
+                    _errorMessage.value = "Lỗi khi tải sản phẩm: ${result.error}"
+                    println("❌ Error reloading products for ${status.displayName}: ${result.error}")
+                }
+                is Result.NetworkError -> {
+                    _errorMessage.value = "Lỗi kết nối mạng"
+                    println("❌ Network error reloading products for ${status.displayName}")
+                }
+                else -> {
+                    println("⚠️ Unknown result type for ${status.displayName}")
+                }
+            }
+            
+            _isLoading.value = false
+        }
+    }
 
+    /**
+     * ✅ Reload all products (for refresh all tabs)
+     */
+    fun reloadAllProducts() {
+        viewModelScope.launch {
+            // Reload inventory stats first
+            loadMyProducts()
+            
+            // Then reload products for each cached status
+            _productsByStatus.keys.forEach { status ->
+                reloadProductsByStatus(status)
+            }
+        }
+    }
 }
 
 /**

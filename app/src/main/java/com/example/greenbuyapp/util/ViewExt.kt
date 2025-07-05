@@ -22,6 +22,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import android.graphics.Bitmap
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 
 fun View.showSnackBar(
     message: String,
@@ -366,11 +367,12 @@ private fun createRequestOptions(
     val options = RequestOptions()
         .placeholder(placeholder)
         .error(error)
-        .timeout(10000) // ✅ Giảm timeout xuống 10s để tránh ANR
-        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC) // ✅ Smart caching
-        .skipMemoryCache(false) // ✅ Use memory cache
-        .dontAnimate() // ✅ Disable animation để tăng performance
-        .override(800, 800) // ✅ Giới hạn kích thước để tránh OOM
+        .timeout(5000) // ✅ Giảm xuống 5s
+        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+        .skipMemoryCache(false)
+        .dontAnimate()
+        .override(600, 600) // ✅ Giảm từ 800x800 xuống 600x600
+        .downsample(DownsampleStrategy.CENTER_INSIDE) // ✅ Thêm downsample
 
     return when (transform) {
         ImageTransform.CIRCLE -> options.transform(CircleCrop())

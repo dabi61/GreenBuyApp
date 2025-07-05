@@ -72,7 +72,7 @@ class LoginRepository(
             ?: return Result.Error(401, "Không tìm thấy refresh token")
 
         val refreshRequest = RefreshTokenRequest(
-            refresh_token = refreshToken
+            old_refresh_data = refreshToken
         )
 
         val result = safeApiCall(dispatcher) {

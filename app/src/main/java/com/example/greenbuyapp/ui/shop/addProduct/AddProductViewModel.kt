@@ -166,6 +166,99 @@ class AddProductViewModel(
     }
 
     /**
+     * Chỉnh sửa sản phẩm mới
+     */
+    fun editProduct(
+        context: Context,
+        productId: Int,
+        name: String,
+        description: String,
+        price: Double,
+        subCategoryId: Int,
+        coverUri: Uri
+    ) {
+        viewModelScope.launch {
+            runCatching {
+                _addProductState.value = AddProductUiState.Loading
+
+                when (val result = productRepository.editProduct(
+                    context, productId, name, description, price, subCategoryId, coverUri
+                )) {
+                    is Result.Success -> {
+                        val response = result.value
+                        _productId.value = response.product_id
+                        _addProductState.value = AddProductUiState.Success(response)
+                        println("✅ Product created successfully: ${response.name} (ID: ${response.product_id})")
+                    }
+                    is Result.Error -> {
+                        _addProductState.value = AddProductUiState.Error(result.error ?: "Lỗi tạo sản phẩm")
+                        println("❌ Error creating product: ${result.error}")
+                    }
+                    is Result.NetworkError -> {
+                        _addProductState.value = AddProductUiState.Error("Lỗi kết nối mạng")
+                        println("❌ Network error creating product")
+                    }
+                    is Result.Loading -> {
+                        // Already handled
+                    }
+                }
+
+            }.onFailure { exception ->
+                _addProductState.value = AddProductUiState.Error("Lỗi tạo sản phẩm: ${exception.message}")
+                println("❌ Exception creating product: ${exception.message}")
+            }
+        }
+    }
+
+    /**
+     * ✅ Chỉnh sửa sản phẩm không có ảnh mới (chỉ cập nhật text fields)
+     */
+    fun editProductWithoutNewImage(
+        productId: Int,
+        name: String,
+        description: String,
+        price: Double,
+        subCategoryId: Int
+    ) {
+        viewModelScope.launch {
+            runCatching {
+                _addProductState.value = AddProductUiState.Loading
+                
+                // ✅ Gọi API thực sự thay vì dummy response
+                when (val result = productRepository.editProductText(
+                    productId = productId,
+                    name = name,
+                    description = description,
+                    price = price,
+                    subCategoryId = subCategoryId
+                )) {
+                    is Result.Success -> {
+                        val response = result.value
+                        _productId.value = response.product_id
+                        _addProductState.value = AddProductUiState.Success(response)
+                        println("✅ Product edited successfully (text only): ${response.name} (ID: ${response.product_id})")
+                    }
+                    is Result.Error -> {
+                        _addProductState.value = AddProductUiState.Error(result.error ?: "Lỗi chỉnh sửa sản phẩm")
+                        println("❌ Error editing product: ${result.error}")
+                    }
+                    is Result.NetworkError -> {
+                        _addProductState.value = AddProductUiState.Error("Lỗi kết nối mạng")
+                        println("❌ Network error editing product")
+                    }
+                    is Result.Loading -> {
+                        // Already handled
+                    }
+                }
+
+            }.onFailure { exception ->
+                _addProductState.value = AddProductUiState.Error("Lỗi chỉnh sửa sản phẩm: ${exception.message}")
+                println("❌ Exception editing product: ${exception.message}")
+            }
+        }
+    }
+
+    /**
      * Thêm variant mới vào danh sách
      */
     fun addVariant() {
