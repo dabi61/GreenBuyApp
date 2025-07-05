@@ -21,6 +21,7 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
+import com.example.greenbuyapp.data.notice.NoticeService
 
 private const val CONTENT_TYPE = "Content-Type"
 private const val APPLICATION_JSON = "application/json"
@@ -45,6 +46,7 @@ val networkModule = module {
     factory { createService<SocialService>(get(), get(), UNSPLASH_BASE_URL) }
     factory { createService<ShopService>(get(), get()) }
     factory { createService<CartService>(get(), get()) }
+    factory { createService<NoticeService>(get(), get()) }
 }
 
 private fun createOkHttpClient(accessTokenInterceptor: AccessTokenInterceptor): OkHttpClient {

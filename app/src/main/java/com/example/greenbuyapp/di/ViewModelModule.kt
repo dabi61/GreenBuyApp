@@ -16,6 +16,7 @@ import com.example.greenbuyapp.ui.profile.orders.CustomerOrderDetailViewModel
 import com.example.greenbuyapp.ui.profile.orders.CustomerOrderViewModel
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
+import com.example.greenbuyapp.ui.notification.NotificationViewModel
 
 val viewModelModule = module {
 
@@ -39,6 +40,7 @@ val viewModelModule = module {
     viewModel { CustomerOrderDetailViewModel(get()) }
     viewModel { CartViewModel(get()) }
 
+    viewModel { NotificationViewModel(get()) }
 //    viewModel { SettingsViewModel(androidContext()) }
 //    viewModel { AutoWallpaperSettingsViewModel(get()) }
 //    viewModel { AutoWallpaperHistoryViewModel(get()) }
