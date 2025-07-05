@@ -14,21 +14,32 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.greenbuyapp.R
 import com.example.greenbuyapp.data.product.model.ProductAttribute
 import com.example.greenbuyapp.databinding.FragmentEditProductVariantBinding
-import com.example.greenbuyapp.domain.product.ProductRepository
-import com.example.greenbuyapp.util.Result
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.example.greenbuyapp.ui.shop.addProduct.AddProductViewModel
 import kotlinx.coroutines.launch
-import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class EditProductVariantFragment : Fragment() {
 
     private var _binding: FragmentEditProductVariantBinding? = null
     private val binding get() = _binding!!
     
+    private val viewModel: AddProductViewModel by viewModel()
     private lateinit var attributeAdapter: EditAttributeAdapter
-    private val productRepository: ProductRepository by inject()
     private var productId: Int = -1
-    private var attributes: List<ProductAttribute> = emptyList()
+    private var currentImagePickerPosition: Int = -1
+
+    private val imagePickerLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let { selectedUri ->
+            if (currentImagePickerPosition != -1) {
+                // Convert URI to file path or handle image upload
+                val imagePath = selectedUri.toString()
+                attributeAdapter.updateAttributeImage(currentImagePickerPosition, imagePath)
+                currentImagePickerPosition = -1
+            }
+        }
+    }
 
     companion object {
         private const val ARG_PRODUCT_ID = "product_id"
@@ -56,26 +67,24 @@ class EditProductVariantFragment : Fragment() {
         
         productId = arguments?.getInt(ARG_PRODUCT_ID, -1) ?: -1
         if (productId == -1) {
-            Toast.makeText(context, "❌ Product ID không hợp lệ", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Lỗi: Không tìm thấy sản phẩm", Toast.LENGTH_SHORT).show()
             requireActivity().finish()
             return
         }
         
         setupRecyclerView()
         setupFab()
-        loadAttributes()
+        observeViewModel()
+        
+        // Load existing attributes
+        loadProductAttributes()
     }
 
     private fun setupRecyclerView() {
         attributeAdapter = EditAttributeAdapter(
-            onEditAttribute = { attribute ->
-                // TODO: Mở dialog edit attribute
-                Toast.makeText(context, "Chỉnh sửa: ${attribute.color} - ${attribute.size}", Toast.LENGTH_SHORT).show()
-            },
-            onDeleteAttribute = { attribute ->
-                // TODO: Xóa attribute
-                Toast.makeText(context, "Xóa: ${attribute.color} - ${attribute.size}", Toast.LENGTH_SHORT).show()
-            }
+            onPickImage = { position -> openImagePicker(position) },
+            onDeleteAttribute = { position -> deleteAttribute(position) },
+            onSaveAttribute = { attribute, position -> saveAttribute(attribute, position) }
         )
         
         binding.rvAttributes.apply {
@@ -86,44 +95,87 @@ class EditProductVariantFragment : Fragment() {
 
     private fun setupFab() {
         binding.fabAddAttribute.setOnClickListener {
-            // TODO: Mở dialog thêm attribute mới
-            Toast.makeText(context, "➕ Thêm thuộc tính mới", Toast.LENGTH_SHORT).show()
+            addNewAttribute()
         }
     }
 
-    private fun loadAttributes() {
+    private fun loadProductAttributes() {
+        viewModel.loadProductAttributes(productId)
+    }
+
+    private fun addNewAttribute() {
+        // Add empty attribute to adapter
+        attributeAdapter.addEmptyAttribute()
+    }
+
+    private fun deleteAttribute(position: Int) {
+        attributeAdapter.removeAttribute(position)
+    }
+
+    private fun openImagePicker(position: Int) {
+        currentImagePickerPosition = position
+        imagePickerLauncher.launch("image/*")
+    }
+
+    private fun saveAttribute(attribute: ProductAttribute, position: Int) {
+        // Validate attribute data
+        if (attribute.color.isBlank() && attribute.size.isBlank()) {
+            Toast.makeText(context, "Vui lòng nhập ít nhất màu sắc hoặc kích thước", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        if (attribute.price <= 0) {
+            Toast.makeText(context, "Vui lòng nhập giá hợp lệ", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        if (attribute.quantity < 0) {
+            Toast.makeText(context, "Vui lòng nhập số lượng hợp lệ", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        // Check if user selected a new image
+        val hasNewImage = attributeAdapter.hasNewImage(position)
+        val newImageUri = attributeAdapter.getNewImageUri(position)
+        
+        println("🔍 DEBUG saveAttribute:")
+        println("   - position: $position")
+        println("   - hasNewImage: $hasNewImage")
+        println("   - newImageUri: $newImageUri")
+        println("   - attribute.image: ${attribute.image}")
+        println("   - attribute.attribute_id: ${attribute.attribute_id}")
+        
+        // ✅ Phân biệt 2 trường hợp: có ảnh mới hoặc chỉ edit text
+        if (hasNewImage && !newImageUri.isNullOrEmpty()) {
+            // User đã chọn ảnh mới - gọi saveProductAttribute với ảnh
+            println("🏭 Calling saveProductAttribute WITH new image")
+            viewModel.saveProductAttribute(requireContext(), attribute, productId, true, newImageUri)
+            println("🏭 Saving attribute with new image: color=${attribute.color}, size=${attribute.size}")
+        } else {
+            // User không chọn ảnh mới - chỉ edit text fields
+            println("🏭 Calling saveProductAttribute WITHOUT new image")
+            viewModel.saveProductAttribute(requireContext(), attribute, productId, false, null)
+            println("🏭 Saving attribute without new image: color=${attribute.color}, size=${attribute.size}")
+        }
+        
+        Toast.makeText(context, "Đã lưu thuộc tính thành công", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
-            binding.progressBar.visibility = View.VISIBLE
-            
-            when (val result = productRepository.getProductAttributes(productId)) {
-                is Result.Success -> {
-                    attributes = result.value
-                    attributeAdapter.submitList(attributes)
-                    
-                    if (attributes.isEmpty()) {
-                        binding.layoutEmpty.visibility = View.VISIBLE
-                        binding.rvAttributes.visibility = View.GONE
-                    } else {
-                        binding.layoutEmpty.visibility = View.GONE
-                        binding.rvAttributes.visibility = View.VISIBLE
-                    }
-                    
-                    println("✅ Loaded ${attributes.size} attributes for product $productId")
-                }
-                is Result.Error -> {
-                    Toast.makeText(context, "❌ Lỗi tải thuộc tính: ${result.error}", Toast.LENGTH_LONG).show()
-                    println("❌ Error loading attributes: ${result.error}")
-                }
-                is Result.NetworkError -> {
-                    Toast.makeText(context, "❌ Lỗi kết nối mạng", Toast.LENGTH_LONG).show()
-                    println("❌ Network error loading attributes")
-                }
-                is Result.Loading -> {
-                    // Already handled by progress bar
+            viewModel.productAttributes.collect { attributes ->
+                attributeAdapter.submitList(attributes)
+                binding.tvEmptyState.visibility = if (attributes.isEmpty()) View.VISIBLE else View.GONE
+            }
+        }
+        
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.errorMessage.collect { errorMessage ->
+                if (!errorMessage.isNullOrEmpty()) {
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                    viewModel.clearErrorMessage()
                 }
             }
-            
-            binding.progressBar.visibility = View.GONE
         }
     }
 

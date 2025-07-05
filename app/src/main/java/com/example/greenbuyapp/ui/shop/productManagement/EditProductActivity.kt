@@ -32,6 +32,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.greenbuyapp.ui.shop.addProduct.AddProductViewModel
 import com.example.greenbuyapp.util.Result
 import com.example.greenbuyapp.ui.shop.addProduct.AddProductUiState
+import com.example.greenbuyapp.ui.shop.productManagement.EditProductVariantActivity
 
 
 class EditProductActivity : BaseActivity<ActivityEditProductBinding>() {
@@ -98,7 +99,7 @@ class EditProductActivity : BaseActivity<ActivityEditProductBinding>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(binding.root)
-        
+
         // ✅ Khởi tạo currentProduct TRƯỚC super.onCreate()
         val product = intent.getParcelableExtra<Product>(EXTRA_PRODUCT)
         if (product == null) {
@@ -315,12 +316,13 @@ class EditProductActivity : BaseActivity<ActivityEditProductBinding>() {
                         binding.btnNext.text = "Tiếp"
                         Toast.makeText(this@EditProductActivity, "✅ Lưu sản phẩm thành công!", Toast.LENGTH_SHORT).show()
                         
-                        // ✅ Chuyển sang EditProductVariantActivity
+                        // ✅ Navigate to EditProductVariantActivity
                         val intent = EditProductVariantActivity.createIntent(
-                            context = this@EditProductActivity,
-                            productId = currentProduct.product_id
+                            this@EditProductActivity,
+                            currentProduct.product_id
                         )
                         startActivity(intent)
+                        
                         finish() // Đóng EditProductActivity
                     }
                     is AddProductUiState.Error -> {

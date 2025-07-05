@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.greenbuyapp.data.category.model.SubCategory
 import com.example.greenbuyapp.data.product.model.CreateAttributeResponse
 import com.example.greenbuyapp.data.product.model.CreateProductResponse
+import com.example.greenbuyapp.data.product.model.ProductAttribute
 import com.example.greenbuyapp.data.product.model.ProductVariant
 import com.example.greenbuyapp.domain.category.CategoryRepository
 import com.example.greenbuyapp.domain.product.ProductRepository
@@ -64,6 +65,10 @@ class AddProductViewModel(
     
     private val _selectedSubCategory = MutableStateFlow<SubCategory?>(null)
     val selectedSubCategory: StateFlow<SubCategory?> = _selectedSubCategory.asStateFlow()
+
+    // ✅ Product attributes state
+    private val _productAttributes = MutableStateFlow<List<ProductAttribute>>(emptyList())
+    val productAttributes: StateFlow<List<ProductAttribute>> = _productAttributes.asStateFlow()
 
     // Counter để track số variants đã tạo thành công
     private val _completedVariants = MutableStateFlow(0)
@@ -507,5 +512,166 @@ class AddProductViewModel(
      */
     fun clearErrorMessage() {
         _errorMessage.value = null
+    }
+
+    /**
+     * ✅ Load product attributes by product ID
+     */
+    fun loadProductAttributes(productId: Int) {
+        viewModelScope.launch {
+            when (val result = productRepository.getProductAttributes(productId)) {
+                is Result.Success -> {
+                    _productAttributes.value = result.value
+                    println("✅ Loaded ${result.value.size} product attributes for product $productId")
+                }
+                is Result.Error -> {
+                    _errorMessage.value = "Lỗi tải thuộc tính sản phẩm: ${result.error}"
+                    println("❌ Error loading product attributes: ${result.error}")
+                }
+                is Result.NetworkError -> {
+                    _errorMessage.value = "Lỗi kết nối mạng khi tải thuộc tính sản phẩm"
+                    println("❌ Network error loading product attributes")
+                }
+                is Result.Loading -> {
+                    // Loading state handled by UI
+                }
+            }
+        }
+    }
+
+    /**
+     * ✅ Save product attribute
+     */
+    fun saveProductAttribute(
+        context: Context, 
+        attribute: ProductAttribute, 
+        productId: Int,
+        hasNewImage: Boolean = false,
+        newImageUri: String? = null
+    ) {
+        viewModelScope.launch {
+            // ✅ Phân biệt 2 trường hợp: có ảnh mới hoặc chỉ edit text
+            if (hasNewImage && !newImageUri.isNullOrEmpty()) {
+                // User đã chọn ảnh mới - gọi editAttribute với ảnh
+                val imageUri = try {
+                    Uri.parse(newImageUri)
+                } catch (e: Exception) {
+                    println("❌ Error parsing new image URI: ${e.message}")
+                    _errorMessage.value = "Lỗi xử lý ảnh: ${e.message}"
+                    return@launch
+                }
+                
+                when (val result = productRepository.editAttribute(
+                    context,
+                    attributeId = attribute.attribute_id,
+                    productId = productId,
+                    color = attribute.color,
+                    size = attribute.size,
+                    price = attribute.price,
+                    quantity = attribute.quantity,
+                    imageUri = imageUri
+                )) {
+                    is Result.Success -> {
+                        loadProductAttributes(productId)
+                        println("✅ Product attribute saved successfully with new image")
+                    }
+                    is Result.Error -> {
+                        // Check if attribute not found, then create new
+                        if (result.error?.contains("Attribute not found") == true) {
+                            println("ℹ️ Attribute not found, creating new attribute...")
+                            createNewAttribute(context, productId, attribute, imageUri)
+                        } else {
+                            _errorMessage.value = "Lỗi lưu thuộc tính sản phẩm: ${result.error}"
+                            println("❌ Error saving product attribute: ${result.error}")
+                        }
+                    }
+                    is Result.NetworkError -> {
+                        _errorMessage.value = "Lỗi kết nối mạng khi lưu thuộc tính sản phẩm"
+                        println("❌ Network error saving product attribute")
+                    }
+                    is Result.Loading -> {
+                        // Loading state handled by UI
+                    }
+                }
+            } else {
+                // User không chọn ảnh mới - chỉ edit text fields
+                when (val result = productRepository.editAttributeText(
+                    context = context,
+                    attributeId = attribute.attribute_id,
+                    productId = productId,
+                    color = attribute.color,
+                    size = attribute.size,
+                    price = attribute.price,
+                    quantity = attribute.quantity,
+                    oldImageUrl = attribute.image
+                )) {
+                    is Result.Success -> {
+                        loadProductAttributes(productId)
+                        println("✅ Product attribute saved successfully (text only)")
+                    }
+                    is Result.Error -> {
+                        // Check if attribute not found, then create new
+                        if (result.error?.contains("Attribute not found") == true) {
+                            println("ℹ️ Attribute not found, but no new image provided")
+                            _errorMessage.value = "Không thể cập nhật thuộc tính: cần chọn ảnh để tạo mới"
+                            println("❌ Cannot update attribute without image")
+                        } else {
+                            _errorMessage.value = "Lỗi lưu thuộc tính sản phẩm: ${result.error}"
+                            println("❌ Error saving product attribute: ${result.error}")
+                        }
+                    }
+                    is Result.NetworkError -> {
+                        _errorMessage.value = "Lỗi kết nối mạng khi lưu thuộc tính sản phẩm"
+                        println("❌ Network error saving product attribute")
+                    }
+                    is Result.Loading -> {
+                        // Loading state handled by UI
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * ✅ Create new attribute when edit fails
+     */
+    private suspend fun createNewAttribute(
+        context: Context,
+        productId: Int,
+        attribute: ProductAttribute,
+        imageUri: Uri?
+    ) {
+        // If no image provided, we need to handle this case
+        if (imageUri == null) {
+            _errorMessage.value = "Không thể tạo thuộc tính mới: cần chọn ảnh"
+            println("❌ Cannot create new attribute without image")
+            return
+        }
+        
+        when (val result = productRepository.createAttribute(
+            context = context,
+            productId = productId,
+            color = attribute.color,
+            size = attribute.size,
+            price = attribute.price,
+            quantity = attribute.quantity,
+            imageUri = imageUri
+        )) {
+            is Result.Success -> {
+                loadProductAttributes(productId)
+                println("✅ New product attribute created successfully")
+            }
+            is Result.Error -> {
+                _errorMessage.value = "Lỗi tạo thuộc tính sản phẩm mới: ${result.error}"
+                println("❌ Error creating new product attribute: ${result.error}")
+            }
+            is Result.NetworkError -> {
+                _errorMessage.value = "Lỗi kết nối mạng khi tạo thuộc tính sản phẩm mới"
+                println("❌ Network error creating new product attribute")
+            }
+            is Result.Loading -> {
+                // Loading state handled by UI
+            }
+        }
     }
 } 

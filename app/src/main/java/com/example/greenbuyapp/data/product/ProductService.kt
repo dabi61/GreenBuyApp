@@ -147,6 +147,34 @@ interface ProductService {
         @Part image: MultipartBody.Part
     ): CreateAttributeResponse
 
+    /**
+     * ✅ Chỉnh sửa attribute của sản phẩm
+     */
+    @Multipart
+    @PUT("api/attribute/{attribute_id}")
+    suspend fun editAttribute(
+        @Path("attribute_id") attributeId: Int,
+        @Part("product_id") productId: RequestBody,
+        @Part("color") color: RequestBody,
+        @Part("size") size: RequestBody,
+        @Part("price") price: RequestBody,
+        @Part("quantity") quantity: RequestBody,
+        @Part image: MultipartBody.Part
+    ): CreateAttributeResponse
 
+    /**
+     * ✅ Chỉnh sửa attribute chỉ text fields (không có ảnh mới)
+     */
+    @Multipart
+    @PUT("api/attribute/{attribute_id}")
+    suspend fun editAttributeText(
+        @Path("attribute_id") attributeId: Int,
+        @Part("product_id") productId: RequestBody,
+        @Part("color") color: RequestBody,
+        @Part("size") size: RequestBody,
+        @Part("price") price: RequestBody,
+        @Part("quantity") quantity: RequestBody,
+        @Part image: MultipartBody.Part?
+    ): CreateAttributeResponse
 
 }
