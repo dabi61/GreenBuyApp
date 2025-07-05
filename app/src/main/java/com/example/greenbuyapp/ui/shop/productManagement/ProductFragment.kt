@@ -12,6 +12,8 @@ import com.example.greenbuyapp.data.product.model.Product
 import com.example.greenbuyapp.data.product.model.ProductStatus
 import com.example.greenbuyapp.databinding.FragmentProductManagementBinding
 import com.example.greenbuyapp.ui.base.BaseFragment
+import com.example.greenbuyapp.ui.shop.addProduct.ProductVariantActivity
+import com.example.greenbuyapp.ui.shop.productManagement.EditProductActivity
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -85,8 +87,10 @@ class ProductFragment : BaseFragment<FragmentProductManagementBinding, ProductMa
      * Navigate to product detail (placeholder)
      */
     private fun navigateToProductDetail(product: Product) {
-        // TODO: Navigate to ProductDetailActivity
-        Toast.makeText(context, "Xem chi tiết sản phẩm: ${product.name}", Toast.LENGTH_SHORT).show()
+        val context = requireContext()
+        val intent = EditProductActivity.createIntent(context, product)
+        startActivity(intent)
+        println("📱 Opening EditProductActivity for product: ${product.name}")
     }
 
     /**
@@ -94,7 +98,7 @@ class ProductFragment : BaseFragment<FragmentProductManagementBinding, ProductMa
      */
     private fun showProductMenu(product: Product) {
         // TODO: Show bottom sheet menu with options (Edit, Delete, etc.)
-        Toast.makeText(context, "Menu cho sản phẩm: ${product.name}", Toast.LENGTH_SHORT).show()
+        println("⋮ Menu cho sản phẩm: ${product.name}")
     }
 
     private fun setupSwipeRefresh() {

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.greenbuyapp.data.cart.model.CartShop
 import com.example.greenbuyapp.databinding.ActivityCartBinding
 import com.example.greenbuyapp.ui.base.BaseActivity
 import com.example.greenbuyapp.ui.order.OrderConfirmActivity
@@ -82,14 +83,14 @@ class CartActivity : BaseActivity<ActivityCartBinding>() {
 
         // Checkout button
         binding.btnCheckout.setOnClickListener {
-            val selectedItems = viewModel.getSelectedCartItems()
-            if (selectedItems.isEmpty()) {
+            val selectedShops = viewModel.getSelectedCartShops()
+            if (selectedShops.isEmpty()) {
                 Toast.makeText(this, "Vui lòng chọn sản phẩm để thanh toán", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            // TODO: Chuyển sang OrderConfirmActivity và truyền danh sách selectedItems
-            val intent = OrderConfirmActivity.createIntent(this, ArrayList(selectedItems))
+            // TODO: Chuyển sang OrderConfirmActivity và truyền danh sách selectedShops
+            val intent = OrderConfirmActivity.createIntent(this, ArrayList(selectedShops))
             startActivity(intent)
         }
 
@@ -162,7 +163,7 @@ class CartActivity : BaseActivity<ActivityCartBinding>() {
         }
     }
 
-    private fun updateUI(cartShops: List<com.example.greenbuyapp.data.cart.model.CartShop>) {
+    private fun updateUI(cartShops: List<CartShop>) {
         val isEmpty = cartShops.isEmpty() || cartShops.all { !it.hasItems() }
         
         // Show/hide views based on cart state

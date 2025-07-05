@@ -21,21 +21,7 @@
             android:background="@color/grey_100"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingVertical="8dp">
-
-            <!-- Checkbox chọn toàn bộ sản phẩm của shop -->
-            <CheckBox
-                android:id="@+id/cb_shop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/main_color" />
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="8dp"
-                android:src="@drawable/ic_my_shop"
-                app:tint="@color/main_color" />
+            android:paddingVertical="16dp">
 
             <TextView
                 android:id="@+id/tv_shop_name"
@@ -44,19 +30,11 @@
                 android:layout_marginStart="12dp"
                 android:layout_weight="1"
                 android:textColor="@color/black"
-                android:textSize="16sp"
+                android:textSize="@dimen/_16sdp"
                 android:textStyle="bold"
                 tools:text="Hoa bàng lăng" />
 
-            <ImageButton
-                android:id="@+id/btn_delete_shop"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Xóa shop"
-                android:src="@drawable/ic_close"
-                android:layout_marginEnd="@dimen/_4sdp"
-                app:tint="@color/red_500" />
+
 
         </LinearLayout>
 
@@ -66,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"
-            tools:listitem="@layout/item_cart_product" />
+            tools:listitem="@layout/item_order_product"/>
 
         <!-- Shop Total -->
         <LinearLayout

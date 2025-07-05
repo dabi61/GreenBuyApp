@@ -17,7 +17,6 @@ import com.example.greenbuyapp.ui.base.BaseFragment
 import com.example.greenbuyapp.ui.shop.productManagement.ProductManagementViewModel
 import com.example.greenbuyapp.util.Result
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.delay
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.android.ext.android.inject
 

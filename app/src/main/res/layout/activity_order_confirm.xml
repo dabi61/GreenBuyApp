@@ -1,25 +1,250 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.order.OrderConfirmActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewSummary"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        tools:listitem="@layout/item_order_summary" />
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/recyclerViewSummary"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_weight="1"-->
+<!--        tools:listitem="@layout/item_order_summary" />-->
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnPlaceOrder"
+<!--    <com.google.android.material.button.MaterialButton-->
+<!--        android:id="@+id/btnPlaceOrder"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Đặt hàng"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:backgroundTint="@color/main_color"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"/>-->
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- App Bar Layout -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:elevation="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/main_color"
+                app:navigationIcon="@drawable/ic_back"
+                app:navigationIconTint="@android:color/white"
+                app:title="Thanh toán"
+                app:titleTextColor="@android:color/white" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <!-- Main Content -->
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/cl_main"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:fillViewport="true"
+            android:background="@color/backgroundLight"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintTop_toBottomOf="@id/app_bar"
+            app:layout_constraintBottom_toTopOf="@id/bottombar">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Cart Content -->
+                <LinearLayout
+                    android:id="@+id/ll_cart_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="visible">
+
+                    <!-- Cart Items -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view_cart"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:paddingTop="8dp"
+                        android:paddingBottom="16dp"
+                        android:clipToPadding="false"
+                        tools:listitem="@layout/item_order_shop"/>
+
+                    <!--                &lt;!&ndash; Order Summary &ndash;&gt;-->
+                    <!--                <com.google.android.material.card.MaterialCardView-->
+                    <!--                    android:layout_width="match_parent"-->
+                    <!--                    android:layout_height="wrap_content"-->
+                    <!--                    android:layout_margin="16dp"-->
+                    <!--                    app:cardCornerRadius="12dp"-->
+                    <!--                    app:cardBackgroundColor="@color/white"-->
+                    <!--                    app:cardElevation="4dp">-->
+
+                    <!--                    <LinearLayout-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:orientation="vertical"-->
+                    <!--                        android:padding="16dp">-->
+
+                    <!--                        <TextView-->
+                    <!--                            android:layout_width="wrap_content"-->
+                    <!--                            android:layout_height="wrap_content"-->
+                    <!--                            android:text="Tóm tắt đơn hàng"-->
+                    <!--                            android:textColor="@color/black"-->
+                    <!--                            android:textSize="16sp"-->
+                    <!--                            android:textStyle="bold" />-->
+
+                    <!--                        &lt;!&ndash; Total Items &ndash;&gt;-->
+                    <!--                        <LinearLayout-->
+                    <!--                            android:layout_width="match_parent"-->
+                    <!--                            android:layout_height="wrap_content"-->
+                    <!--                            android:layout_marginTop="12dp"-->
+                    <!--                            android:orientation="horizontal">-->
+
+                    <!--                            <TextView-->
+                    <!--                                android:layout_width="0dp"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:layout_weight="1"-->
+                    <!--                                android:text="Tổng sản phẩm:"-->
+                    <!--                                android:textColor="@color/grey_700"-->
+                    <!--                                android:textSize="14sp" />-->
+
+                    <!--                            <TextView-->
+                    <!--                                android:id="@+id/tv_total_items"-->
+                    <!--                                android:layout_width="wrap_content"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:textColor="@color/black"-->
+                    <!--                                android:textSize="14sp"-->
+                    <!--                                tools:text="5 sản phẩm" />-->
+
+                    <!--                        </LinearLayout>-->
+
+                    <!--                        &lt;!&ndash; Subtotal &ndash;&gt;-->
+                    <!--                        <LinearLayout-->
+                    <!--                            android:layout_width="match_parent"-->
+                    <!--                            android:layout_height="wrap_content"-->
+                    <!--                            android:layout_marginTop="8dp"-->
+                    <!--                            android:orientation="horizontal">-->
+
+                    <!--                            <TextView-->
+                    <!--                                android:layout_width="0dp"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:layout_weight="1"-->
+                    <!--                                android:text="Tạm tính:"-->
+                    <!--                                android:textColor="@color/grey_700"-->
+                    <!--                                android:textSize="14sp" />-->
+
+                    <!--                            <TextView-->
+                    <!--                                android:id="@+id/tv_subtotal"-->
+                    <!--                                android:layout_width="wrap_content"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:textColor="@color/black"-->
+                    <!--                                android:textSize="14sp"-->
+                    <!--                                tools:text="₫299.000" />-->
+
+                    <!--                        </LinearLayout>-->
+
+                    <!--                        &lt;!&ndash; Divider &ndash;&gt;-->
+                    <!--                        <View-->
+                    <!--                            android:layout_width="match_parent"-->
+                    <!--                            android:layout_height="1dp"-->
+                    <!--                            android:layout_marginVertical="12dp"-->
+                    <!--                            android:background="@color/grey_300" />-->
+
+                    <!--                        &lt;!&ndash; Total &ndash;&gt;-->
+                    <!--                        <LinearLayout-->
+                    <!--                            android:layout_width="match_parent"-->
+                    <!--                            android:layout_height="wrap_content"-->
+                    <!--                            android:orientation="horizontal">-->
+
+                    <!--                            <TextView-->
+                    <!--                                android:layout_width="0dp"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:layout_weight="1"-->
+                    <!--                                android:text="Tổng cộng:"-->
+                    <!--                                android:textColor="@color/black"-->
+                    <!--                                android:textSize="16sp"-->
+                    <!--                                android:textStyle="bold" />-->
+
+                    <!--                            <TextView-->
+                    <!--                                android:id="@+id/tv_total_amount"-->
+                    <!--                                android:layout_width="wrap_content"-->
+                    <!--                                android:layout_height="wrap_content"-->
+                    <!--                                android:textColor="@color/main_color"-->
+                    <!--                                android:textSize="18sp"-->
+                    <!--                                android:textStyle="bold"-->
+                    <!--                                tools:text="₫299.000" />-->
+
+                    <!--                        </LinearLayout>-->
+
+                    <!--                    </LinearLayout>-->
+
+                    <!--                </com.google.android.material.card.MaterialCardView>-->
+
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- Bottom Actions -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/bottombar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="8dp"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                android:id="@+id/ll_bottom_actions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:visibility="visible">
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_checkout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:layout_marginStart="8dp"
+                    android:text="Thanh toán"
+                    app:backgroundTint="@color/main_color" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Đặt hàng"
-        android:layout_marginTop="16dp"
-        android:backgroundTint="@color/main_color" />
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
-</LinearLayout> 
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

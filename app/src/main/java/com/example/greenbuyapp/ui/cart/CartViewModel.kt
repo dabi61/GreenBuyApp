@@ -308,4 +308,18 @@ class CartViewModel(
         val ids = _selectedAttributeIds.value
         return _cartShops.value.flatMap { it.items }.filter { ids.contains(it.attributeId) }
     }
+
+    fun getSelectedCartShops(): List<CartShop> {
+        val selectedIds = _selectedAttributeIds.value
+        if (selectedIds.isEmpty()) return emptyList()
+        
+        return _cartShops.value.mapNotNull { shop ->
+            val selectedItems = shop.items.filter { selectedIds.contains(it.attributeId) }
+            if (selectedItems.isNotEmpty()) {
+                shop.copy(items = selectedItems)
+            } else {
+                null
+            }
+        }
+    }
 } 
