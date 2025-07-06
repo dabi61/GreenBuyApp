@@ -7,17 +7,22 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/tvOrderNumber"
+        android:id="@+id/tvNoticeTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mã đơn hàng"
-        android:textStyle="bold"
-        android:textSize="16sp"/>
-
+        android:text="Giao kiện hàng thành công"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:layout_marginBottom="4dp"/>
     <TextView
-        android:id="@+id/tvCreatedAt"
+        android:id="@+id/tvDeliveryStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ngày tạo"
-        android:textSize="14sp"/>
+        android:textSize="16sp"
+        android:textColor="#000000" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_marginTop="8dp"
+        android:background="#00AA00" />
 </LinearLayout>

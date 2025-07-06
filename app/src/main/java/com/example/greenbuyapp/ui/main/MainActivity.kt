@@ -27,6 +27,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         ActivityMainBinding.inflate(layoutInflater)
     }
 
+    var pendingOpenOrders: Boolean = false
+
     // Cache fragments để tránh tạo lại
     private val fragmentMap = mutableMapOf<Int, Fragment>()
     private var currentFragmentPosition = -1
@@ -276,4 +278,14 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         
         super.onDestroy()
     }
+
+    fun openDeliveredOrdersFromNotification() {
+        pendingOpenOrders = true
+        navigateToFragment(4) // ProfileFragment
+
+        // Gọi hàm mở tab nếu ProfileFragment đã tồn tại
+        val profileFragment = supportFragmentManager.findFragmentByTag("ProfileFragment") as? ProfileFragment
+        profileFragment?.openDeliveredOrdersIfPending()
+    }
+
 }

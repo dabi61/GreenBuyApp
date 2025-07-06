@@ -1,5 +1,6 @@
 package com.example.greenbuyapp.ui.notification
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.greenbuyapp.R
 import com.example.greenbuyapp.databinding.FragmentNotificationBinding
+import com.example.greenbuyapp.ui.main.MainActivity
+import com.example.greenbuyapp.ui.order.OrderItemSummaryAdapter
+import com.example.greenbuyapp.ui.profile.orders.CustomerOrderFragment
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -22,7 +26,7 @@ class NotificationFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: NotificationViewModel by viewModel()
-    private lateinit var adapter: PendingNoticeAdapter
+    private lateinit var adapter: DeliveredNoticeAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +42,12 @@ class NotificationFragment : Fragment() {
         // Khởi tạo các view và thiết lập sự kiện
         initViews()
 
-        adapter = PendingNoticeAdapter()
+        adapter = DeliveredNoticeAdapter()
+
+        adapter.onItemClick = {
+            (activity as? MainActivity)?.openDeliveredOrdersFromNotification()
+        }
+
         binding.recyclerViewPendingNotices.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewPendingNotices.adapter = adapter
 

@@ -10,8 +10,8 @@ class NoticeRepository(
     private val noticeService: NoticeService,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
-    suspend fun getPendingNotices(): List<Notice> = withContext(dispatcher) {
-        val response = noticeService.getOrder(search = "pending")
+    suspend fun getDeliveredNotices(): List<Notice> = withContext(dispatcher) {
+        val response = noticeService.getOrder(search = "delivered")
         return@withContext response.items
     }
 }

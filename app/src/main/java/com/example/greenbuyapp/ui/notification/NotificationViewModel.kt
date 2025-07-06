@@ -12,17 +12,17 @@ class NotificationViewModel(
     private val noticeRepository: NoticeRepository
 ) : ViewModel() {
 
-    private val _pendingNotices = MutableStateFlow<List<Notice>>(emptyList())
-    val pendingNotices: StateFlow<List<Notice>> = _pendingNotices
+    private val _deliveredNotices = MutableStateFlow<List<Notice>>(emptyList())
+    val pendingNotices: StateFlow<List<Notice>> = _deliveredNotices
 
     fun loadPendingNotices() {
         viewModelScope.launch {
             try {
-                val result = noticeRepository.getPendingNotices()
-                _pendingNotices.value = result
+                val result = noticeRepository.getDeliveredNotices()
+                _deliveredNotices.value = result
             } catch (e: Exception) {
                 // TODO: xử lý lỗi nếu cần
-                _pendingNotices.value = emptyList()
+                _deliveredNotices.value = emptyList()
             }
         }
     }
