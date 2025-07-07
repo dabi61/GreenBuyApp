@@ -150,7 +150,6 @@ class ProductActivity : BaseActivity<ActivityProductBinding>() {
         observeSelectedIndex()
         observeLoading()
         observeError()
-
         observeProductsViewModel()
     }
 
@@ -213,7 +212,7 @@ class ProductActivity : BaseActivity<ActivityProductBinding>() {
     private fun setupToolbar() {
         // Setup custom toolbar
         setSupportActionBar(binding.toolbar)
-        
+
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)

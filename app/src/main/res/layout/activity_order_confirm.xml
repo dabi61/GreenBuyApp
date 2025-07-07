@@ -240,6 +240,7 @@ Phường  Trung Văn, Quận Nam Từ Liêm, Hà Nội"
                                 app:layout_constraintBottom_toBottomOf="@id/tv_total_payment"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 android:paddingHorizontal="@dimen/_12sdp"
+                                android:textColor="@color/main_color"
                                 android:text="đ 200.000"/>
 
 
