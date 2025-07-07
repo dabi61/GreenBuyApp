@@ -36,4 +36,13 @@ interface CartService {
     suspend fun deleteCartItem(
         @Path("attribute_id") attributeId: Int
     ): Response<DeleteCartItemResponse>
+
+    @POST("api/order/")
+    suspend fun createOrder(@Body request: OrderRequest): OrderResponse
+
+    @POST("api/payment/process/{order_id}")
+    suspend fun processPayment(
+        @Path("order_id") orderId: Int,
+        @Body request: PaymentRequest
+    ): PaymentResponse
 } 

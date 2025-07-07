@@ -90,4 +90,41 @@ class CartRepository(
             Result.NetworkError
         }
     }
+
+    suspend fun placeOrderAndPay(
+    cartShop: CartShop,
+    shippingAddress: String,
+    phoneNumber: String,
+    recipientName: String,
+    deliveryNotes: String,
+    billingAddress: String
+): Result<PaymentResponse> = withContext(Dispatchers.IO) {
+    try {
+        // 1. Tạo order
+        val orderItems = cartShop.items.map {
+            OrderItemRequest(
+                product_id = it.productId,
+                attribute_id = it.attributeId,
+                quantity = it.quantity
+            )
+        }
+        val orderRequest = OrderRequest(
+            items = orderItems,
+            shipping_address = shippingAddress,
+            phone_number = phoneNumber,
+            recipient_name = recipientName,
+            delivery_notes = deliveryNotes,
+            billing_address = billingAddress
+        )
+        val orderResponse = cartService.createOrder(orderRequest)
+
+        // 2. Thanh toán
+        val paymentRequest = PaymentRequest() // giữ nguyên như bạn yêu cầu
+        val paymentResponse = cartService.processPayment(orderResponse.id, paymentRequest)
+
+        Result.Success(paymentResponse)
+    } catch (e: Exception) {
+        Result.Error(null, e.message)
+    }
+}
 } 

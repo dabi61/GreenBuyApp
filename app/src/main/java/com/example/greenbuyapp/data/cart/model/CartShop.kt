@@ -25,6 +25,22 @@ data class CartShop(
     fun getTotalAmount(): Double {
         return items.sumOf { it.getTotalPrice() }
     }
+
+    /**
+     * Tính tổng tiền của shop
+     */
+    fun getTotalPriceAndPee(): Double {
+        return items.sumOf { it.getTotalPrice() } + 45000
+    }
+
+    /**
+     * Format tổng tiền và ship của shop
+     */
+    fun getFormattedTotalAndPeeAmount(): String {
+        val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
+        return formatter.format(getTotalPriceAndPee())
+    }
+
     
     /**
      * Format tổng tiền của shop

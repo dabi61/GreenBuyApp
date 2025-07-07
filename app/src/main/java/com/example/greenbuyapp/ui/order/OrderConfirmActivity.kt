@@ -21,19 +21,21 @@ import com.example.greenbuyapp.util.Result
 import com.example.greenbuyapp.util.loadAvatar
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.text.NumberFormat
+import java.util.Locale
 
 
 class OrderConfirmActivity : BaseActivity<ActivityOrderConfirmBinding>() {
 
-    private lateinit var items: List<CartShop>
+    private var items: List<CartShop> = emptyList()
     override val viewModel: CartViewModel by viewModel()
-    val viewModelProfile: ProfileViewModel by viewModel()
+    private val viewModelProfile: ProfileViewModel by viewModel()
     override val binding: ActivityOrderConfirmBinding by lazy {
         ActivityOrderConfirmBinding.inflate(layoutInflater)
     }
 
     private lateinit var orderAdapter: OrderShopAdapter
-
+    private var fastShipping = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -41,12 +43,22 @@ class OrderConfirmActivity : BaseActivity<ActivityOrderConfirmBinding>() {
         super.onCreate(savedInstanceState)
 
         items = intent.getParcelableArrayListExtra<CartShop>(EXTRA_ITEMS) ?: emptyList()
+
+
         setupRecycler()
         updateUI(items)
         setupConfirmButton()
         initViews()
         observeViewModel()
+
     }
+
+    private fun setupToolbar() {
+        binding.toolbar.setNavigationOnClickListener {
+            finish()
+        }
+    }
+
 
     override fun observeViewModel() {
         super.observeViewModel()
@@ -96,10 +108,40 @@ class OrderConfirmActivity : BaseActivity<ActivityOrderConfirmBinding>() {
     override fun initViews() {
         viewModelProfile.loadAddress()
         viewModelProfile.loadUserProfile()
+
+        setupToolbar()
+        setupSummaryTotal()
+    }
+
+    private fun setupSummaryTotal() {
+        var totalAmount = 0.0
+        var shippingAmount = 0.0
+        for (item in items) {
+            totalAmount += item.getTotalAmount()
+            if (item.getTotalAmount() >= 500000) {
+                shippingAmount += 0
+            } else {
+                shippingAmount += 45000
+            }
+        }
+        binding.apply {
+            tvNumberShipPeeDiscount.text = getFormattedTotalAmount(0.0)
+            tvNumberTotalPrice.text = getFormattedTotalAmount(totalAmount)
+            tvNumberShipPee.text = getFormattedTotalAmount(shippingAmount)
+            tvNumberTotalPayment.text = getFormattedTotalAmount(totalAmount + shippingAmount)
+            tvNumberTotalPayment2.text = getFormattedTotalAmount(totalAmount + shippingAmount)
+        }
+
     }
 
     private fun setupRecycler() {
-        orderAdapter = OrderShopAdapter()
+        orderAdapter = OrderShopAdapter(
+            isFastShipping = true
+        ) { isFast ->
+            // Xử lý khi người dùng chọn shipping
+            fastShipping = isFast
+            // Có thể update UI hoặc lưu trạng thái
+        }
 
         binding.recyclerViewCart.apply {
             adapter = orderAdapter
@@ -150,11 +192,23 @@ class OrderConfirmActivity : BaseActivity<ActivityOrderConfirmBinding>() {
     }
 
     private fun setupConfirmButton() {
-//        binding.btnPlaceOrder.setOnClickListener {
-//            // TODO: validate inputs and call Order API
-//            Toast.makeText(this, "Đang gửi đơn hàng...", Toast.LENGTH_SHORT).show()
-//        }
+        binding.btnCheckout.setOnClickListener {
+            viewModel.placeOrderAndPayAll(
+                items,
+                shippingAddress = binding.tvAddress.text.toString(),
+                phoneNumber = binding.tvPhoneNumber.text.toString(),
+                recipientName = binding.tvName.text.toString(),
+                deliveryNotes = "", // hoặc lấy từ EditText nếu có
+                billingAddress = binding.tvAddress.text.toString()
+            )
+        }
     }
+
+    fun getFormattedTotalAmount(price: Double): String {
+        val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
+        return formatter.format(price)
+    }
+
 
     companion object {
         private const val EXTRA_ITEMS = "items"
