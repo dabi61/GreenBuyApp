@@ -98,6 +98,7 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
         observeFollowResult()
         observeUnfollowResult()
         observeFollowingShops()
+        observeFollowerCount()
         loadInitialData()
     }
 
@@ -237,6 +238,40 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
 
     private fun loadInitialData() {
         followViewModel.loadFollowingShops()
+        followViewModel.loadFollowerCount(shopId)
         viewModel.loadShopProducts(isRefresh = true, shopId = shopId)
     }
+
+    private fun observeFollowerCount() {
+        lifecycleScope.launch {
+            followViewModel.followerCount.collect { result ->
+                when (result) {
+                    is com.example.greenbuyapp.util.Result.Success -> {
+                        val count = result.value
+                        binding.tvFollower.text = "${formatFollowerCount(count)} người theo dõi"
+                        println("🧮 Follower count: $count")
+
+                    }
+                    is com.example.greenbuyapp.util.Result.Error -> {
+                        Toast.makeText(
+                            this@ShopDetailActivity,
+                            "Không thể tải số lượng người theo dõi",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    private fun formatFollowerCount(count: Int): String {
+        return when {
+            count >= 1_000_000 -> String.format("%.1fM", count / 1_000_000f)
+            count >= 1_000 -> String.format("%.1fk", count / 1_000f)
+            else -> count.toString()
+        }
+    }
+
+
 }

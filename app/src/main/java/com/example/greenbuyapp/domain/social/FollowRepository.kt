@@ -35,4 +35,10 @@ class FollowRepository(
         }
     }
 
+    // đếm số lợng follow cho 1 shop bất kì
+    suspend fun getFollowerCount(shopId: Int): Result<Int> {
+        return safeApiCall(dispatcher) {
+            socialService.CountFollowerShops(shopId).size
+        }
+    }
 }

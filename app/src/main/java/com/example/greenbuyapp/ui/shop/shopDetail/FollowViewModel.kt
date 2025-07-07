@@ -11,9 +11,13 @@ import com.example.greenbuyapp.util.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.example.greenbuyapp.domain.social.FollowStatsRepository
+import com.example.greenbuyapp.data.social.model.FollowStatsResponse
+
 
 class FollowViewModel(
-    private val followRepository: FollowRepository
+    private val followRepository: FollowRepository,
+    private val followStatsRepository: FollowStatsRepository
 ) : ViewModel() {
 
     private val _followResult = MutableStateFlow<Result<FollowShopResponse>?>(null)
@@ -24,6 +28,9 @@ class FollowViewModel(
 
     private val _followingShops = MutableStateFlow<Result<List<FollowingShop>>?>(null)
     val followingShops = _followingShops.asStateFlow()
+
+    private val _followerCount = MutableStateFlow<Result<Int>?>(null)
+    val followerCount = _followerCount.asStateFlow()
 
     fun follow(shopId: Int) {
         viewModelScope.launch {
@@ -50,4 +57,13 @@ class FollowViewModel(
             _followingShops.value = result
         }
     }
+
+    fun loadFollowerCount(shopId: Int) {
+        viewModelScope.launch {
+            _followerCount.value = Result.Loading
+            val result = followRepository.getFollowerCount(shopId)
+            _followerCount.value = result
+        }
+    }
+
 }

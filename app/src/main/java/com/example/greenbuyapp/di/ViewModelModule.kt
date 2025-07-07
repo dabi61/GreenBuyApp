@@ -42,7 +42,7 @@ val viewModelModule = module {
     viewModel { CartViewModel(get()) }
 
     viewModel { NotificationViewModel(get()) }
-    viewModel { FollowViewModel(get()) }
+    viewModel { FollowViewModel(get(), get()) }
 //    viewModel { SettingsViewModel(androidContext()) }
 //    viewModel { AutoWallpaperSettingsViewModel(get()) }
 //    viewModel { AutoWallpaperHistoryViewModel(get()) }
