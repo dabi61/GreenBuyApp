@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Shop Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/grey_100"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingVertical="12dp">
+
+            <TextView
+                android:id="@+id/tv_shop_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_16sdp"
+                android:textStyle="bold"
+                tools:text="Hoa bàng lăng" />
+
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/backgroundLight"/>
+        <!-- Products List -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_items"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            tools:listitem="@layout/item_order_product"
+            tools:itemCount="1"/>
+
+        <!-- Ship method -->
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/backgroundLight"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_16sdp">
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textSize="@dimen/_14sdp"
+                android:textStyle="bold"
+                android:text="Phương thức vận chuyển"/>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_shipping_fast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/_12sdp"
+                app:layout_constraintTop_toBottomOf="@id/tv_title"
+                app:cardBackgroundColor="@color/main_color_dark"
+                app:cardCornerRadius="@dimen/_8sdp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_8sdp"
+                    >
+                    <TextView
+                        android:id="@+id/tv_title_item_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_12sdp"
+                        android:textStyle="bold"
+                        android:text="Vận chuyển nhanh"
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_description_item_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/tv_title_item_1"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:textSize="@dimen/_9sdp"
+                        android:textColor="@color/white"
+                        android:text="Đảm bảo nhận hàng từ 1 - 3 ngày"/>
+
+                    <TextView
+                        android:id="@+id/tv_shipping_price_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toStartOf="@id/tv_shipping_free_1"
+                        app:layout_constraintTop_toTopOf="@id/tv_shipping_free_1"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_shipping_free_1"
+                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_9sdp"
+                        android:text="đ 45.000"/>
+
+                    <View
+                        android:id="@+id/item_1"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        app:layout_constraintStart_toStartOf="@id/tv_shipping_price_1"
+                        app:layout_constraintEnd_toEndOf="@id/tv_shipping_price_1"
+                        app:layout_constraintTop_toTopOf="@id/tv_shipping_price_1"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_shipping_price_1"
+                        android:background="@color/white"/>
+
+                    <TextView
+                        android:id="@+id/tv_shipping_free_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tv_title_item_1"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_title_item_1"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_9sdp"
+                        android:text="Miễn phí"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_shipping_slow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/_8sdp"
+                app:layout_constraintTop_toBottomOf="@id/cv_shipping_fast"
+                app:cardBackgroundColor="@color/backgroundLight"
+                app:cardElevation="0dp"
+                app:cardCornerRadius="@dimen/_8sdp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_8sdp"
+                    >
+                    <TextView
+                        android:id="@+id/tv_title_item_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_12sdp"
+                        android:textStyle="bold"
+                        android:text="Vận chuyển thường"
+                        />
+
+                    <TextView
+                        android:id="@+id/tv_description_item_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/tv_title_item_2"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:textSize="@dimen/_9sdp"
+                        android:textColor="@color/black"
+                        android:text="Đảm bảo nhận hàng từ 2 - 5 ngày"/>
+
+                    <TextView
+                        android:id="@+id/tv_shipping_price_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toStartOf="@id/tv_shipping_free_2"
+                        app:layout_constraintTop_toTopOf="@id/tv_shipping_free_2"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_shipping_free_2"
+                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_9sdp"
+                        android:text="đ 45.000"/>
+
+                    <View
+                        android:id="@+id/item_2"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        app:layout_constraintStart_toStartOf="@id/tv_shipping_price_2"
+                        app:layout_constraintEnd_toEndOf="@id/tv_shipping_price_2"
+                        app:layout_constraintTop_toTopOf="@id/tv_shipping_price_2"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_shipping_price_2"
+                        android:background="@color/black"/>
+
+                    <TextView
+                        android:id="@+id/tv_shipping_free_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tv_title_item_2"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_title_item_2"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_9sdp"
+                        android:text="Miễn phí"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/backgroundLight"/>
+        <!-- Shop Total -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/grey_50"
+            android:orientation="horizontal"
+            android:padding="16dp"
+            >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Tổng tiền shop:"
+                android:textColor="@color/grey_700"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tv_shop_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/main_color"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                tools:text="₫299.000" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView> 

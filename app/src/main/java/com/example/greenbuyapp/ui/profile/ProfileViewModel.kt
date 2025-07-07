@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.greenbuyapp.R
 import com.example.greenbuyapp.data.social.model.FollowStatsResponse
+import com.example.greenbuyapp.data.user.model.AddressResponse
 import com.example.greenbuyapp.data.user.model.UserMe
 import com.example.greenbuyapp.domain.user.UserRepository
 import com.example.greenbuyapp.domain.SharedPreferencesRepository
@@ -46,6 +47,11 @@ class ProfileViewModel(
     // follow
     private val _followStats = MutableStateFlow<Result<FollowStatsResponse>?>(null)
     val followStats: StateFlow<Result<FollowStatsResponse>?> = _followStats.asStateFlow()
+
+    // Address
+    private val _address = MutableStateFlow<List<AddressResponse>?>(null)
+    val address: StateFlow<List<AddressResponse>?> = _address.asStateFlow()
+
 
     init {
         // Observe token expired events
@@ -177,6 +183,42 @@ class ProfileViewModel(
             }
         }
     }
+
+    fun loadAddress() {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+
+                when (val result = userRepository.getListAddress()) {
+                    is Result.Success -> {
+                        _address.value = result.value
+                        println("✅ Address loaded successfully: ${result.value.firstOrNull()?.street}")
+                    }
+
+                    is Result.Error -> {
+                        val errorMsg = "Lỗi tải chi tiết đơn hàng: ${result.error}"
+                        println("❌ $errorMsg")
+                    }
+
+                    is Result.NetworkError -> {
+                        val errorMsg = "Lỗi mạng, vui lòng kiểm tra kết nối"
+                        println("🌐 $errorMsg")
+                    }
+
+                    is Result.Loading -> {
+                        // Loading được handle bởi isLoading state
+                    }
+                }
+            } catch (e: Exception) {
+                val errorMsg = "Lỗi không xác định: ${e.message}"
+                println("💥 $errorMsg")
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+
     /**
      * Clear token expired event after handling
      */

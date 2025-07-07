@@ -29,8 +29,8 @@ private const val CONTENT_TYPE = "Content-Type"
 private const val APPLICATION_JSON = "application/json"
 private const val ACCEPT_VERSION = "Accept-Version"
 
-private const val UNSPLASH_BASE_URL = "https://www.utt-school.site/"
-private const val UNSPLASH_API_BASE_URL = "https://www.utt-school.site/"
+private const val BASE_URL = "https://www.utt-school.site/"
+private const val API_BASE_URL = "https://www.utt-school.site/"
 
 val networkModule = module {
 
@@ -41,11 +41,11 @@ val networkModule = module {
     factory { createConverterFactory() }
     factory { createService<UserService>(get(), get()) }
     factory { createService<SearchService>(get(), get()) }
-    factory { createService<AuthorizationService>(get(), get(), UNSPLASH_BASE_URL) }
+    factory { createService<AuthorizationService>(get(), get(), BASE_URL) }
     factory { createService<RegisterService>(get(), get()) }
     factory { createService<ProductService>(get(), get()) }
     factory { createService<CategoryService>(get(), get()) }
-    factory { createService<SocialService>(get(), get(), UNSPLASH_BASE_URL) }
+    factory { createService<SocialService>(get(), get(), BASE_URL) }
     factory { createService<ShopService>(get(), get()) }
     factory { createService<CartService>(get(), get()) }
     factory { createService<NoticeService>(get(), get()) }
@@ -120,7 +120,7 @@ private fun createConverterFactory(): MoshiConverterFactory {
 private inline fun <reified T> createService(
     okHttpClient: OkHttpClient,
     converterFactory: MoshiConverterFactory,
-    baseUrl: String = UNSPLASH_API_BASE_URL
+    baseUrl: String = API_BASE_URL
 ): T {
     return Retrofit.Builder()
         .baseUrl(baseUrl)

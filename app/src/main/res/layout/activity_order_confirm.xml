@@ -146,7 +146,7 @@ Phường  Trung Văn, Quận Nam Từ Liêm, Hà Nội"
                         android:nestedScrollingEnabled="false"
                         android:paddingBottom="16dp"
                         android:clipToPadding="false"
-                        tools:listitem="@layout/item_order_shop"
+                        tools:listitem="@layout/item_order_shop_payment"
                         tools:itemCount="1"/>
 
                     <androidx.cardview.widget.CardView
@@ -210,6 +210,17 @@ Phường  Trung Văn, Quận Nam Từ Liêm, Hà Nội"
                                 android:text="Tổng tiền phí vận chuyển"/>
 
                             <TextView
+                                android:id="@+id/tv_ship_pee_discount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintTop_toBottomOf="@id/tv_ship_pee"
+                                app:layout_constraintStart_toStartOf="parent"
+                                android:paddingHorizontal="@dimen/_12sdp"
+                                android:paddingTop="@dimen/_8sdp"
+                                android:paddingBottom="@dimen/_4sdp"
+                                android:text="Giảm giá phí vận chuyển"/>
+
+                            <TextView
                                 android:id="@+id/tv_number_ship_pee"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -220,10 +231,21 @@ Phường  Trung Văn, Quận Nam Từ Liêm, Hà Nội"
                                 android:text="đ 200.000"/>
 
                             <TextView
+                                android:id="@+id/tv_number_ship_pee_discount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:layout_constraintTop_toTopOf="@id/tv_ship_pee_discount"
+                                app:layout_constraintBottom_toBottomOf="@id/tv_ship_pee_discount"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                android:paddingHorizontal="@dimen/_12sdp"
+                                android:textColor="@color/red_900"
+                                android:text="đ 200.000"/>
+
+                            <TextView
                                 android:id="@+id/tv_total_payment"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                app:layout_constraintTop_toBottomOf="@id/tv_ship_pee"
+                                app:layout_constraintTop_toBottomOf="@id/tv_ship_pee_discount"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 android:paddingHorizontal="@dimen/_12sdp"
@@ -257,7 +279,7 @@ Phường  Trung Văn, Quận Nam Từ Liêm, Hà Nội"
                         android:textSize="@dimen/_10sdp"
                         android:textColor="@color/grey_700"
                         android:layout_marginBottom="@dimen/_12sdp"
-                        android:text="Nhấn “đặt hàng” đồng nghĩa với việc bạn đồng ý tuân theo điều khoản GreenBuy"/>
+                        android:text="Nhấn đặt hàng đồng nghĩa với việc bạn đồng ý tuân theo điều khoản GreenBuy"/>
 
 
                 </LinearLayout>

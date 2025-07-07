@@ -282,4 +282,6 @@
 
 
     <color name="main_color">#2CCE75</color>
+    <color name="main_color_dark">#317E39</color>
+
 </resources>

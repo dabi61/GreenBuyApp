@@ -7,12 +7,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.greenbuyapp.data.cart.model.CartShop
-import com.example.greenbuyapp.databinding.ItemOrderShopBinding
+import com.example.greenbuyapp.databinding.ItemOrderShopPaymentBinding
 
 class OrderShopAdapter() : ListAdapter<CartShop, OrderShopAdapter.OrdershopViewHoler>(CartShopDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrdershopViewHoler {
-        val binding = ItemOrderShopBinding.inflate(
+        val binding = ItemOrderShopPaymentBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -25,7 +25,7 @@ class OrderShopAdapter() : ListAdapter<CartShop, OrderShopAdapter.OrdershopViewH
     }
 
     inner class OrdershopViewHoler(
-        private val binding: ItemOrderShopBinding
+        private val binding: ItemOrderShopPaymentBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var itemAdapter: OrderItemAdapter

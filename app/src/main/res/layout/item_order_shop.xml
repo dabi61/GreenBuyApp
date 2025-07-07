@@ -21,7 +21,7 @@
             android:background="@color/grey_100"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingVertical="16dp">
+            android:paddingVertical="12dp">
 
             <TextView
                 android:id="@+id/tv_shop_name"
@@ -38,6 +38,10 @@
 
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/backgroundLight"/>
         <!-- Products List -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_items"
@@ -47,6 +51,13 @@
             tools:listitem="@layout/item_order_product"
             tools:itemCount="1"/>
 
+        <!-- Ship method -->
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/backgroundLight"/>
         <!-- Shop Total -->
         <LinearLayout
             android:layout_width="match_parent"

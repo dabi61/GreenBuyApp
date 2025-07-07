@@ -13,7 +13,7 @@ import com.example.greenbuyapp.util.safeLoadImage
 
 class EditAttributeAdapter(
     private val onPickImage: (Int) -> Unit,
-    private val onDeleteAttribute: (Int) -> Unit,
+    private val onDeleteAttribute: (ProductAttribute, Int) -> Unit,
     private val onSaveAttribute: (ProductAttribute, Int) -> Unit
 ) : ListAdapter<ProductAttribute, EditAttributeAdapter.EditAttributeViewHolder>(EditAttributeDiffCallback()) {
 
@@ -107,8 +107,7 @@ class EditAttributeAdapter(
                 
                 ivAttributeImage.safeLoadImage(
                     imageUrl = imageUrl,
-                    placeholder = R.drawable.pic_item_product,
-                    error = R.drawable.pic_item_product,
+                    error = R.drawable.ic_add,
                     transform = ImageTransform.ROUNDED
                 )
                 
@@ -118,7 +117,10 @@ class EditAttributeAdapter(
                 }
                 
                 btnDelete.setOnClickListener {
-                    onDeleteAttribute(position)
+                    val deletedAttribute = attribute.copy(
+                        attribute_id = attribute.attribute_id
+                    )
+                    onDeleteAttribute(deletedAttribute, position)
                 }
 
                 // Save button click listener

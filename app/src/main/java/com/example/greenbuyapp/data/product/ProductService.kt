@@ -1,5 +1,6 @@
 package com.example.greenbuyapp.data.product
 
+import com.example.greenbuyapp.data.MessageResponse
 import com.example.greenbuyapp.data.product.model.Product
 import com.example.greenbuyapp.data.product.model.ProductAttributeList
 import com.example.greenbuyapp.data.product.model.ProductListResponse
@@ -13,6 +14,7 @@ import com.example.greenbuyapp.data.product.model.CreateAttributeResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import com.example.greenbuyapp.domain.product.ProductRepository
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Multipart
@@ -176,5 +178,10 @@ interface ProductService {
         @Part("quantity") quantity: RequestBody,
         @Part image: MultipartBody.Part?
     ): CreateAttributeResponse
+
+    @DELETE("api/attribute/{attribute_id}")
+    suspend fun deleteAttribute(
+        @Path("attribute_id") attributeId: Int
+    ): MessageResponse
 
 }

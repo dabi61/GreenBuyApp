@@ -3,6 +3,7 @@ package com.example.greenbuyapp.ui.shop.productManagement
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -83,7 +84,15 @@ class EditProductVariantFragment : Fragment() {
     private fun setupRecyclerView() {
         attributeAdapter = EditAttributeAdapter(
             onPickImage = { position -> openImagePicker(position) },
-            onDeleteAttribute = { position -> deleteAttribute(position) },
+            onDeleteAttribute = { attribute,position -> deleteAttribute(attribute, position)
+                                    if (attributeAdapter.itemCount - 1 == 0) {
+                                        Log.d("EditProductVariantFragment", "No attributes left, showing empty state")
+                                        binding.tvEmptyState.visibility = View.VISIBLE
+                                    } else {
+                                        Log.d("EditProductVariantFragment", "${attributeAdapter.itemCount} attributes left}")
+                                        binding.tvEmptyState.visibility = View.GONE
+                                    }
+                                },
             onSaveAttribute = { attribute, position -> saveAttribute(attribute, position) }
         )
         
@@ -106,10 +115,12 @@ class EditProductVariantFragment : Fragment() {
     private fun addNewAttribute() {
         // Add empty attribute to adapter
         attributeAdapter.addEmptyAttribute()
+        binding.tvEmptyState.visibility = View.GONE
     }
 
-    private fun deleteAttribute(position: Int) {
+    private fun deleteAttribute(attribute: ProductAttribute, position: Int) {
         attributeAdapter.removeAttribute(position)
+        viewModel.deleteProductAttribute(attribute.attribute_id)
     }
 
     private fun openImagePicker(position: Int) {

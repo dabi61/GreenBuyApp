@@ -410,7 +410,7 @@ fun ImageView.clearImage(@DrawableRes placeholder: Int = R.drawable.avatar_blank
  */
 fun ImageView.safeLoadImage(
     imageUrl: String?,
-    @DrawableRes placeholder: Int = R.drawable.pic_item_product,
+    @DrawableRes placeholder: Int = R.drawable.ic_add,
     @DrawableRes error: Int = R.drawable.pic_item_product,
     transform: ImageTransform = ImageTransform.NONE,
     cornerRadius: Int = 8

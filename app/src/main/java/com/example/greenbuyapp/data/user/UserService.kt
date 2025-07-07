@@ -1,5 +1,6 @@
 package com.example.greenbuyapp.data.user
 
+import com.example.greenbuyapp.data.user.model.AddressResponse
 import com.example.greenbuyapp.data.user.model.ChangeRoleRequest
 import com.example.greenbuyapp.data.user.model.CustomerOrderDetail
 import com.example.greenbuyapp.data.user.model.CustomerOrderResponse
@@ -28,4 +29,7 @@ interface UserService {
     suspend fun getCustomerOrderDetail(
         @Path("orderId") orderId: Int
     ): CustomerOrderDetail
+
+    @GET("api/addresses/")
+    suspend fun getAddresses(): List<AddressResponse>
 }

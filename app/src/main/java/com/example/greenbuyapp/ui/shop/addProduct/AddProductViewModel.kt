@@ -632,6 +632,31 @@ class AddProductViewModel(
         }
     }
 
+    fun deleteProductAttribute(
+        attributeId: Int
+    ) {
+        viewModelScope.launch {
+            when (val result = productRepository.deleteAttribute(attributeId)) {
+                is Result.Success -> {
+                    loadProductAttributes(_productId.value!!)
+                    println("✅ Product attribute deleted successfully")
+                    _errorMessage.value = "Thuộc tính đã được xóa"
+                }
+                is Result.Error -> {
+                    _errorMessage.value = "Lỗi xóa thuộc tính sản phẩm: ${result.error}"
+                    println("❌ Error deleting product attribute: ${result.error}")
+                    }
+                is Result.NetworkError -> {
+                    _errorMessage.value = "Lỗi kết nối mạng khi xóa thuộc tính sản phẩm"
+                    println("❌ Network error deleting product attribute")
+                }
+                is Result.Loading -> {
+                    // Loading state handled by UI
+                }
+            }
+        }
+    }
+
     /**
      * ✅ Create new attribute when edit fails
      */

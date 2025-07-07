@@ -13,6 +13,7 @@ import com.example.greenbuyapp.data.product.model.CreateAttributeResponse
 import com.example.greenbuyapp.util.MultipartUtils
 import android.content.Context
 import android.net.Uri
+import com.example.greenbuyapp.data.MessageResponse
 import com.example.greenbuyapp.util.Result
 import com.example.greenbuyapp.util.safeApiCall
 import kotlinx.coroutines.CoroutineDispatcher
@@ -393,6 +394,12 @@ class ProductRepository(
                 quantity = quantityPart,
                 image = oldImagePart
             )
+        }
+    }
+
+    suspend fun deleteAttribute(attributeId: Int): Result<MessageResponse> {
+        return safeApiCall(dispatcher) {
+            productService.deleteAttribute(attributeId)
         }
     }
 
