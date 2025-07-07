@@ -123,11 +123,18 @@ class ProductManagementAdapter(
 
     class ProductDiffCallback : DiffUtil.ItemCallback<Product>() {
         override fun areItemsTheSame(oldItem: Product, newItem: Product): Boolean {
-            return oldItem.product_id == newItem.product_id
+            val isSame = oldItem.product_id == newItem.product_id
+            println("🔍 DiffCallback.areItemsTheSame: ${oldItem.product_id} == ${newItem.product_id} = $isSame")
+            return isSame
         }
 
         override fun areContentsTheSame(oldItem: Product, newItem: Product): Boolean {
-            return oldItem == newItem
+            val isSame = oldItem == newItem
+            println("🔍 DiffCallback.areContentsTheSame for ${oldItem.product_id}:")
+            println("   Old: name='${oldItem.name}', price=${oldItem.price}, desc='${oldItem.description}'")
+            println("   New: name='${newItem.name}', price=${newItem.price}, desc='${newItem.description}'")
+            println("   Is same: $isSame")
+            return isSame
         }
     }
 }

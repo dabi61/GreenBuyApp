@@ -13,6 +13,7 @@ import com.example.greenbuyapp.domain.login.TokenExpiredManager
 import com.example.greenbuyapp.data.category.CategoryService
 import com.example.greenbuyapp.data.shop.ShopService
 import com.example.greenbuyapp.data.social.SocialService
+import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -22,6 +23,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 import com.example.greenbuyapp.data.notice.NoticeService
+import android.content.Context
 
 private const val CONTENT_TYPE = "Content-Type"
 private const val APPLICATION_JSON = "application/json"
@@ -32,7 +34,7 @@ private const val UNSPLASH_API_BASE_URL = "https://www.utt-school.site/"
 
 val networkModule = module {
 
-    single(createdAtStart = true) { createOkHttpClient(get()) }
+    single(createdAtStart = true) { createOkHttpClient(get(), androidContext()) }
     single(createdAtStart = true) { AccessTokenProvider(androidContext()) }
     single(createdAtStart = true) { TokenExpiredManager() }
     factory { createAccessTokenInterceptor(get(), get()) }
@@ -49,14 +51,19 @@ val networkModule = module {
     factory { createService<NoticeService>(get(), get()) }
 }
 
-private fun createOkHttpClient(accessTokenInterceptor: AccessTokenInterceptor): OkHttpClient {
+private fun createOkHttpClient(
+    accessTokenInterceptor: AccessTokenInterceptor,
+    context: Context
+): OkHttpClient {
     return OkHttpClient.Builder()
         .addNetworkInterceptor(createHeaderInterceptor())
         .addInterceptor(createHttpLoggingInterceptor())
         .addInterceptor(accessTokenInterceptor)
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(30, TimeUnit.SECONDS)
+        .addInterceptor(createCacheInterceptor())
+        .cache(Cache(context.cacheDir, 50 * 1024 * 1024))
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(15, TimeUnit.SECONDS)
+        .writeTimeout(10, TimeUnit.SECONDS)
         .build()
 }
 
@@ -83,6 +90,22 @@ private fun createHttpLoggingInterceptor(): Interceptor {
     }
 }
 
+private fun createCacheInterceptor(): Interceptor {
+    return Interceptor { chain ->
+        val request = chain.request()
+        val response = chain.proceed(request)
+        
+        // Cache GET requests for 5 minutes
+        if (request.method == "GET") {
+            response.newBuilder()
+                .header("Cache-Control", "public, max-age=300")
+                .build()
+        } else {
+            response
+        }
+    }
+}
+
 private fun createAccessTokenInterceptor(
     accessTokenProvider: AccessTokenProvider,
     tokenExpiredManager: TokenExpiredManager
@@ -106,26 +129,6 @@ private inline fun <reified T> createService(
         .build()
         .create(T::class.java)
 }
-//
-//private fun createDownloadService(
-//    accessTokenInterceptor: AccessTokenInterceptor,
-//    converterFactory: MoshiConverterFactory
-//): DownloadService {
-//    val okHttpClient = OkHttpClient.Builder()
-//        .addNetworkInterceptor(createHeaderInterceptor())
-//        .addInterceptor(createHttpLoggingInterceptor())
-//        .addInterceptor(accessTokenInterceptor)
-//        .connectTimeout(20, TimeUnit.SECONDS)
-//        .readTimeout(120, TimeUnit.SECONDS)
-//        .writeTimeout(120, TimeUnit.SECONDS)
-//        .build()
-//    return Retrofit.Builder()
-//        .baseUrl(UNSPLASH_API_BASE_URL)
-//        .client(okHttpClient)
-//        .addConverterFactory(converterFactory)
-//        .build()
-//        .create(DownloadService::class.java)
-//}
 
 object Properties {
 

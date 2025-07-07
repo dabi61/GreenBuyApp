@@ -51,7 +51,6 @@ class OrderConfirmActivity : BaseActivity<ActivityOrderConfirmBinding>() {
         // Show/hide views based on cart state
 //        binding.llEmptyCart.isVisible = isEmpty
         binding.llCartContent.isVisible = !isEmpty
-        binding.llBottomActions.isVisible = !isEmpty
 
         if (!isEmpty) {
             // Update cart items

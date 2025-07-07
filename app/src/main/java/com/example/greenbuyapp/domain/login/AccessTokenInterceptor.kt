@@ -6,6 +6,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import okhttp3.*
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -18,11 +20,14 @@ class AccessTokenInterceptor(
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
     @Volatile
     private var isRefreshing = false
+    
+    // ✅ Thêm mutex để đồng bộ hóa refresh token
+    private val refreshMutex = kotlinx.coroutines.sync.Mutex()
 
     // Tạo Retrofit client riêng cho refresh token (không có interceptor để tránh vòng lặp)
     private val authService: AuthorizationService by lazy {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://www.utt-school.site/api/")
+            .baseUrl("https://www.utt-school.site/")
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
         
@@ -66,10 +71,12 @@ class AccessTokenInterceptor(
         
         // Nếu nhận 401 và user đang logged in, thử refresh token
         if (response.code == 401 && accessTokenProvider.isAuthorized && !isRefreshing) {
-            response.close() // Đóng response cũ
             
             val refreshResult = tryRefreshToken()
             if (refreshResult) {
+                // ✅ Đóng response cũ trước khi thực hiện request mới
+                response.close()
+                
                 // Refresh thành công, thử lại request với token mới
                 val newToken = accessTokenProvider.accessToken
                 val newTokenType = accessTokenProvider.tokenType ?: "Bearer"
@@ -95,40 +102,43 @@ class AccessTokenInterceptor(
     private fun tryRefreshToken(): Boolean {
         if (isRefreshing) return false
         
-        return try {
-            isRefreshing = true
-            println("🔄 Attempting to refresh token using AuthorizationService...")
-            
-            val refreshToken = accessTokenProvider.refreshToken
-            if (refreshToken.isNullOrEmpty()) {
-                println("❌ No refresh token available")
-                accessTokenProvider.reset()
-                return false
+        return runBlocking(Dispatchers.IO) {
+            refreshMutex.withLock {
+                if (isRefreshing) return@withLock false
+                
+                try {
+                    isRefreshing = true
+                    println("🔄 Attempting to refresh token using AuthorizationService...")
+                    
+                    val refreshToken = accessTokenProvider.refreshToken
+                    if (refreshToken.isNullOrEmpty()) {
+                        println("❌ No refresh token available")
+                        accessTokenProvider.reset()
+                        return@withLock false
+                    }
+                    
+                    // ✅ Tạo request với format đúng: {"old_refresh_data": "token"}
+                    val refreshRequest = RefreshTokenRequest(
+                        old_refresh_data = refreshToken
+                    )
+                    
+                    // ✅ Thực hiện request
+                    val loginResponse = authService.refreshToken(refreshRequest)
+                    
+                    // Lưu token mới
+                    accessTokenProvider.saveLoginResponse(loginResponse)
+                    
+                    println("✅ Token refreshed successfully using AuthorizationService")
+                    true
+                    
+                } catch (e: Exception) {
+                    println("❌ Error refreshing token: ${e.message}")
+                    accessTokenProvider.reset()
+                    false
+                } finally {
+                    isRefreshing = false
+                }
             }
-            
-            // Sử dụng AuthorizationService để refresh token
-            val refreshRequest = RefreshTokenRequest(
-                refresh_token = refreshToken,
-                grant_type = "refresh_token"
-            )
-            
-            // ✅ Thực hiện request trên IO dispatcher để tránh block main thread
-            val loginResponse = runBlocking(Dispatchers.IO) {
-                authService.refreshToken(refreshRequest)
-            }
-            
-            // Lưu token mới
-            accessTokenProvider.saveLoginResponse(loginResponse)
-            
-            println("✅ Token refreshed successfully using AuthorizationService")
-            true
-            
-        } catch (e: Exception) {
-            println("❌ Error refreshing token: ${e.message}")
-            accessTokenProvider.reset()
-            false
-        } finally {
-            isRefreshing = false
         }
     }
 }

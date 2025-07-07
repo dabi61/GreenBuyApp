@@ -1,6 +1,7 @@
 package com.example.greenbuyapp.ui.shop.productManagement
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -103,26 +104,29 @@ class ProductFragment : BaseFragment<FragmentProductManagementBinding, ProductMa
 
     private fun setupSwipeRefresh() {
         binding.swipeRefresh.setOnRefreshListener {
-            // Refresh cả inventory stats và products cho tab hiện tại
-            viewModel.loadMyProducts()
-            // Restart observeProducts để reload data cho tab hiện tại
+            // ✅ Gọi method reload
             refreshProductsForCurrentStatus()
         }
     }
 
     /**
-     * Refresh products for current status
+     * ✅ Refresh products for current status - Fixed version
      */
     private fun refreshProductsForCurrentStatus() {
-        // Tạo StateFlow mới cho status hiện tại để trigger reload
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getProductsByStatus(productStatus)
-        }
+        println("🔄 Refreshing products for status: ${productStatus.displayName}")
+        
+        // ✅ Gọi method reload thay vì chỉ collect StateFlow
+        viewModel.reloadProductsByStatus(productStatus)
     }
 
     private fun observeProducts() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getProductsByStatus(productStatus).collect { products ->
+                println("📦 ProductFragment received ${products.size} products for ${productStatus.displayName}")
+                products.forEach { product ->
+                    println("   - ID: ${product.product_id}, Name: '${product.name}', Price: ${product.price}")
+                }
+                
                 productAdapter.submitList(products)
                 
                 // Show/hide empty state
@@ -179,5 +183,13 @@ class ProductFragment : BaseFragment<FragmentProductManagementBinding, ProductMa
                 binding.tvEmptySubtitle.text = "Sản phẩm chờ phê duyệt sẽ hiển thị ở đây"
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("ProductFragment", "onResume() called for status: ${productStatus.displayName}")
+        
+        // ✅ Reload data when fragment resumes
+        refreshProductsForCurrentStatus()
     }
 } 

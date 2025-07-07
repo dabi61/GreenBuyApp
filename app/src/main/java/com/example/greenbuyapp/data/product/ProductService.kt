@@ -16,6 +16,7 @@ import com.example.greenbuyapp.domain.product.ProductRepository
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Multipart
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -105,6 +106,34 @@ interface ProductService {
     ): CreateProductResponse
 
     /**
+     * Chỉnh sửa sản phẩm
+     */
+    @Multipart
+    @PUT("api/product/{product_id}")
+    suspend fun editProduct(
+        @Path("product_id") productId: Int,
+        @Part("name") name: RequestBody,
+        @Part("description") description: RequestBody,
+        @Part("price") price: RequestBody,
+        @Part("sub_category_id") subCategoryId: RequestBody,
+        @Part cover: MultipartBody.Part
+    ): CreateProductResponse
+
+    /**
+     * ✅ Chỉnh sửa sản phẩm chỉ text fields (không có ảnh mới)
+     */
+    @Multipart
+    @PUT("api/product/{product_id}")
+    suspend fun editProductText(
+        @Path("product_id") productId: Int,
+        @Part("name") name: RequestBody,
+        @Part("description") description: RequestBody,
+        @Part("price") price: RequestBody,
+        @Part("sub_category_id") subCategoryId: RequestBody,
+        @Part cover: MultipartBody.Part?
+    ): CreateProductResponse
+
+    /**
      * Tạo attribute cho sản phẩm
      */
     @Multipart
@@ -117,4 +146,35 @@ interface ProductService {
         @Part("quantity") quantity: RequestBody,
         @Part image: MultipartBody.Part
     ): CreateAttributeResponse
+
+    /**
+     * ✅ Chỉnh sửa attribute của sản phẩm
+     */
+    @Multipart
+    @PUT("api/attribute/{attribute_id}")
+    suspend fun editAttribute(
+        @Path("attribute_id") attributeId: Int,
+        @Part("product_id") productId: RequestBody,
+        @Part("color") color: RequestBody,
+        @Part("size") size: RequestBody,
+        @Part("price") price: RequestBody,
+        @Part("quantity") quantity: RequestBody,
+        @Part image: MultipartBody.Part
+    ): CreateAttributeResponse
+
+    /**
+     * ✅ Chỉnh sửa attribute chỉ text fields (không có ảnh mới)
+     */
+    @Multipart
+    @PUT("api/attribute/{attribute_id}")
+    suspend fun editAttributeText(
+        @Path("attribute_id") attributeId: Int,
+        @Part("product_id") productId: RequestBody,
+        @Part("color") color: RequestBody,
+        @Part("size") size: RequestBody,
+        @Part("price") price: RequestBody,
+        @Part("quantity") quantity: RequestBody,
+        @Part image: MultipartBody.Part?
+    ): CreateAttributeResponse
+
 }

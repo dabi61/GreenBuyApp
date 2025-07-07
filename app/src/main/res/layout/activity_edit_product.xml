@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -8,114 +8,205 @@
     android:background="@color/backgroundLight"
     tools:context=".ui.shop.productManagement.EditProductActivity">
 
-    <!-- Toolbar -->
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/white"
-        app:navigationIcon="@drawable/ic_back"
-        app:navigationIconTint="@color/black"
-        app:title="Chỉnh sửa sản phẩm"
-        app:titleTextColor="@color/black"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
 
-    <!-- Nội dung -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        <!-- AppBar -->
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginBottom="24dp"
+            android:background="@color/white"
+            app:title="Chỉnh sửa sản phẩm"
+            app:titleTextColor="@color/black"
+            app:navigationIcon="@drawable/ic_back"
+            app:navigationIconTint="@color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <LinearLayout
+        <!-- Cover Image Section -->
+        <TextView
+            android:id="@+id/tv_cover_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ảnh sản phẩm"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_margin="16dp"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            app:layout_constraintTop_toBottomOf="@id/tv_cover_label"
             android:padding="16dp">
 
-            <!-- Cover Image -->
-            <ImageView
-                android:id="@+id/iv_cover"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/pic_item_product"
-                tools:ignore="ContentDescription" />
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_cover_image"
+                android:layout_width="@dimen/_120sdp"
+                android:layout_height="@dimen/_120sdp"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_pick_image"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Chọn ảnh"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-            <!-- Name -->
+                    <ImageView
+                        android:id="@+id/iv_cover_preview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:id="@+id/ll_add_cover"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:background="@color/lightGrey">
+
+                        <ImageView
+                            android:layout_width="@dimen/_32sdp"
+                            android:layout_height="@dimen/_32sdp"
+                            android:src="@drawable/ic_add"
+                            android:layout_marginBottom="8dp"
+                            app:tint="@color/grey_600" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Thêm ảnh"
+                            android:textSize="12sp"
+                            android:textColor="@color/grey_600" />
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Product Name -->
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_name"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Tên sản phẩm">
+                android:layout_marginTop="24dp"
+                android:hint="Tên sản phẩm"
+                app:layout_constraintTop_toBottomOf="@id/cv_cover_image"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_name"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:inputType="text"
+                    android:maxLines="1" />
+
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Description -->
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_description"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:hint="Mô tả sản phẩm"
-                android:layout_marginTop="8dp">
+                app:layout_constraintTop_toBottomOf="@id/til_name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
                     android:minLines="3"
-                    android:gravity="top|start" />
+                    android:maxLines="5" />
+
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Price -->
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_price"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Giá (VND)"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="16dp"
+                android:hint="Giá sản phẩm (VND)"
+                app:layout_constraintTop_toBottomOf="@id/til_description"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_price"
-                    android:inputType="numberDecimal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:maxLines="1" />
+
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Edit Attributes Button -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_edit_attributes"
+            <!-- Sub Category Dropdown -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_sub_category"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Chỉnh sửa thuộc tính"
                 android:layout_marginTop="16dp"
-                style="@style/Widget.Material3.Button.OutlinedButton" />
+                android:hint="Chọn danh mục con"
+                app:endIconMode="dropdown_menu"
+                app:layout_constraintTop_toBottomOf="@id/til_price"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
-            <!-- Save Button -->
+                <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                    android:id="@+id/et_sub_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:cursorVisible="false"
+                    android:maxLines="1"
+                    android:textSize="16sp"
+                    android:textColor="@color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Next Button -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_save"
+                android:id="@+id/btn_next"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Lưu"
-                android:layout_marginTop="24dp"
+                android:layout_height="@dimen/_48sdp"
+                android:layout_marginTop="32dp"
+                android:text="Tiếp"
+                android:textSize="16sp"
+                android:textColor="@color/white"
                 android:backgroundTint="@color/main_color"
-                android:textColor="@color/white" />
-        </LinearLayout>
+                app:cornerRadius="12dp"
+                app:layout_constraintTop_toBottomOf="@id/til_sub_category"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-    </androidx.core.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

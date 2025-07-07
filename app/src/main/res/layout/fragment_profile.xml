@@ -112,7 +112,7 @@
                     android:layout_marginTop="@dimen/_10sdp"
                     android:textStyle="bold"
                     android:textSize="@dimen/_12sdp"
-                    android:text="1337"/>
+                    android:text="0"/>
 
                 <TextView
                     android:id="@+id/tv_title_follower"
@@ -133,7 +133,7 @@
                     android:layout_marginStart="@dimen/_12sdp"
                     android:textStyle="bold"
                     android:textSize="@dimen/_12sdp"
-                    android:text="200"/>
+                    android:text="0"/>
 
                 <TextView
                     android:id="@+id/tv_title_following"

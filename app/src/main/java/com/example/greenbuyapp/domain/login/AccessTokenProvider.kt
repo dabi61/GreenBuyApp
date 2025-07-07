@@ -76,7 +76,7 @@ class AccessTokenProvider(context: Context) {
         putString(REFRESH_TOKEN_KEY, loginResponse.refresh_token)
         putString(TOKEN_TYPE_KEY, loginResponse.token_type)
         
-        val expiresInSeconds = loginResponse.expires_in ?: 1800 // Default 1 hour nếu không có
+        val expiresInSeconds = loginResponse.expires_in ?: 36000 // Default 1 hour nếu không có
         val expiryTime = System.currentTimeMillis() + (expiresInSeconds * 1000L)
         putLong(TOKEN_EXPIRES_AT_KEY, expiryTime)
         

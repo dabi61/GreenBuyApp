@@ -19,7 +19,7 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_marginBottom="24dp"
             android:background="@color/white"
-            app:title="Thêm sản phẩm mới"
+            app:title="Chỉnh sửa sản phẩm"
             app:titleTextColor="@color/black"
             app:navigationIcon="@drawable/ic_back"
             app:navigationIconTint="@color/black"

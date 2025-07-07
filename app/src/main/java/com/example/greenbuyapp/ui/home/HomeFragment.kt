@@ -383,6 +383,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         if (::bannerAdapter.isInitialized && bannerAdapter.itemCount > 0) {
         startAutoScroll()
         }
+
+        viewModel.loadProducts(isRefresh = true)
     }
     
     override fun onPause() {

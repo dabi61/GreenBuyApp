@@ -257,24 +257,27 @@
                     android:src="@drawable/avatar_blank"/>
                 <TextView
                     android:id="@+id/tv_name_dashboard"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toEndOf="@id/iv_avatar_dashboard"
                     app:layout_constraintTop_toTopOf="@id/iv_avatar_dashboard"
+                    app:layout_constraintEnd_toStartOf="@id/bt_shop_dashboard"
                     android:layout_marginStart="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_4sdp"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_16sdp"
                     android:textStyle="bold"
+                    android:maxLines="1"
                     android:text="Name"/>
 
                 <TextView
                     android:id="@+id/tv_shop_id_dashboard"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toBottomOf="@id/tv_name_dashboard"
                     app:layout_constraintStart_toStartOf="@id/tv_name_dashboard"
                     android:textColor="@color/grey_600"
+                    app:layout_constraintEnd_toStartOf="@id/bt_shop_dashboard"
                     android:text="greenbuy.site/name"
                     />
 

@@ -193,6 +193,77 @@ class ProductRepository(
     }
 
     /**
+     * Tạo sản phẩm mới
+     * @param context Context để xử lý Uri
+     * @param name Tên sản phẩm
+     * @param description Mô tả sản phẩm
+     * @param price Giá sản phẩm
+     * @param subCategoryId ID danh mục con
+     * @param coverUri Uri của ảnh cover
+     * @return Result<CreateProductResponse> chứa thông tin sản phẩm đã tạo
+     */
+    suspend fun editProduct(
+        context: Context,
+        productId: Int,
+        name: String,
+        description: String,
+        price: Double,
+        subCategoryId: Int,
+        coverUri: Uri
+    ): Result<CreateProductResponse> {
+        return safeApiCall(dispatcher) {
+            val namePart = MultipartUtils.createTextPart(name)
+            val descriptionPart = MultipartUtils.createTextPart(description)
+            val pricePart = MultipartUtils.createTextPart(price.toString())
+            val subCategoryPart = MultipartUtils.createTextPart(subCategoryId.toString())
+            val coverPart = MultipartUtils.createImagePart(context, "cover", coverUri)
+                ?: throw IllegalArgumentException("Cannot create image part from Uri")
+
+            productService.editProduct(
+                productId = productId,
+                name = namePart,
+                description = descriptionPart,
+                price = pricePart,
+                subCategoryId = subCategoryPart,
+                cover = coverPart
+            )
+        }
+    }
+
+    /**
+     * ✅ Chỉnh sửa sản phẩm chỉ text fields (không có ảnh mới)
+     * @param productId ID sản phẩm
+     * @param name Tên sản phẩm
+     * @param description Mô tả sản phẩm
+     * @param price Giá sản phẩm
+     * @param subCategoryId ID danh mục con
+     * @return Result<CreateProductResponse> chứa thông tin sản phẩm đã cập nhật
+     */
+    suspend fun editProductText(
+        productId: Int,
+        name: String,
+        description: String,
+        price: Double,
+        subCategoryId: Int
+    ): Result<CreateProductResponse> {
+        return safeApiCall(dispatcher) {
+            val namePart = MultipartUtils.createTextPart(name)
+            val descriptionPart = MultipartUtils.createTextPart(description)
+            val pricePart = MultipartUtils.createTextPart(price.toString())
+            val subCategoryPart = MultipartUtils.createTextPart(subCategoryId.toString())
+            
+            productService.editProductText(
+                productId = productId,
+                name = namePart,
+                description = descriptionPart,
+                price = pricePart,
+                subCategoryId = subCategoryPart,
+                cover = null
+            )
+        }
+    }
+
+    /**
      * Tạo attribute cho sản phẩm
      * @param context Context để xử lý Uri
      * @param productId ID sản phẩm
@@ -231,4 +302,98 @@ class ProductRepository(
             )
         }
     }
+
+    /**
+     * ✅ Chỉnh sửa attribute của sản phẩm
+     * @param context Context để xử lý Uri
+     * @param attributeId AttributeID
+     * @param productId ID sản phẩm
+     * @param color Màu sắc
+     * @param size Kích thước
+     * @param price Giá
+     * @param quantity Số lượng
+     * @param imageUri Uri của ảnh (required)
+     * @return Result<CreateAttributeResponse> chứa thông tin attribute đã cập nhật
+     */
+    suspend fun editAttribute(
+        context: Context,
+        attributeId: Int,
+        productId: Int,
+        color: String,
+        size: String,
+        price: Double,
+        quantity: Int,
+        imageUri: Uri
+    ): Result<CreateAttributeResponse> {
+        return safeApiCall(dispatcher) {
+            val productIdPart = MultipartUtils.createTextPart(productId.toString())
+            val colorPart = MultipartUtils.createTextPart(color)
+            val sizePart = MultipartUtils.createTextPart(size)
+            val pricePart = MultipartUtils.createTextPart(price.toString())
+            val quantityPart = MultipartUtils.createTextPart(quantity.toString())
+            val imagePart = MultipartUtils.createImagePart(context, "image", imageUri)
+                ?: throw IllegalArgumentException("Cannot create image part from Uri")
+
+            productService.editAttribute(
+                attributeId = attributeId,
+                productId = productIdPart,
+                color = colorPart,
+                size = sizePart,
+                price = pricePart,
+                quantity = quantityPart,
+                image = imagePart
+            )
+        }
+    }
+
+    /**
+     * ✅ Chỉnh sửa attribute chỉ text fields (không có ảnh mới)
+     * @param context Context để xử lý Uri
+     * @param attributeId AttributeID
+     * @param productId ID sản phẩm
+     * @param color Màu sắc
+     * @param size Kích thước
+     * @param price Giá
+     * @param quantity Số lượng
+     * @param oldImageUrl URL của ảnh cũ
+     * @return Result<CreateAttributeResponse> chứa thông tin attribute đã cập nhật
+     */
+    suspend fun editAttributeText(
+        context: Context,
+        attributeId: Int,
+        productId: Int,
+        color: String,
+        size: String,
+        price: Double,
+        quantity: Int,
+        oldImageUrl: String
+    ): Result<CreateAttributeResponse> {
+        return safeApiCall(dispatcher) {
+            val productIdPart = MultipartUtils.createTextPart(productId.toString())
+            val colorPart = MultipartUtils.createTextPart(color)
+            val sizePart = MultipartUtils.createTextPart(size)
+            val pricePart = MultipartUtils.createTextPart(price.toString())
+            val quantityPart = MultipartUtils.createTextPart(quantity.toString())
+            
+            // Tạo file ảnh từ URL cũ
+            var oldImagePart = MultipartUtils.createImagePartFromUrl(context, "image", oldImageUrl)
+            
+            // Nếu không download được ảnh cũ, tạo file dummy
+            if (oldImagePart == null) {
+                println("⚠️ Failed to download old image, creating dummy image instead")
+                oldImagePart = MultipartUtils.createDummyImagePart(context, "image")
+            }
+
+            productService.editAttributeText(
+                attributeId = attributeId,
+                productId = productIdPart,
+                color = colorPart,
+                size = sizePart,
+                price = pricePart,
+                quantity = quantityPart,
+                image = oldImagePart
+            )
+        }
+    }
+
 } 
