@@ -2,6 +2,7 @@ package com.example.greenbuyapp.domain.user
 
 import com.example.greenbuyapp.data.search.SearchService
 import com.example.greenbuyapp.data.user.UserService
+import com.example.greenbuyapp.data.user.model.AddressResponse
 import com.example.greenbuyapp.data.user.model.CustomerOrderDetail
 import com.example.greenbuyapp.data.user.model.CustomerOrderResponse
 import com.example.greenbuyapp.data.user.model.User
@@ -51,4 +52,14 @@ class UserRepository(
             userService.getCustomerOrderDetail(orderId)
         }
     }
+
+    /**
+     * Lấy chi dia chi khach hang
+     */
+    suspend fun getUserAddresses(): Result<AddressResponse> {
+        return safeApiCall(dispatcher) {
+            userService.getAddress()
+        }
+    }
+
 }

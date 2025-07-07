@@ -14,6 +14,7 @@ import com.example.greenbuyapp.data.user.model.UserMe
 import com.example.greenbuyapp.ui.base.BaseFragment
 import com.example.greenbuyapp.ui.login.LoginActivity
 import com.example.greenbuyapp.ui.main.MainActivity
+import com.example.greenbuyapp.ui.profile.editProfile.EditProfileActivity
 import com.example.greenbuyapp.ui.profile.orders.CustomerOrderActivity
 import com.example.greenbuyapp.util.Result
 import com.example.greenbuyapp.util.loadAvatar
@@ -543,7 +544,9 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
     private fun setupLogoutAction() {
         // Có thể thêm logout button vào menu hoặc profile UI
         binding.ivSetting.setOnClickListener {
-            showLogoutDialog()
+//            showLogoutDialog()
+                val intent = Intent(requireContext(), EditProfileActivity::class.java)
+                startActivity(intent)
         }
     }
 
@@ -568,4 +571,5 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
             }
             .show()
     }
+
 }

@@ -5,6 +5,7 @@ import com.example.greenbuyapp.data.user.model.CustomerOrderDetail
 import com.example.greenbuyapp.data.user.model.CustomerOrderResponse
 import com.example.greenbuyapp.data.user.model.Me
 import com.example.greenbuyapp.data.user.model.User
+import com.example.greenbuyapp.data.user.model.AddressResponse
 import com.example.greenbuyapp.data.user.model.UserMeResponse
 import retrofit2.http.*
 
@@ -28,4 +29,8 @@ interface UserService {
     suspend fun getCustomerOrderDetail(
         @Path("orderId") orderId: Int
     ): CustomerOrderDetail
+
+    @GET("api/addresses/")
+    suspend fun getAddress(
+    ): AddressResponse
 }
