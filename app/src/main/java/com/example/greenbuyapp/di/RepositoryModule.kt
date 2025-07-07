@@ -11,6 +11,7 @@ import com.example.greenbuyapp.domain.social.FollowStatsRepository
 import com.example.greenbuyapp.domain.user.UserRepository
 import org.koin.dsl.module
 import com.example.greenbuyapp.domain.notice.NoticeRepository
+import com.example.greenbuyapp.domain.social.FollowRepository
 
 val repositoryModule = module {
 
@@ -25,6 +26,7 @@ val repositoryModule = module {
     single(createdAtStart = true) { ShopRepository(get(), get()) }
     single(createdAtStart = true) { CartRepository(get()) }
     single(createdAtStart = true) { NoticeRepository(get()) }
+    single(createdAtStart = true) { FollowRepository(get()) }
 //    single(createdAtStart = true) { BillingRepository(androidApplication()) }
 //
 //    single { AutoWallpaperRepository(get(), get()) }

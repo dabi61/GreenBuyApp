@@ -3,6 +3,7 @@ package com.example.greenbuyapp.ui.shop.shopDetail
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -22,11 +23,13 @@ import com.example.greenbuyapp.ui.shop.ShopViewModel
 import com.example.greenbuyapp.util.loadAvatar
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import androidx.core.content.ContextCompat
 
 
 class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
     override val viewModel: ProductViewModel by viewModel()
     private val productViewModel : HomeViewModel by viewModel()
+    private val followViewModel: FollowViewModel by viewModel()
 
 
     override val binding: ActivityShopDetailBinding by lazy {
@@ -35,8 +38,7 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
 
     private var shopId: Int = -1
     private lateinit var productAdapter: ProductAdapter
-
-
+    private var isFollowed = false
 
     companion object {
         private const val EXTRA_SHOP_ID = "extra_shop_id"
@@ -66,6 +68,7 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
         loadShop()
         setupRecyclerView()
         backEvent()
+        handleFollowEvent()
 
         viewModel.loadShopProducts(isRefresh = true, shopId = shopId)
     }
@@ -92,6 +95,10 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
     override fun observeViewModel() {
         observeShop()
         observeProduct()
+        observeFollowResult()
+        observeUnfollowResult()
+        observeFollowingShops()
+        loadInitialData()
     }
 
     private fun observeShop() {
@@ -145,4 +152,91 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
         }
     }
 
+    private fun observeFollowResult() {
+        lifecycleScope.launch {
+            followViewModel.followResult.collect { result ->
+                when (result) {
+                    is com.example.greenbuyapp.util.Result.Success -> {
+                        isFollowed = true
+                        binding.btFollow.apply {
+                            text = "Đã theo dõi"
+                            setTextColor(ContextCompat.getColor(context, R.color.green_600))
+                        }
+                        Toast.makeText(this@ShopDetailActivity, "Đã theo dõi shop", Toast.LENGTH_SHORT).show()
+                    }
+                    is com.example.greenbuyapp.util.Result.Error -> {
+                        Toast.makeText(this@ShopDetailActivity, "Theo dõi thất bại", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    private fun observeUnfollowResult() {
+        lifecycleScope.launch {
+            followViewModel.unfollowResult.collect { result ->
+                when (result) {
+                    is com.example.greenbuyapp.util.Result.Success -> {
+                        isFollowed = false
+                        binding.btFollow.apply {
+                            text = "Theo dõi"
+                            setTextColor(ContextCompat.getColor(context, R.color.red_600))
+                        }
+                        Toast.makeText(this@ShopDetailActivity, "Đã bỏ theo dõi shop", Toast.LENGTH_SHORT).show()
+                    }
+                    is com.example.greenbuyapp.util.Result.Error -> {
+                        Toast.makeText(this@ShopDetailActivity, "Bỏ theo dõi thất bại", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    private fun handleFollowEvent() {
+        binding.btFollow.setOnClickListener {
+            if (isFollowed) {
+                followViewModel.unfollow(shopId)
+            } else {
+                followViewModel.follow(shopId)
+            }
+        }
+    }
+
+    private fun observeFollowingShops() {
+        lifecycleScope.launch {
+            followViewModel.followingShops.collect { result ->
+                when (result) {
+                    is com.example.greenbuyapp.util.Result.Success -> {
+                        val followingList = result.value
+                        isFollowed = followingList.any { shop -> shop.shop_id == shopId }
+                        binding.btFollow.apply {
+                            text = if (isFollowed) "Đã theo dõi" else "Theo dõi"
+                            setTextColor(
+                                ContextCompat.getColor(
+                                    context,
+                                    if (isFollowed) R.color.green_600 else R.color.red_600
+                                )
+                            )
+                        }
+                    }
+                    is com.example.greenbuyapp.util.Result.Error -> {
+                        Toast.makeText(
+                            this@ShopDetailActivity,
+                            "Không thể kiểm tra trạng thái theo dõi",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    else -> {}
+                }
+            }
+        }
+    }
+
+
+    private fun loadInitialData() {
+        followViewModel.loadFollowingShops()
+        viewModel.loadShopProducts(isRefresh = true, shopId = shopId)
+    }
 }
