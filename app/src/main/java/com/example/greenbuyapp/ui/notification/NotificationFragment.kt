@@ -13,6 +13,7 @@ import com.example.greenbuyapp.R
 import com.example.greenbuyapp.databinding.FragmentNotificationBinding
 import com.example.greenbuyapp.ui.main.MainActivity
 import com.example.greenbuyapp.ui.order.OrderItemSummaryAdapter
+import com.example.greenbuyapp.ui.profile.orders.CustomerOrderDetailActivity
 import com.example.greenbuyapp.ui.profile.orders.CustomerOrderFragment
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -44,8 +45,12 @@ class NotificationFragment : Fragment() {
 
         adapter = DeliveredNoticeAdapter()
 
-        adapter.onItemClick = {
-            (activity as? MainActivity)?.openDeliveredOrdersFromNotification()
+        adapter.onItemClick = { it ->
+            val orderId = it.id
+            val intent = CustomerOrderDetailActivity.createIntent(requireContext(), orderId)
+            startActivity(intent)
+
+            println("🔍 Navigate to customer order detail for orderId: $orderId")
         }
 
         binding.recyclerViewPendingNotices.layoutManager = LinearLayoutManager(requireContext())

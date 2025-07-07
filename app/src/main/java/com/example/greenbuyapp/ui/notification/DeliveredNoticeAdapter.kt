@@ -11,11 +11,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.greenbuyapp.R
 import com.example.greenbuyapp.data.notice.model.Notice
+import com.example.greenbuyapp.ui.profile.UtilProfile
 
 class DeliveredNoticeAdapter : RecyclerView.Adapter<DeliveredNoticeAdapter.NoticeViewHolder>() {
 
     private var notices = listOf<Notice>()
-    var onItemClick: ((Notice) -> Unit)? = null
+
+    var onItemClick: (Notice) -> Unit = {}
 
     fun submitList(newList: List<Notice>) {
         notices = newList
