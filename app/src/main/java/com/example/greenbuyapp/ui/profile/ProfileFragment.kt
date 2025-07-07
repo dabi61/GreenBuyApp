@@ -568,4 +568,22 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
             }
             .show()
     }
+
+    override fun onResume() {
+        super.onResume()
+
+        val mainActivity = requireActivity() as? MainActivity
+        if (mainActivity?.pendingOpenOrders == true) {
+            mainActivity.pendingOpenOrders = false
+            navigateToCustomerOrders(4)
+        }
+    }
+
+    fun openDeliveredOrdersIfPending() {
+        val mainActivity = requireActivity() as? MainActivity
+        if (mainActivity?.pendingOpenOrders == true) {
+            mainActivity.pendingOpenOrders = false
+            navigateToCustomerOrders(4) // Tab "Đã giao"
+        }
+    }
 }
