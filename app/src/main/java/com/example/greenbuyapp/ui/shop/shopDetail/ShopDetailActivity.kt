@@ -162,10 +162,11 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
                     is com.example.greenbuyapp.util.Result.Success -> {
                         isFollowed = true
                         binding.btFollow.apply {
-                            text = "Đã theo dõi"
+                            text = "Đang theo dõi"
                             setTextColor(ContextCompat.getColor(context, R.color.green_600))
                         }
-                        Toast.makeText(this@ShopDetailActivity, "Đã theo dõi shop", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@ShopDetailActivity, "Đang theo dõi shop", Toast.LENGTH_SHORT).show()
+                        followViewModel.loadFollowerCount(shopId)
                     }
                     is com.example.greenbuyapp.util.Result.Error -> {
                         Toast.makeText(this@ShopDetailActivity, "Theo dõi thất bại", Toast.LENGTH_SHORT).show()
@@ -184,9 +185,10 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
                         isFollowed = false
                         binding.btFollow.apply {
                             text = "Theo dõi"
-                            setTextColor(ContextCompat.getColor(context, R.color.red_600))
+                            setTextColor(ContextCompat.getColor(context, R.color.color_on_background))
                         }
                         Toast.makeText(this@ShopDetailActivity, "Đã bỏ theo dõi shop", Toast.LENGTH_SHORT).show()
+                        followViewModel.loadFollowerCount(shopId)
                     }
                     is com.example.greenbuyapp.util.Result.Error -> {
                         Toast.makeText(this@ShopDetailActivity, "Bỏ theo dõi thất bại", Toast.LENGTH_SHORT).show()
@@ -215,11 +217,11 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
                         val followingList = result.value
                         isFollowed = followingList.any { shop -> shop.shop_id == shopId }
                         binding.btFollow.apply {
-                            text = if (isFollowed) "Đã theo dõi" else "Theo dõi"
+                            text = if (isFollowed) "Đang theo dõi" else "Theo dõi"
                             setTextColor(
                                 ContextCompat.getColor(
                                     context,
-                                    if (isFollowed) R.color.green_600 else R.color.red_600
+                                    if (isFollowed) R.color.green_600 else R.color.color_on_background
                                 )
                             )
                         }

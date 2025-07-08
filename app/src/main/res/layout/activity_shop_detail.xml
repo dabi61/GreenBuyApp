@@ -85,7 +85,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:cornerRadius="@dimen/_8sdp"
                 app:backgroundTint="@color/white"
-                android:textColor="@color/red_600"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_10sdp"
                 android:textAllCaps="false"
                 android:text="Theo dõi"/>
 
