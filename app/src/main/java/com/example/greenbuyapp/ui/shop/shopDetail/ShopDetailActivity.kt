@@ -160,6 +160,7 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
                     is com.example.greenbuyapp.util.Result.Success -> {
                         isFollowed = true
                         binding.btFollow.apply {
+
                             text = "Đã theo dõi"
                             setTextColor(ContextCompat.getColor(context, R.color.green_600))
                         }
@@ -202,6 +203,7 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
             } else {
                 followViewModel.follow(shopId)
             }
+            followViewModel.loadFollowerCount(shopId)
         }
     }
 

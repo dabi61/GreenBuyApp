@@ -37,6 +37,7 @@ class FollowViewModel(
             _followResult.value = Result.Loading
             val result = followRepository.followShop(FollowShopRequest(shopId))
             _followResult.value = result
+//            loadFollowerCount(shopId)
         }
     }
 
