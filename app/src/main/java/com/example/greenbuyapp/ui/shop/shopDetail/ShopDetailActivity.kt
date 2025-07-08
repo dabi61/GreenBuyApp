@@ -24,6 +24,8 @@ import com.example.greenbuyapp.util.loadAvatar
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.core.content.ContextCompat
+import com.example.greenbuyapp.util.Result
+import kotlinx.coroutines.delay
 
 
 class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
@@ -160,7 +162,6 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
                     is com.example.greenbuyapp.util.Result.Success -> {
                         isFollowed = true
                         binding.btFollow.apply {
-
                             text = "Đã theo dõi"
                             setTextColor(ContextCompat.getColor(context, R.color.green_600))
                         }
@@ -203,7 +204,6 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
             } else {
                 followViewModel.follow(shopId)
             }
-            followViewModel.loadFollowerCount(shopId)
         }
     }
 
