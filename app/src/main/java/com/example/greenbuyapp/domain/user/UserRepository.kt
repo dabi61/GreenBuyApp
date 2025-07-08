@@ -13,6 +13,11 @@ import com.example.greenbuyapp.util.safeApiCall
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import com.example.greenbuyapp.data.user.model.AddressAddRequest
+import com.example.greenbuyapp.data.user.model.AddressDetailResponse
+import com.example.greenbuyapp.data.user.model.AddressUpdateRequest
+
+
 
 class UserRepository(
     private val userService: UserService,
@@ -23,6 +28,56 @@ class UserRepository(
 
     suspend fun getUserMe() =
         safeApiCall(dispatcher) { userService.getUserMe() }
+
+//    suspend fun getMe() =
+//        safeApiCall(dispatcher) { userService.getMe() }
+
+    suspend fun createAddress(
+        street: String,
+        city: String,
+        state: String,
+        zipcode: String,
+        country: String,
+        phone: String
+    ): Result<AddressResponse> {
+        return try {
+            val request = AddressAddRequest(
+                street = street,
+                city = city,
+                state = state,
+                zipcode = zipcode,
+                country = country,
+                phone = phone
+            )
+            val response = userService.addAddress(request)
+            Result.Success(response)
+        } catch (e: Exception) {
+            Result.Error(null,e.message ?: "Unknown")
+        }
+    }
+
+    suspend fun getAddressById(id: Int): Result<AddressDetailResponse> {
+        return safeApiCall(dispatcher) {
+
+            userService.getAddressDetail(id)
+        }
+    }
+
+    suspend fun updateAddress(
+        id: Int,
+        request: AddressUpdateRequest
+    ): Result<AddressDetailResponse> {
+        return try {
+            val response = userService.updateAddress(id, request)
+            Result.Success(response)
+        } catch (e: Exception) {
+            Result.Error(null, e.message ?: "Unknown")
+        }
+    }
+
+
+
+
 
     fun searchUsers(
         query: String,
