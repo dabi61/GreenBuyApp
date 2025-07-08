@@ -27,7 +27,7 @@ class AddressAdapter :
 
     override fun onBindViewHolder(holder: AddressViewHolder, position: Int) {
         holder.bind(getItem(position), userFullName)
-        holder.itemView.setOnLongClickListener {
+        holder.itemView.setOnClickListener {
             val addressId = getItem(holder.adapterPosition).id
             onItemLongClick?.invoke(addressId)
             true
@@ -42,7 +42,7 @@ class AddressAdapter :
             binding.tvWard.text = "${address.city}, ${address.state}, ${address.zipcode}"
             binding.tvPhone.text = address.phone
 
-            if(address.is_default == true) {
+            if(address.is_default) {
                 binding.tvDefault.text = "Mặc định"
                 binding.tvDefault.visibility = View.VISIBLE
             }else{
