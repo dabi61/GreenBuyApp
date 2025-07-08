@@ -14,13 +14,13 @@ data class FollowStatsResponse(
 
 @JsonClass(generateAdapter = true)
 data class FollowerShop(
-    val follower_id: Int,
+    val follow_id: Int,
     val user_id: Int,
     val username: String,
-    val first_name: String,
-    val last_name: String,
-    val avatar: String,
-    val follower_at: Date,
+    val first_name: String?,
+    val last_name: String?,
+    val avatar: String?,
+    val followed_at: String,
     val shop_id: Int,
     val shop_name: String,
 )
