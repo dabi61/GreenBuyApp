@@ -1,8 +1,10 @@
 package com.example.greenbuyapp.ui.cart
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.greenbuyapp.data.cart.model.CartShop
+import com.example.greenbuyapp.data.cart.model.PaymentResponse
 import com.example.greenbuyapp.domain.cart.CartRepository
 import com.example.greenbuyapp.util.Result
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +40,15 @@ class CartViewModel(
 
     init {
         loadCart()
+    }
+
+    /**
+    * Payment
+    */
+    fun payment(cartShops: CartShop) {
+        viewModelScope.launch {
+
+        }
     }
 
     /**
@@ -309,6 +320,7 @@ class CartViewModel(
         return _cartShops.value.flatMap { it.items }.filter { ids.contains(it.attributeId) }
     }
 
+
     fun getSelectedCartShops(): List<CartShop> {
         val selectedIds = _selectedAttributeIds.value
         if (selectedIds.isEmpty()) return emptyList()
@@ -320,6 +332,40 @@ class CartViewModel(
             } else {
                 null
             }
+        }
+    }
+
+    fun placeOrderAndPayAll(
+        cartShops: List<CartShop>,
+        shippingAddress: String,
+        phoneNumber: String,
+        recipientName: String,
+        deliveryNotes: String,
+        billingAddress: String
+    ) {
+        viewModelScope.launch {
+            val paymentResults = mutableListOf<PaymentResponse>()
+            for (shop in cartShops) {
+                when (val result = cartRepository.placeOrderAndPay(
+                    shop, shippingAddress, phoneNumber, recipientName, deliveryNotes, billingAddress
+                )) {
+                    is Result.Success -> {
+                        paymentResults.add(result.value)
+                        Log.d("Payment", result.value.toString())
+                    }
+                    is Result.Error -> {
+                        Log.d("Payment", result.error.toString())
+                        // Xử lý lỗi từng shop nếu cần
+                    }
+                    is Result.NetworkError -> {
+                        Log.d("Payment", "Network error")
+                        // Xử lý lỗi mạng nếu cần
+                    }
+                    is Result.Loading -> {}
+                }
+            }
+            // paymentResults chứa kết quả thanh toán của tất cả shop
+            // Có thể update UI hoặc thông báo thành công ở đây
         }
     }
 } 
