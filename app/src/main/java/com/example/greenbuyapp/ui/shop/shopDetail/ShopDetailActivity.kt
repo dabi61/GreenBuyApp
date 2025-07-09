@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -24,13 +25,13 @@ import com.example.greenbuyapp.util.loadAvatar
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.core.content.ContextCompat
+import com.example.greenbuyapp.ui.social.shopReview.ShopReviewActivity
 import com.example.greenbuyapp.util.Result
 import kotlinx.coroutines.delay
 
 
 class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
     override val viewModel: ProductViewModel by viewModel()
-    private val productViewModel : HomeViewModel by viewModel()
     private val followViewModel: FollowViewModel by viewModel()
 
 
@@ -55,12 +56,12 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // ✅ Get data TRƯỚC
         shopId = intent.getIntExtra(EXTRA_SHOP_ID, -1)
-        
+
         if (shopId == -1) {
             finish()
             return
         }
-        
+
         // ✅ setContentView TRƯỚC super.onCreate()
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
@@ -71,6 +72,7 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
         setupRecyclerView()
         backEvent()
         handleFollowEvent()
+        handleReviewButtonClick()
 
         viewModel.loadShopProducts(isRefresh = true, shopId = shopId)
     }
@@ -102,6 +104,7 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
         observeFollowingShops()
         observeFollowerCount()
         loadInitialData()
+        observeRatingSummary()
     }
 
     private fun observeShop() {
@@ -209,6 +212,11 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        followViewModel.loadShopRatingStats(shopId)
+    }
+
     private fun observeFollowingShops() {
         lifecycleScope.launch {
             followViewModel.followingShops.collect { result ->
@@ -243,6 +251,7 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
     private fun loadInitialData() {
         followViewModel.loadFollowingShops()
         followViewModel.loadFollowerCount(shopId)
+        followViewModel.loadShopRatingStats(shopId)
         viewModel.loadShopProducts(isRefresh = true, shopId = shopId)
     }
 
@@ -276,6 +285,55 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
             else -> count.toString()
         }
     }
+
+    // Nhấn vào đánh giá
+    private fun handleReviewButtonClick() {
+        binding.btReview.setOnClickListener {
+//            val intent = ShopReviewActivity.createIntent(this, shopId)
+//            startActivity(intent)
+            val intent = ShopReviewActivity.createIntent(this, shopId)
+            reviewLauncher.launch(intent)
+        }
+    }
+
+    private fun observeRatingSummary() {
+        lifecycleScope.launch {
+            followViewModel.ratingStats.collect { result ->
+                when (result) {
+                    is Result.Success -> {
+                        val avg = result.value.average_rating
+                        binding.tvStar.text = String.format("%.1f", avg)
+                        println("🌟 Cập nhật số sao: $avg")
+                    }
+                    is Result.Error -> {
+                        Toast.makeText(this@ShopDetailActivity, "Không thể tải đánh giá", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    private val reviewLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            followViewModel.loadShopRatingStats(shopId)
+
+            // ✅ Thêm dòng này để đảm bảo cập nhật lại UI nếu StateFlow không emit giá trị mới
+            lifecycleScope.launch {
+                delay(300) // đợi API trả về
+                followViewModel.ratingStats.value.let { ratingResult ->
+                    if (ratingResult is Result.Success) {
+                        val avg = ratingResult.value.average_rating
+                        binding.tvStar.text = String.format("%.1f", avg)
+                    }
+                }
+            }
+        }
+    }
+
+
 
 
 }

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="@android:color/white"
+    android:elevation="1dp"
+    android:layout_marginBottom="8dp">
+
+    <!-- Hàng trên: avatar + tên + 5 sao -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="4dp">
+
+        <!-- Avatar -->
+        <ImageView
+            android:id="@+id/imgReviewerAvatar"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:src="@drawable/background_item_pokemon"
+            android:scaleType="centerCrop"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/background_item_pokemon"
+            android:clipToOutline="true" />
+
+        <!-- Tên + rating icon -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:baselineAligned="false">
+
+            <!-- Tên người đánh giá -->
+            <TextView
+                android:id="@+id/tvReviewerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Aquangbgls"
+                android:textSize="@dimen/_11sdp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
+                android:layout_marginEnd="8dp" />
+
+            <!-- Hàng 5 sao -->
+            <LinearLayout
+                android:id="@+id/starContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <ImageView
+                    android:id="@+id/iv_star_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_star"
+                    android:layout_marginEnd="2dp" />
+
+                <ImageView
+                    android:id="@+id/iv_star_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_star"
+                    android:layout_marginEnd="2dp" />
+
+                <ImageView
+                    android:id="@+id/iv_star_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_star"
+                    android:layout_marginEnd="2dp" />
+
+                <ImageView
+                    android:id="@+id/iv_star_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_star"
+                    android:layout_marginEnd="2dp" />
+
+                <ImageView
+                    android:id="@+id/iv_star_5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_star" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Nội dung đánh giá -->
+    <TextView
+        android:id="@+id/tvReviewContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tạm ổn"
+        android:textSize="@dimen/_11sdp"
+        android:textColor="@android:color/black" />
+</LinearLayout>

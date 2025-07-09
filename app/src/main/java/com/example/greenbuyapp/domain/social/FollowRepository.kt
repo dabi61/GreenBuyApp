@@ -4,6 +4,9 @@ import com.example.greenbuyapp.data.social.SocialService
 import com.example.greenbuyapp.data.social.model.FollowShopRequest
 import com.example.greenbuyapp.data.social.model.FollowShopResponse
 import com.example.greenbuyapp.data.social.model.FollowingShop
+import com.example.greenbuyapp.data.social.model.GetRatingShopResponse
+import com.example.greenbuyapp.data.social.model.RatingShopRequest
+import com.example.greenbuyapp.data.social.model.RatingSummaryResponse
 import com.example.greenbuyapp.data.social.model.UnfollowShopResponse
 import com.example.greenbuyapp.util.Result
 import com.example.greenbuyapp.util.safeApiCall
@@ -41,4 +44,31 @@ class FollowRepository(
             socialService.CountFollowerShops(shopId).size
         }
     }
+
+    // lấy đánh giá của shop
+    suspend fun getShopRatings(
+        shopId: Int,
+        page: Int? = null,
+        limit: Int? = null
+    ): Result<List<GetRatingShopResponse>> {
+        return safeApiCall(dispatcher) {
+            socialService.getRatingShops(shopId, page, limit)
+        }
+    }
+
+    // đánh giá shop
+    suspend fun ratingShop(request: RatingShopRequest): Result<GetRatingShopResponse> {
+        return safeApiCall(dispatcher) {
+            val response = socialService.ratingShops(request)
+            response.body() ?: throw Exception("Empty response from ratingShop")
+        }
+    }
+
+    // Lấy thống kê trung bình sao của shop
+    suspend fun getShopRatingStats(shopId: Int): Result<RatingSummaryResponse> {
+        return safeApiCall(dispatcher) {
+            socialService.getStarRatingShops(shopId)
+        }
+    }
+
 }
