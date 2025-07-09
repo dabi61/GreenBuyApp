@@ -2,16 +2,11 @@ package com.example.greenbuyapp.ui.profile.editProfile
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModel
-import com.example.greenbuyapp.R
 import com.example.greenbuyapp.databinding.ActivityEditProfileBinding
 import com.example.greenbuyapp.ui.base.BaseActivity
-import com.example.greenbuyapp.ui.profile.orders.CustomerInformationActivity
+import com.example.greenbuyapp.ui.profile.editProfile.address.AddressActivity
+import com.example.greenbuyapp.ui.profile.editProfile.infomation.CustomerInformationActivity
 
 class EditProfileActivity :  BaseActivity<ActivityEditProfileBinding>() {
     override val binding: ActivityEditProfileBinding by lazy {

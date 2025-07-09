@@ -37,7 +37,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         // Phải gọi setContentView trước khi gọi super.onCreate
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
-        
+        val intentFragmentIndex = intent.getIntExtra("fragment_index", -1) // -1 nghĩa là không có intent data
         val isAuthenticated = (viewModel as LoginViewModel).checkAuthStatus()
         Log.d("MainActivity", "onCreate - Auth status: $isAuthenticated")
 
@@ -48,10 +48,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             return
         }
 
-        // Hiển thị HomeFragment mặc định khi mở app (chỉ khi đã authenticated)
+        // Hiển thị fragment được chỉ định từ intent hoặc HomeFragment mặc định
         if (savedInstanceState == null) {
-            navigateToFragment(0) // HomeFragment position
-            binding.bottomNavigation.itemActiveIndex = 0
+            val targetPosition = if (intentFragmentIndex != -1) intentFragmentIndex else 0
+            navigateToFragment(targetPosition) // Sử dụng intent data hoặc mặc định HomeFragment
+            binding.bottomNavigation.itemActiveIndex = targetPosition
         }
     }
     

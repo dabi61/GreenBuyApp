@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.bumptech.glide.Glide
 import com.example.greenbuyapp.R
 import com.example.greenbuyapp.data.social.model.FollowStatsResponse
 import com.example.greenbuyapp.databinding.FragmentProfileBinding
@@ -14,12 +13,10 @@ import com.example.greenbuyapp.data.user.model.UserMe
 import com.example.greenbuyapp.ui.base.BaseFragment
 import com.example.greenbuyapp.ui.login.LoginActivity
 import com.example.greenbuyapp.ui.main.MainActivity
-import com.example.greenbuyapp.ui.profile.editProfile.AddressActivity
 import com.example.greenbuyapp.ui.profile.editProfile.EditProfileActivity
 import com.example.greenbuyapp.ui.profile.orders.CustomerOrderActivity
 import com.example.greenbuyapp.util.Result
 import com.example.greenbuyapp.util.loadAvatar
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
@@ -575,7 +572,8 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
 
     override fun onResume() {
         super.onResume()
-
+        viewModel.loadUserProfile()
+        viewModel.loadFollowStats()
         val mainActivity = requireActivity() as? MainActivity
         if (mainActivity?.pendingOpenOrders == true) {
             mainActivity.pendingOpenOrders = false

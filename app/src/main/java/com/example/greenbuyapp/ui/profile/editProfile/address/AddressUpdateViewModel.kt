@@ -1,9 +1,8 @@
-package com.example.greenbuyapp.ui.profile.editProfile
+package com.example.greenbuyapp.ui.profile.editProfile.address
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.greenbuyapp.data.user.model.AddressDetailResponse
-import com.example.greenbuyapp.data.user.model.AddressResponse
 import com.example.greenbuyapp.data.user.model.AddressUpdateRequest
 import com.example.greenbuyapp.domain.user.UserRepository
 import com.example.greenbuyapp.util.Result

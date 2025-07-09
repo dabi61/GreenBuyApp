@@ -47,10 +47,14 @@ interface UserService {
     /**
      * Cập nhật thông tin hồ sơ người dùng.
      */
-
+    @Multipart
     @PUT("api/user/me")
     suspend fun updateUserProfile(
-        @Body request: UpdateUserProfileRequest
+        @Part avatar: MultipartBody.Part?,
+        @Part("first_name") fistName: RequestBody,
+        @Part("last_name") lastName: RequestBody,
+        @Part("phone_number") phone: RequestBody,
+        @Part("birth_date") birthDate: RequestBody
     ): UpdateUserProfileResponse
 
     @GET("api/addresses/")

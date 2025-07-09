@@ -1,6 +1,8 @@
 package com.example.greenbuyapp.domain.user
 
+import android.content.Context
 import android.net.Uri
+import com.example.greenbuyapp.data.product.model.CreateProductResponse
 import com.example.greenbuyapp.data.search.SearchService
 import com.example.greenbuyapp.data.user.UserService
 import com.example.greenbuyapp.data.user.model.AddressResponse
@@ -21,6 +23,7 @@ import com.example.greenbuyapp.data.user.model.UpdateUserProfileRequest
 import com.example.greenbuyapp.data.user.model.UpdateUserProfileResponse
 
 import com.example.greenbuyapp.data.user.model.UserMe
+import com.example.greenbuyapp.util.MultipartUtils
 import com.google.android.datatransport.runtime.dagger.Provides
 import java.io.IOException
 
@@ -119,8 +122,49 @@ class UserRepository(
     suspend fun getUserMeDirect(): UserMeResponse {
         return userService.getUserMe()
     }
-    suspend fun updateUserProfile(request: UpdateUserProfileRequest): UpdateUserProfileResponse {
-        return userService.updateUserProfile(request) // 🛡️ token tự động thêm ở đây
+
+
+    /**
+     * Cập nhật thông tin người dùng
+     * @param context Context để xử lý Uri
+     * @param avatar Uri của ảnh avatar (có thể null)
+     * @param firstName first name
+     * @param lastName last name
+     * @param phoneNumber phone number
+     * @param birthDate birth date
+     * @return Result<UpdateUserProfileResponse> chứa thông tin người dùng đã cập nhật
+     */
+    suspend fun updateProfile(
+        context: Context,
+        avatar: Uri?,
+        firstName: String,
+        lastName: String,
+        phoneNumber: Int,
+        birthDate: String,
+    ): Result<UpdateUserProfileResponse> {
+        return safeApiCall(dispatcher) {
+            val firstNamePart = MultipartUtils.createTextPart(firstName)
+            val lastNamePart = MultipartUtils.createTextPart(lastName)
+            val phoneNumberPart = MultipartUtils.createTextPart(phoneNumber.toString())
+            val birthDatePart = MultipartUtils.createTextPart(birthDate)
+            
+            val avatarPart = if (avatar != null) {
+                println("📸 Có ảnh mới, tạo avatar part từ URI: $avatar")
+                MultipartUtils.createImagePart(context, "avatar", avatar)
+                    ?: throw IllegalArgumentException("Cannot create image part from Uri")
+            } else {
+                println("🚫 Không có ảnh mới, gửi avatar = null")
+                null
+            }
+
+            userService.updateUserProfile(
+                avatar = avatarPart,
+                fistName = firstNamePart,
+                lastName = lastNamePart,
+                phone = phoneNumberPart,
+                birthDate = birthDatePart
+            )
+        }
     }
 
 }

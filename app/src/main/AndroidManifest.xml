@@ -19,16 +19,16 @@
         android:theme="@style/GreenBuy.Theme.DayNight"
         tools:targetApi="31">
         <activity
-            android:name=".ui.profile.orders.CustomerInformationActivity"
+            android:name=".ui.profile.editProfile.infomation.CustomerInformationActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.profile.editProfile.AddressUpdateActivity"
+            android:name=".ui.profile.editProfile.address.AddressUpdateActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.profile.editProfile.AddressAddActivity"
+            android:name=".ui.profile.editProfile.address.AddressAddActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.profile.editProfile.AddressActivity"
+            android:name=".ui.profile.editProfile.address.AddressActivity"
             android:exported="false" />
         <activity
             android:name=".ui.profile.editProfile.EditProfileActivity"
