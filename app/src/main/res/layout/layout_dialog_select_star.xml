@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="24dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chọn số sao"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginBottom="16dp"/>
+
+    <RadioGroup
+        android:id="@+id/ratingRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/star1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1 sao" />
+
+        <RadioButton
+            android:id="@+id/star2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2 sao" />
+
+        <RadioButton
+            android:id="@+id/star3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3 sao" />
+
+        <RadioButton
+            android:id="@+id/star4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="4 sao" />
+
+        <RadioButton
+            android:id="@+id/star5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5 sao" />
+    </RadioGroup>
+</LinearLayout>

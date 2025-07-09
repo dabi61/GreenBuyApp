@@ -24,13 +24,13 @@ import com.example.greenbuyapp.util.loadAvatar
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import androidx.core.content.ContextCompat
+import com.example.greenbuyapp.ui.social.shopReview.ShopReviewActivity
 import com.example.greenbuyapp.util.Result
 import kotlinx.coroutines.delay
 
 
 class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
     override val viewModel: ProductViewModel by viewModel()
-    private val productViewModel : HomeViewModel by viewModel()
     private val followViewModel: FollowViewModel by viewModel()
 
 
@@ -71,6 +71,7 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
         setupRecyclerView()
         backEvent()
         handleFollowEvent()
+        handleReviewButtonClick()
 
         viewModel.loadShopProducts(isRefresh = true, shopId = shopId)
     }
@@ -274,6 +275,14 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
             count >= 1_000_000 -> String.format("%.1fM", count / 1_000_000f)
             count >= 1_000 -> String.format("%.1fk", count / 1_000f)
             else -> count.toString()
+        }
+    }
+
+    // Nhấn vào đánh giá
+    private fun handleReviewButtonClick() {
+        binding.btReview.setOnClickListener {
+            val intent = ShopReviewActivity.createIntent(this, shopId)
+            startActivity(intent)
         }
     }
 

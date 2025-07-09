@@ -1,5 +1,6 @@
 package com.example.greenbuyapp.domain.social
 
+import com.example.greenbuyapp.data.notice.NoticeService
 import com.example.greenbuyapp.data.social.SocialService
 import com.example.greenbuyapp.data.social.model.FollowStatsResponse
 import com.example.greenbuyapp.util.safeApiCall

@@ -18,6 +18,15 @@
         android:theme="@style/GreenBuy.Theme.DayNight"
         tools:targetApi="31">
         <activity
+            android:name=".ui.social.shopReview.SelectStarActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.social.shopReview.RatingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.social.shopReview.ShopReviewActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.profile.editProfile.AddressUpdateActivity"
             android:exported="false" />
         <activity

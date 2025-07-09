@@ -5,6 +5,8 @@ import com.example.greenbuyapp.data.social.model.FollowShopResponse
 import com.example.greenbuyapp.data.social.model.FollowStatsResponse
 import com.example.greenbuyapp.data.social.model.FollowerShop
 import com.example.greenbuyapp.data.social.model.FollowingShop
+import com.example.greenbuyapp.data.social.model.GetRatingShopResponse
+import com.example.greenbuyapp.data.social.model.RatingShopRequest
 import com.example.greenbuyapp.data.social.model.UnfollowShopResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -49,4 +51,22 @@ interface SocialService {
         @Query("page")page: Int? = null,
         @Query("limit")limit: Int? = null
     ): List<FollowerShop>
+
+    /**
+     * Lấy đánh giá của một shop
+     */
+    @GET("api/user/rating/shop/{shop_id}")
+    suspend fun getRatingShops(
+        @Path("shop_id")shopId: Int?,
+        @Query("page")page: Int? = null,
+        @Query("limit")limit: Int? = null
+    ): List<GetRatingShopResponse>
+
+    /**
+     * Đánh giá một shop
+     */
+    @POST("api/user/rating/shop")
+    suspend fun ratingShops(
+        @Body request: RatingShopRequest
+    ): Response<GetRatingShopResponse>
 }
