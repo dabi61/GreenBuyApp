@@ -2,6 +2,11 @@ package com.example.greenbuyapp.ui.profile.editProfile
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.ViewModel
+import com.example.greenbuyapp.databinding.ActivityEditProfileBinding
+import com.example.greenbuyapp.ui.base.BaseActivity
+import com.example.greenbuyapp.ui.profile.editProfile.address.AddressActivity
+import com.example.greenbuyapp.ui.profile.editProfile.infomation.CustomerInformationActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -61,6 +66,20 @@ class EditProfileActivity :  BaseActivity<ActivityEditProfileBinding>() {
         binding.txtAddress.setOnClickListener {
             val intent = Intent(this, AddressActivity::class.java)
             startActivity(intent)
+        }
+        //chuyen sang fomr thong tin ca nhan
+        binding.txtPersonalInfo.setOnClickListener {
+            val intent = Intent(this, CustomerInformationActivity::class.java)
+            startActivity(intent)
+        }
+        binding.txtPersonalInfo2.setOnClickListener {
+            val intent = Intent(this, CustomerInformationActivity::class.java)
+            startActivity(intent)
+        }
+        binding.llInfor.setOnClickListener {
+            val intent = Intent(this, CustomerInformationActivity::class.java)
+            startActivity(intent)
+
         }
         setupLogoutAction()
         viewModel.checkAuthStatus()

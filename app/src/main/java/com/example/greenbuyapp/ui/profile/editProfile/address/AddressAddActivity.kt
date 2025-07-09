@@ -1,4 +1,4 @@
-package com.example.greenbuyapp.ui.profile.editProfile
+package com.example.greenbuyapp.ui.profile.editProfile.address
 
 import android.os.Bundle
 import android.widget.Toast

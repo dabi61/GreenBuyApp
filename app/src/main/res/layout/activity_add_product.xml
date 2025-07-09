@@ -73,23 +73,23 @@
                         android:id="@+id/ll_add_cover"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical"
+                        android:background="@color/lightGrey"
                         android:gravity="center"
-                        android:background="@color/lightGrey">
+                        android:orientation="vertical">
 
                         <ImageView
                             android:layout_width="@dimen/_32sdp"
                             android:layout_height="@dimen/_32sdp"
-                            android:src="@drawable/ic_add"
                             android:layout_marginBottom="8dp"
+                            android:src="@drawable/ic_add"
                             app:tint="@color/grey_600" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Thêm ảnh"
-                            android:textSize="12sp"
-                            android:textColor="@color/grey_600" />
+                            android:textColor="@color/grey_600"
+                            android:textSize="12sp" />
 
                     </LinearLayout>
 
