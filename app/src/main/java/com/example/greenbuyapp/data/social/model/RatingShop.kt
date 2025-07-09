@@ -21,3 +21,10 @@ data class RatingShopRequest(
     val rating: Int,
     val comment: String
 )
+
+@JsonClass(generateAdapter = true)
+data class RatingSummaryResponse(
+    val total_ratings: Int,
+    val average_rating: Double,
+    val rating_breakdown: Map<String, Int>
+)

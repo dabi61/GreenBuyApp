@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.greenbuyapp.databinding.ActivityShopReviewBinding
 import com.example.greenbuyapp.ui.base.BaseActivity
+import com.example.greenbuyapp.ui.shop.shopDetail.FollowViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import com.example.greenbuyapp.util.Result
 
@@ -19,6 +20,8 @@ class ShopReviewActivity : BaseActivity<ActivityShopReviewBinding>() {
     override val viewModel: ShopReviewViewModel by viewModel()
 
     private lateinit var reviewAdapter: ShopReviewAdapter
+    private val followViewModel: FollowViewModel by viewModel()
+
     private var shopId: Int = -1
 
     private val ratingLauncher = registerForActivityResult(
@@ -27,6 +30,7 @@ class ShopReviewActivity : BaseActivity<ActivityShopReviewBinding>() {
         if (result.resultCode == RESULT_OK) {
             // Reload đánh giá khi đánh giá mới thành công
             viewModel.loadShopRatings(shopId)
+            followViewModel.loadShopRatingStats(shopId)
         }
     }
 
@@ -41,7 +45,7 @@ class ShopReviewActivity : BaseActivity<ActivityShopReviewBinding>() {
         observeData()
         setupRatingButton()
 
-        val shopId = intent.getIntExtra(EXTRA_SHOP_ID, -1)
+        shopId = intent.getIntExtra(EXTRA_SHOP_ID, -1)
         if (shopId != -1) {
             viewModel.loadShopRatings(shopId)
         } else {

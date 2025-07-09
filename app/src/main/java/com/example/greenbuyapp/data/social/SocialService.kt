@@ -7,6 +7,7 @@ import com.example.greenbuyapp.data.social.model.FollowerShop
 import com.example.greenbuyapp.data.social.model.FollowingShop
 import com.example.greenbuyapp.data.social.model.GetRatingShopResponse
 import com.example.greenbuyapp.data.social.model.RatingShopRequest
+import com.example.greenbuyapp.data.social.model.RatingSummaryResponse
 import com.example.greenbuyapp.data.social.model.UnfollowShopResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -69,4 +70,13 @@ interface SocialService {
     suspend fun ratingShops(
         @Body request: RatingShopRequest
     ): Response<GetRatingShopResponse>
+
+    /**
+     * Lấy sao đánh giá trung bình của shop
+     */
+    @GET("api/user/rating/shop/{shop_id}/stats")
+    suspend fun getStarRatingShops(
+        @Path("shop_id")shopId: Int?
+    ): RatingSummaryResponse
+
 }

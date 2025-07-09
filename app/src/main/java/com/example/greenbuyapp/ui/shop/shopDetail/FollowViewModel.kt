@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.example.greenbuyapp.domain.social.FollowStatsRepository
 import com.example.greenbuyapp.data.social.model.FollowStatsResponse
+import com.example.greenbuyapp.data.social.model.RatingSummaryResponse
 
 
 class FollowViewModel(
@@ -31,6 +32,10 @@ class FollowViewModel(
 
     private val _followerCount = MutableStateFlow<Result<Int>?>(null)
     val followerCount = _followerCount.asStateFlow()
+
+    private val _ratingStats = MutableStateFlow<Result<RatingSummaryResponse>>(Result.Loading)
+    val ratingStats = _ratingStats.asStateFlow()
+
 
     fun follow(shopId: Int) {
         viewModelScope.launch {
@@ -59,11 +64,22 @@ class FollowViewModel(
         }
     }
 
+    // đếm follower của shop
     fun loadFollowerCount(shopId: Int) {
         viewModelScope.launch {
             _followerCount.value = Result.Loading
             val result = followRepository.getFollowerCount(shopId)
             _followerCount.value = result
+        }
+    }
+
+    fun loadShopRatingStats(shopId: Int) {
+        viewModelScope.launch {
+            // Phải emit Loading trước để trigger lại collect sau đánh giá
+            _ratingStats.emit(Result.Loading)
+
+            val result = followRepository.getShopRatingStats(shopId)
+            _ratingStats.emit(result)
         }
     }
 
