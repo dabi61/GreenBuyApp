@@ -138,7 +138,7 @@ class RatingActivity : BaseActivity<ActivityRatingBinding>() {
         Handler(Looper.getMainLooper()).postDelayed({
             setResult(RESULT_OK)
             finish()
-        }, 2500)
+        }, 1500)
     }
 
 }

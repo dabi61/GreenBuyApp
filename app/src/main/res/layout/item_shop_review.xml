@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="12dp"
     android:background="@android:color/white"
@@ -28,22 +29,21 @@
             android:clipToOutline="true" />
 
         <!-- Tên + rating icon -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:baselineAligned="false">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <!-- Tên người đánh giá -->
             <TextView
                 android:id="@+id/tvReviewerName"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Aquangbgls"
                 android:textSize="@dimen/_11sdp"
                 android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/starContainer"
                 android:textColor="@android:color/black"
                 android:layout_marginEnd="8dp" />
 
@@ -52,7 +52,8 @@
                 android:id="@+id/starContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 android:gravity="center_vertical">
 
                 <ImageView
@@ -89,15 +90,20 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_star" />
             </LinearLayout>
-        </LinearLayout>
+
+            <!-- Nội dung đánh giá -->
+            <TextView
+                android:id="@+id/tvReviewContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/starContainer"
+                app:layout_constraintStart_toStartOf="@id/tvReviewerName"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:text="Tạm ổn"
+                android:textSize="@dimen/_11sdp"
+                android:textColor="@android:color/black" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>
 
-    <!-- Nội dung đánh giá -->
-    <TextView
-        android:id="@+id/tvReviewContent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Tạm ổn"
-        android:textSize="@dimen/_11sdp"
-        android:textColor="@android:color/black" />
+
 </LinearLayout>

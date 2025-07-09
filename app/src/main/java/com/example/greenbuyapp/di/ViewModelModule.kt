@@ -18,9 +18,6 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 import com.example.greenbuyapp.ui.notification.NotificationViewModel
 import com.example.greenbuyapp.ui.shop.shopDetail.FollowViewModel
-import com.example.greenbuyapp.ui.profile.address.AddressViewModel
-import com.example.greenbuyapp.ui.profile.editProfile.AddressAddViewModel
-import com.example.greenbuyapp.ui.profile.editProfile.AddressUpdateViewModel
 import com.example.greenbuyapp.ui.social.shopReview.RatingShopViewModel
 import com.example.greenbuyapp.ui.social.shopReview.ShopReviewViewModel
 import com.example.greenbuyapp.ui.profile.editProfile.address.AddressViewModel
@@ -60,6 +57,8 @@ val viewModelModule = module {
     viewModel { FollowViewModel(get(), get()) }
     viewModel { ShopReviewViewModel(get()) }
     viewModel { RatingShopViewModel(get()) }
+
+
 //    viewModel { SettingsViewModel(androidContext()) }
 //    viewModel { AutoWallpaperSettingsViewModel(get()) }
 //    viewModel { AutoWallpaperHistoryViewModel(get()) }
