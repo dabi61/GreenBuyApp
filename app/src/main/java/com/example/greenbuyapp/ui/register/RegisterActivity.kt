@@ -142,7 +142,7 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding>() {
         
         // Setup login link
         binding.tvLinkQuest.setOnClickListener {
-            navigateToLogin()
+            backToLogin()
         }
     }
     
@@ -188,7 +188,7 @@ class RegisterActivity : BaseActivity<ActivityRegisterBinding>() {
         }
     }
     
-    private fun navigateToLogin() {
+    private fun backToLogin() {
         onBackPressed()
     }
     

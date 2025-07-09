@@ -61,7 +61,7 @@ class NotificationFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.pendingNotices.collect { notices ->
                 adapter.submitList(notices)
-                binding.tvEmpty.visibility = if (notices.isEmpty()) View.VISIBLE else View.GONE
+//                binding.tvEmpty.visibility = if (notices.isEmpty()) View.VISIBLE else View.GONE
             }
         }
     }

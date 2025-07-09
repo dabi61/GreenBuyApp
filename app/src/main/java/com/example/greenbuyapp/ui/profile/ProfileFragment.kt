@@ -548,27 +548,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
         }
     }
 
-    private fun showLogoutDialog() {
-        // Check fragment state
-        if (!isFragmentSafe()) {
-            println("⚠️ Fragment not safe, cannot show logout dialog")
-            return
-        }
-        
-        // Dismiss existing dialog
-        logoutDialog?.dismiss()
-        
-        logoutDialog = AlertDialog.Builder(requireContext())
-            .setTitle("Đăng xuất")
-            .setMessage("Bạn có chắc muốn đăng xuất?")
-            .setPositiveButton("Đăng xuất") { _, _ ->
-                viewModel.logout()
-            }
-            .setOnDismissListener {
-                logoutDialog = null
-            }
-            .show()
-    }
+
 
     override fun onResume() {
         super.onResume()

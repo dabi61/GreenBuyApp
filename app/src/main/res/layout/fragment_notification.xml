@@ -67,13 +67,4 @@
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
-    <!-- Text khi rỗng -->
-    <TextView
-        android:id="@+id/tvEmpty"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Không có đơn hàng đang chờ."
-        android:textSize="16sp"
-        android:visibility="gone"
-        android:layout_gravity="center"/>
 </LinearLayout>
