@@ -73,6 +73,10 @@ class EditProductVariantFragment : Fragment() {
             return
         }
         
+        // ✅ Set productId in ViewModel trước khi thực hiện bất kỳ operation nào
+        viewModel.setProductId(productId)
+        println("🏷️ EditProductVariantFragment: Set productId = $productId in ViewModel")
+        
         setupRecyclerView()
         setupFab()
         observeViewModel()
@@ -119,6 +123,11 @@ class EditProductVariantFragment : Fragment() {
     }
 
     private fun deleteAttribute(attribute: ProductAttribute, position: Int) {
+        println("🗑️ Deleting attribute:")
+        println("   - attribute_id: ${attribute.attribute_id}")
+        println("   - position: $position")
+        println("   - current productId in fragment: $productId")
+        
         attributeAdapter.removeAttribute(position)
         viewModel.deleteProductAttribute(attribute.attribute_id)
     }

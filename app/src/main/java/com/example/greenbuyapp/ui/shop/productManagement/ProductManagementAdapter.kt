@@ -75,7 +75,6 @@ class ProductManagementAdapter(
                 
                 // Click listeners
                 root.setOnClickListener { onItemClick(product) }
-                ivMore.setOnClickListener { onMoreClick(product) }
             }
         }
         

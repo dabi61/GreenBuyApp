@@ -95,17 +95,6 @@
 
         </LinearLayout>
 
-        <!-- More Button -->
-        <ImageView
-            android:id="@+id/iv_more"
-            android:layout_width="@dimen/_24sdp"
-            android:layout_height="@dimen/_24sdp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/ic_setting"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:padding="4dp"
-            app:tint="@color/grey_600" />
 
     </LinearLayout>
 

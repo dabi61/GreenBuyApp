@@ -505,6 +505,8 @@ class AddProductViewModel(
      */
     fun setProductId(productId: Int) {
         _productId.value = productId
+        println("🏷️ AddProductViewModel: setProductId = $productId")
+        println("   Current _productId.value = ${_productId.value}")
     }
 
     /**
@@ -519,6 +521,9 @@ class AddProductViewModel(
      */
     fun loadProductAttributes(productId: Int) {
         viewModelScope.launch {
+            println("🔄 AddProductViewModel: loadProductAttributes called with productId = $productId")
+            println("   Current _productId.value = ${_productId.value}")
+            
             when (val result = productRepository.getProductAttributes(productId)) {
                 is Result.Success -> {
                     _productAttributes.value = result.value
@@ -636,9 +641,17 @@ class AddProductViewModel(
         attributeId: Int
     ) {
         viewModelScope.launch {
+            // ✅ Kiểm tra productId trước khi sử dụng
+            val currentProductId = _productId.value
+            if (currentProductId == null) {
+                _errorMessage.value = "Lỗi: Không có Product ID để xóa thuộc tính"
+                println("❌ Error: Product ID is null when deleting attribute")
+                return@launch
+            }
+            
             when (val result = productRepository.deleteAttribute(attributeId)) {
                 is Result.Success -> {
-                    loadProductAttributes(_productId.value!!)
+                    loadProductAttributes(currentProductId) // ✅ Sử dụng safe productId
                     println("✅ Product attribute deleted successfully")
                     _errorMessage.value = "Thuộc tính đã được xóa"
                 }
