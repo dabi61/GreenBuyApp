@@ -23,6 +23,7 @@ import com.example.greenbuyapp.ui.shop.addProduct.AddProductUiState
 import com.example.greenbuyapp.util.ImageTransform
 import com.example.greenbuyapp.util.loadUrl
 import com.example.greenbuyapp.util.loadAvatar
+import com.example.greenbuyapp.util.clearImage
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -146,15 +147,24 @@ class CustomerInformationActivity : BaseActivity<ActivityCustomerInformationBind
         binding.tvBirthday.text = user.birth_date?.take(10) ?: "Chọn ngày sinh"
         selectedBirthDate = user.birth_date
 
-        // Load avatar hiện tại từ server
-        println("👤 Loading user avatar: ${user.avatar}")
+        // Load avatar hiện tại từ server với enhanced logging
+        println("👤 CustomerInformationActivity: Loading user avatar")
+        println("   Avatar path: ${user.avatar}")
+        println("   Avatar null/empty: ${user.avatar.isNullOrEmpty()}")
+        
         if (!user.avatar.isNullOrEmpty()) {
+            // Clear cache trước khi load
+            binding.ivAvatar.clearImage(R.drawable.avatar_blank)
+            
             binding.ivAvatar.loadAvatar(
                 avatarPath = user.avatar,
                 placeholder = R.drawable.avatar_blank,
-                error = R.drawable.avatar_blank
+                error = R.drawable.avatar_blank,
+                forceRefresh = true // ✅ Force refresh để đảm bảo ảnh mới nhất
             )
+            println("✅ Avatar loading initiated for: ${user.avatar}")
         } else {
+            println("⚠️ No avatar URL, using default avatar")
             binding.ivAvatar.setImageResource(R.drawable.avatar_blank)
         }
     }
@@ -214,5 +224,12 @@ class CustomerInformationActivity : BaseActivity<ActivityCustomerInformationBind
 
         datePickerDialog.datePicker.maxDate = System.currentTimeMillis()
         datePickerDialog.show()
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        // Force refresh user info để đảm bảo avatar mới nhất được hiển thị
+        println("🔄 CustomerInformationActivity: onResume - refreshing user info")
+        viewModel.getInfor()
     }
 }

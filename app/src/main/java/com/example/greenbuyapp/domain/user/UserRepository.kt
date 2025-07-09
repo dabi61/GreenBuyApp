@@ -143,27 +143,44 @@ class UserRepository(
         birthDate: String,
     ): Result<UpdateUserProfileResponse> {
         return safeApiCall(dispatcher) {
+            println("🚀 Starting profile update...")
+            println("   firstName: $firstName")
+            println("   lastName: $lastName")
+            println("   phoneNumber: $phoneNumber")
+            println("   birthDate: $birthDate")
+            println("   avatar URI: $avatar")
+            
             val firstNamePart = MultipartUtils.createTextPart(firstName)
             val lastNamePart = MultipartUtils.createTextPart(lastName)
             val phoneNumberPart = MultipartUtils.createTextPart(phoneNumber.toString())
             val birthDatePart = MultipartUtils.createTextPart(birthDate)
             
             val avatarPart = if (avatar != null) {
-                println("📸 Có ảnh mới, tạo avatar part từ URI: $avatar")
-                MultipartUtils.createImagePart(context, "avatar", avatar)
-                    ?: throw IllegalArgumentException("Cannot create image part from Uri")
+                println("📸 Processing avatar image...")
+                val result = MultipartUtils.createImagePart(context, "avatar", avatar)
+                if (result != null) {
+                    println("✅ Avatar part created successfully")
+                } else {
+                    println("❌ Failed to create avatar part")
+                    throw IllegalArgumentException("Cannot create image part from Uri")
+                }
+                result
             } else {
-                println("🚫 Không có ảnh mới, gửi avatar = null")
+                println("🚫 No avatar provided, sending null")
                 null
             }
 
-            userService.updateUserProfile(
+            println("📤 Sending multipart request to server...")
+            val response = userService.updateUserProfile(
                 avatar = avatarPart,
                 fistName = firstNamePart,
                 lastName = lastNamePart,
                 phone = phoneNumberPart,
                 birthDate = birthDatePart
             )
+            
+            println("✅ Server response received: ${response.first_name} ${response.last_name}")
+            response
         }
     }
 

@@ -49,9 +49,15 @@ class CustomerInformationViewModel(
             _errorMessage.value = null
 
             try {
+                println("🔄 CustomerInformationViewModel: Loading user info...")
                 val response = userRepository.getUserMeDirect()
                 _userState.value = response.user
-                println("✅ Tải thông tin user thành công: ${response.user.username}")
+                println("✅ User info loaded successfully:")
+                println("   Username: ${response.user.username}")
+                println("   First name: ${response.user.first_name}")
+                println("   Last name: ${response.user.last_name}")
+                println("   Avatar: ${response.user.avatar}")
+                println("   Avatar null/empty: ${response.user.avatar.isNullOrEmpty()}")
             } catch (e: Exception) {
                 val msg = "❌ Lỗi tải thông tin: ${e.message}"
                 println(msg)

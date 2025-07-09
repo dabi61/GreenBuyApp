@@ -17,6 +17,7 @@ import com.example.greenbuyapp.ui.profile.editProfile.EditProfileActivity
 import com.example.greenbuyapp.ui.profile.orders.CustomerOrderActivity
 import com.example.greenbuyapp.util.Result
 import com.example.greenbuyapp.util.loadAvatar
+import com.example.greenbuyapp.util.clearImage
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
@@ -373,18 +374,33 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
 //            tvFollowing.text = user.email
 //            tvTitleFollowing.text = "Email"
 
-            // Hiển thị avatar
-            binding.ivAvatar.loadAvatar(
-                avatarPath =  user.avatar,
-                placeholder =  R.drawable.avatar_blank,
-                error =  R.drawable.avatar_blank
-            )
+            // Hiển thị avatar với improved logging
+            println("🖼️ ProfileFragment: Loading avatar")
+            println("   Avatar path: ${user.avatar}")
+            println("   Avatar null/empty: ${user.avatar.isNullOrEmpty()}")
+            
+            if (!user.avatar.isNullOrEmpty()) {
+                // Clear cache trước khi load ảnh mới để đảm bảo update
+                binding.ivAvatar.clearImage(R.drawable.avatar_blank)
+                
+                binding.ivAvatar.loadAvatar(
+                    avatarPath = user.avatar,
+                    placeholder = R.drawable.avatar_blank,
+                    error = R.drawable.avatar_blank,
+                    forceRefresh = true // ✅ Force refresh để bypass cache
+                )
+                println("✅ Avatar loading initiated for: ${user.avatar}")
+            } else {
+                println("⚠️ No avatar URL, using default")
+                binding.ivAvatar.setImageResource(R.drawable.avatar_blank)
+            }
         }
         
         // Log thông tin để debug
         println("✅ User profile loaded: ${getDisplayName(user)} - ${user.role}")
         println("📱 Phone: ${user.phone_number}, 🎂 Birth: ${user.birth_date}")
         println("✅ Verified: ${user.is_verified}, 🌟 Active: ${user.is_active}")
+        println("🔗 Avatar URL: ${user.avatar}")
     }
 
     private fun bindFollowStats(followStats: FollowStatsResponse) {
@@ -552,13 +568,23 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
 
     override fun onResume() {
         super.onResume()
-        viewModel.loadUserProfile()
-        viewModel.loadFollowStats()
+        // Force refresh profile để đảm bảo avatar mới được load
+        forceRefreshProfile()
+        
         val mainActivity = requireActivity() as? MainActivity
         if (mainActivity?.pendingOpenOrders == true) {
             mainActivity.pendingOpenOrders = false
             navigateToCustomerOrders(4)
         }
+    }
+    
+    /**
+     * Force refresh profile data - bypass cache
+     */
+    private fun forceRefreshProfile() {
+        println("🔄 ProfileFragment: Force refreshing profile data...")
+        viewModel.loadUserProfile()
+        viewModel.loadFollowStats()
     }
 
     fun openDeliveredOrdersIfPending() {
