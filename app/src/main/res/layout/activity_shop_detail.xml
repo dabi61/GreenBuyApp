@@ -99,7 +99,7 @@
                 android:layout_marginTop="@dimen/_1sdp"
                 app:cornerRadius="@dimen/_8sdp"
                 app:backgroundTint="@color/white"
-                android:textColor="@color/green_600"
+                android:textColor="@color/black"
                 android:textSize="@dimen/_10sdp"
                 android:textAllCaps="false"
                 android:text="Đánh giá" />

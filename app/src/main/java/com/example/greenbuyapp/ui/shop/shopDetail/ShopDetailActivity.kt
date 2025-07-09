@@ -212,6 +212,11 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        followViewModel.loadShopRatingStats(shopId)
+    }
+
     private fun observeFollowingShops() {
         lifecycleScope.launch {
             followViewModel.followingShops.collect { result ->
