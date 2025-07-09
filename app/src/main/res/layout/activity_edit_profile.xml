@@ -142,7 +142,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/bottomButton"
+        android:id="@+id/bt_logout"
         android:layout_width="@dimen/_267sdp"
         android:layout_height="@dimen/_51sdp"
         android:text="Đăng xuất"
