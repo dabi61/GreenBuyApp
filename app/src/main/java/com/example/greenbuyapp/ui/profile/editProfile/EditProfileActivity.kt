@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import com.example.greenbuyapp.R
 import com.example.greenbuyapp.databinding.ActivityEditProfileBinding
 import com.example.greenbuyapp.ui.base.BaseActivity
+import com.example.greenbuyapp.ui.profile.orders.CustomerInformationActivity
 
 class EditProfileActivity :  BaseActivity<ActivityEditProfileBinding>() {
     override val binding: ActivityEditProfileBinding by lazy {
@@ -48,6 +49,20 @@ class EditProfileActivity :  BaseActivity<ActivityEditProfileBinding>() {
         binding.txtAddress.setOnClickListener {
             val intent = Intent(this, AddressActivity::class.java)
             startActivity(intent)
+        }
+        //chuyen sang fomr thong tin ca nhan
+        binding.txtPersonalInfo.setOnClickListener {
+            val intent = Intent(this, CustomerInformationActivity::class.java)
+            startActivity(intent)
+        }
+        binding.txtPersonalInfo2.setOnClickListener {
+            val intent = Intent(this, CustomerInformationActivity::class.java)
+            startActivity(intent)
+        }
+        binding.llInfor.setOnClickListener {
+            val intent = Intent(this, CustomerInformationActivity::class.java)
+            startActivity(intent)
+
         }
 
     }

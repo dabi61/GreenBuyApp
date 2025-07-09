@@ -1,5 +1,6 @@
 package com.example.greenbuyapp.domain.user
 
+import android.net.Uri
 import com.example.greenbuyapp.data.search.SearchService
 import com.example.greenbuyapp.data.user.UserService
 import com.example.greenbuyapp.data.user.model.AddressResponse
@@ -16,7 +17,12 @@ import kotlinx.coroutines.Dispatchers
 import com.example.greenbuyapp.data.user.model.AddressAddRequest
 import com.example.greenbuyapp.data.user.model.AddressDetailResponse
 import com.example.greenbuyapp.data.user.model.AddressUpdateRequest
+import com.example.greenbuyapp.data.user.model.UpdateUserProfileRequest
+import com.example.greenbuyapp.data.user.model.UpdateUserProfileResponse
 
+import com.example.greenbuyapp.data.user.model.UserMe
+import com.google.android.datatransport.runtime.dagger.Provides
+import java.io.IOException
 
 
 class UserRepository(
@@ -76,9 +82,6 @@ class UserRepository(
     }
 
 
-
-
-
     fun searchUsers(
         query: String,
         scope: CoroutineScope
@@ -112,4 +115,12 @@ class UserRepository(
             userService.getAddresses()
         }
     }
+
+    suspend fun getUserMeDirect(): UserMeResponse {
+        return userService.getUserMe()
+    }
+    suspend fun updateUserProfile(request: UpdateUserProfileRequest): UpdateUserProfileResponse {
+        return userService.updateUserProfile(request) // 🛡️ token tự động thêm ở đây
+    }
+
 }
