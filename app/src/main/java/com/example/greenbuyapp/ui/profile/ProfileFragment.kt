@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import com.bumptech.glide.Glide
 import com.example.greenbuyapp.R
 import com.example.greenbuyapp.data.social.model.FollowStatsResponse
 import com.example.greenbuyapp.databinding.FragmentProfileBinding
@@ -14,12 +13,11 @@ import com.example.greenbuyapp.data.user.model.UserMe
 import com.example.greenbuyapp.ui.base.BaseFragment
 import com.example.greenbuyapp.ui.login.LoginActivity
 import com.example.greenbuyapp.ui.main.MainActivity
-import com.example.greenbuyapp.ui.profile.editProfile.AddressActivity
 import com.example.greenbuyapp.ui.profile.editProfile.EditProfileActivity
 import com.example.greenbuyapp.ui.profile.orders.CustomerOrderActivity
 import com.example.greenbuyapp.util.Result
 import com.example.greenbuyapp.util.loadAvatar
-import kotlinx.coroutines.delay
+import com.example.greenbuyapp.util.clearImage
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.SimpleDateFormat
@@ -376,18 +374,33 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
 //            tvFollowing.text = user.email
 //            tvTitleFollowing.text = "Email"
 
-            // Hiển thị avatar
-            binding.ivAvatar.loadAvatar(
-                avatarPath =  user.avatar,
-                placeholder =  R.drawable.avatar_blank,
-                error =  R.drawable.avatar_blank
-            )
+            // Hiển thị avatar với improved logging
+            println("🖼️ ProfileFragment: Loading avatar")
+            println("   Avatar path: ${user.avatar}")
+            println("   Avatar null/empty: ${user.avatar.isNullOrEmpty()}")
+            
+            if (!user.avatar.isNullOrEmpty()) {
+                // Clear cache trước khi load ảnh mới để đảm bảo update
+                binding.ivAvatar.clearImage(R.drawable.avatar_blank)
+                
+                binding.ivAvatar.loadAvatar(
+                    avatarPath = user.avatar,
+                    placeholder = R.drawable.avatar_blank,
+                    error = R.drawable.avatar_blank,
+                    forceRefresh = true // ✅ Force refresh để bypass cache
+                )
+                println("✅ Avatar loading initiated for: ${user.avatar}")
+            } else {
+                println("⚠️ No avatar URL, using default")
+                binding.ivAvatar.setImageResource(R.drawable.avatar_blank)
+            }
         }
         
         // Log thông tin để debug
         println("✅ User profile loaded: ${getDisplayName(user)} - ${user.role}")
         println("📱 Phone: ${user.phone_number}, 🎂 Birth: ${user.birth_date}")
         println("✅ Verified: ${user.is_verified}, 🌟 Active: ${user.is_active}")
+        println("🔗 Avatar URL: ${user.avatar}")
     }
 
     private fun bindFollowStats(followStats: FollowStatsResponse) {
@@ -551,36 +564,27 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
         }
     }
 
-    private fun showLogoutDialog() {
-        // Check fragment state
-        if (!isFragmentSafe()) {
-            println("⚠️ Fragment not safe, cannot show logout dialog")
-            return
-        }
-        
-        // Dismiss existing dialog
-        logoutDialog?.dismiss()
-        
-        logoutDialog = AlertDialog.Builder(requireContext())
-            .setTitle("Đăng xuất")
-            .setMessage("Bạn có chắc muốn đăng xuất?")
-            .setPositiveButton("Đăng xuất") { _, _ ->
-                viewModel.logout()
-            }
-            .setOnDismissListener {
-                logoutDialog = null
-            }
-            .show()
-    }
+
 
     override fun onResume() {
         super.onResume()
-
+        // Force refresh profile để đảm bảo avatar mới được load
+        forceRefreshProfile()
+        
         val mainActivity = requireActivity() as? MainActivity
         if (mainActivity?.pendingOpenOrders == true) {
             mainActivity.pendingOpenOrders = false
             navigateToCustomerOrders(4)
         }
+    }
+    
+    /**
+     * Force refresh profile data - bypass cache
+     */
+    private fun forceRefreshProfile() {
+        println("🔄 ProfileFragment: Force refreshing profile data...")
+        viewModel.loadUserProfile()
+        viewModel.loadFollowStats()
     }
 
     fun openDeliveredOrdersIfPending() {

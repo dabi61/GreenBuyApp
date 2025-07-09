@@ -1,4 +1,4 @@
-package com.example.greenbuyapp.ui.profile.editProfile
+package com.example.greenbuyapp.ui.profile.editProfile.address
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,8 +6,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.greenbuyapp.databinding.ActivityAddressBinding
 import com.example.greenbuyapp.ui.base.BaseActivity
-import com.example.greenbuyapp.ui.profile.address.AddressAdapter
-import com.example.greenbuyapp.ui.profile.address.AddressViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel

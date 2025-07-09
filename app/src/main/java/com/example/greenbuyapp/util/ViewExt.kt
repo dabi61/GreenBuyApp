@@ -148,13 +148,15 @@ private const val BASE_AVATAR_URL = "https://www.utt-school.site"
 fun ImageView.loadAvatar(
     avatarPath: String?,
     @DrawableRes placeholder: Int = R.drawable.avatar_blank,
-    @DrawableRes error: Int = R.drawable.avatar_blank
+    @DrawableRes error: Int = R.drawable.avatar_blank,
+    forceRefresh: Boolean = false
 ) {
     loadImage(
         imagePath = avatarPath,
         placeholder = placeholder,
         error = error,
-        transform = ImageTransform.CIRCLE
+        transform = ImageTransform.CIRCLE,
+        forceRefresh = forceRefresh
     )
 }
 
@@ -200,7 +202,8 @@ private fun ImageView.loadImage(
     @DrawableRes placeholder: Int,
     @DrawableRes error: Int,
     transform: ImageTransform,
-    cornerRadius: Int = 8
+    cornerRadius: Int = 8,
+    forceRefresh: Boolean = false
 ) {
     if (!imagePath.isNullOrEmpty()) {
         val imageUrl = buildImageUrl(imagePath)
@@ -212,11 +215,12 @@ private fun ImageView.loadImage(
             return
         }
         
-        val requestOptions = createRequestOptions(transform, cornerRadius, placeholder, error)
+        val requestOptions = createRequestOptions(transform, cornerRadius, placeholder, error, forceRefresh)
         
         println("🖼️ Loading image:")
         println("   Original path: $imagePath")
         println("   Full URL: $imageUrl")
+        println("   Force refresh: $forceRefresh")
 
         Glide.with(context)
             .asBitmap() // ✅ Force bitmap decode only
@@ -244,6 +248,7 @@ private fun ImageView.loadImage(
                     isFirstResource: Boolean
                 ): Boolean {
                     println("✅ Image loaded successfully: $imageUrl")
+                    println("   Data source: $dataSource")
                     return false
                 }
             })
@@ -362,17 +367,26 @@ private fun createRequestOptions(
     transform: ImageTransform,
     cornerRadius: Int,
     @DrawableRes placeholder: Int,
-    @DrawableRes error: Int
+    @DrawableRes error: Int,
+    forceRefresh: Boolean = false
 ): RequestOptions {
     val options = RequestOptions()
         .placeholder(placeholder)
         .error(error)
         .timeout(5000) // ✅ Giảm xuống 5s
-        .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-        .skipMemoryCache(false)
         .dontAnimate()
         .override(600, 600) // ✅ Giảm từ 800x800 xuống 600x600
         .downsample(DownsampleStrategy.CENTER_INSIDE) // ✅ Thêm downsample
+
+    // ✅ Handle cache strategy based on forceRefresh
+    if (forceRefresh) {
+        options.diskCacheStrategy(DiskCacheStrategy.NONE)
+            .skipMemoryCache(true)
+        println("🔄 Force refresh enabled - bypassing all caches")
+    } else {
+        options.diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+            .skipMemoryCache(false)
+    }
 
     return when (transform) {
         ImageTransform.CIRCLE -> options.transform(CircleCrop())

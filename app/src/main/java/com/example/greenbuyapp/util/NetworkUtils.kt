@@ -72,7 +72,24 @@ object MultipartUtils {
      * Tạo MultipartBody.Part từ File cho image upload
      */
     fun createImagePart(partName: String, file: File): MultipartBody.Part {
-        val requestFile = file.asRequestBody("image/*".toMediaType())
+        // Xác định media type dựa trên extension
+        val mediaType = when (file.extension.lowercase()) {
+            "jpg", "jpeg" -> "image/jpeg"
+            "png" -> "image/png"
+            "gif" -> "image/gif"
+            "webp" -> "image/webp"
+            else -> "image/*"
+        }.toMediaType()
+        
+        println("🖼️ Creating image part:")
+        println("   Part name: $partName")
+        println("   File name: ${file.name}")
+        println("   File size: ${file.length()} bytes")
+        println("   File extension: ${file.extension}")
+        println("   Media type: $mediaType")
+        println("   File exists: ${file.exists()}")
+        
+        val requestFile = file.asRequestBody(mediaType)
         return MultipartBody.Part.createFormData(partName, file.name, requestFile)
     }
     
@@ -81,9 +98,20 @@ object MultipartUtils {
      */
     fun createImagePart(context: Context, partName: String, uri: Uri): MultipartBody.Part? {
         return try {
+            println("📸 Converting URI to file:")
+            println("   URI: $uri")
+            println("   URI scheme: ${uri.scheme}")
+            
             val file = uriToFile(context, uri)
+            
+            println("✅ File conversion successful:")
+            println("   File path: ${file.absolutePath}")
+            println("   File size: ${file.length()} bytes")
+            println("   File readable: ${file.canRead()}")
+            
             createImagePart(partName, file)
         } catch (e: Exception) {
+            println("❌ Error creating image part from URI: ${e.message}")
             e.printStackTrace()
             null
         }
@@ -171,56 +199,110 @@ object MultipartUtils {
      */
     private fun uriToFile(context: Context, uri: Uri): File {
         return try {
+            println("🔄 Converting URI to File:")
+            println("   URI: $uri")
+            println("   Scheme: ${uri.scheme}")
+            
             // Try to get file path directly
             when (uri.scheme) {
                 "file" -> {
                     // Direct file URI
-                    File(uri.path!!)
+                    val file = File(uri.path!!)
+                    println("   File URI detected: ${file.absolutePath}")
+                    file
                 }
                 "content" -> {
+                    println("   Content URI detected, copying to cache...")
                     // Content URI - try to get file name and copy to cache
                     val cursor = context.contentResolver.query(uri, null, null, null, null)
                     cursor?.use {
                         val nameIndex = it.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)
                         it.moveToFirst()
-                        val name = if (nameIndex >= 0) {
-                            it.getString(nameIndex) ?: "image_${System.currentTimeMillis()}.jpg"
-                        } else {
-                            "image_${System.currentTimeMillis()}.jpg"
+                        val originalName = if (nameIndex >= 0) {
+                            it.getString(nameIndex)
+                        } else null
+                        
+                        println("   Original file name: $originalName")
+                        
+                        // Tạo tên file với extension đúng
+                        val fileName = when {
+                            !originalName.isNullOrEmpty() -> originalName
+                            else -> {
+                                // Detect mime type để tạo extension đúng
+                                val mimeType = context.contentResolver.getType(uri)
+                                val extension = when (mimeType) {
+                                    "image/jpeg" -> "jpg"
+                                    "image/png" -> "png"
+                                    "image/gif" -> "gif"
+                                    "image/webp" -> "webp"
+                                    else -> "jpg" // default to jpg
+                                }
+                                "avatar_${System.currentTimeMillis()}.$extension"
+                            }
                         }
                         
-                        val file = File(context.cacheDir, name)
+                        println("   Final file name: $fileName")
+                        
+                        val file = File(context.cacheDir, fileName)
                         context.contentResolver.openInputStream(uri)?.use { input ->
                             file.outputStream().use { output ->
                                 input.copyTo(output)
                             }
                         }
+                        
+                        println("   Copied to cache: ${file.absolutePath}")
+                        println("   File size: ${file.length()} bytes")
                         return file
                     }
                     
                     // Fallback if cursor is null
-                    val fileName = "image_${System.currentTimeMillis()}.jpg"
+                    println("   Cursor is null, using fallback...")
+                    val mimeType = context.contentResolver.getType(uri)
+                    val extension = when (mimeType) {
+                        "image/jpeg" -> "jpg"
+                        "image/png" -> "png"
+                        "image/gif" -> "gif"
+                        "image/webp" -> "webp"
+                        else -> "jpg"
+                    }
+                    val fileName = "avatar_${System.currentTimeMillis()}.$extension"
                     val file = File(context.cacheDir, fileName)
+                    
                     context.contentResolver.openInputStream(uri)?.use { input ->
                         file.outputStream().use { output ->
                             input.copyTo(output)
                         }
                     }
+                    
+                    println("   Fallback copy completed: ${file.absolutePath}")
                     file
                 }
                 else -> {
+                    println("   Unknown scheme, using fallback copy...")
                     // Unknown scheme, try to copy to cache
-                    val fileName = "image_${System.currentTimeMillis()}.jpg"
+                    val mimeType = context.contentResolver.getType(uri)
+                    val extension = when (mimeType) {
+                        "image/jpeg" -> "jpg"
+                        "image/png" -> "png"
+                        "image/gif" -> "gif"
+                        "image/webp" -> "webp"
+                        else -> "jpg"
+                    }
+                    val fileName = "avatar_${System.currentTimeMillis()}.$extension"
                     val file = File(context.cacheDir, fileName)
+                    
                     context.contentResolver.openInputStream(uri)?.use { input ->
                         file.outputStream().use { output ->
                             input.copyTo(output)
                         }
                     }
+                    
+                    println("   Unknown scheme copy completed: ${file.absolutePath}")
                     file
                 }
             }
         } catch (e: Exception) {
+            println("❌ Error in uriToFile: ${e.message}")
             e.printStackTrace()
             throw IllegalArgumentException("Cannot convert URI to File: ${e.message}")
         }

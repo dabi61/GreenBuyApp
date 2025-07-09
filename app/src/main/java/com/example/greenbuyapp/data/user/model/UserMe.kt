@@ -1,5 +1,6 @@
 package com.example.greenbuyapp.data.user.model
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
@@ -24,4 +25,4 @@ data class UserMe(
     val is_verified: Boolean,
     val created_at: String,
     val updated_at: String
-) 
+)

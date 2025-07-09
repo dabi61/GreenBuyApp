@@ -1,4 +1,4 @@
-package com.example.greenbuyapp.ui.profile.editProfile
+package com.example.greenbuyapp.ui.profile.editProfile.address
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

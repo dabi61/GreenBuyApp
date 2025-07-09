@@ -9,6 +9,10 @@ import com.example.greenbuyapp.data.user.model.ChangeRoleRequest
 import com.example.greenbuyapp.data.user.model.CustomerOrderDetail
 import com.example.greenbuyapp.data.user.model.CustomerOrderResponse
 import com.example.greenbuyapp.data.user.model.Me
+import com.example.greenbuyapp.data.user.model.UpdateUserProfileRequest
+import com.example.greenbuyapp.data.user.model.UpdateUserProfileResponse
+
+
 import com.example.greenbuyapp.data.user.model.User
 import com.example.greenbuyapp.data.user.model.UserMe
 import com.example.greenbuyapp.data.user.model.UserMeResponse
@@ -40,6 +44,19 @@ interface UserService {
         @Path("orderId") orderId: Int
     ): CustomerOrderDetail
 
+    /**
+     * Cập nhật thông tin hồ sơ người dùng.
+     */
+    @Multipart
+    @PUT("api/user/me")
+    suspend fun updateUserProfile(
+        @Part avatar: MultipartBody.Part?,
+        @Part("first_name") fistName: RequestBody,
+        @Part("last_name") lastName: RequestBody,
+        @Part("phone_number") phone: RequestBody,
+        @Part("birth_date") birthDate: RequestBody
+    ): UpdateUserProfileResponse
+
     @GET("api/addresses/")
     suspend fun getAddresses(): List<AddressResponse>
 
@@ -58,4 +75,6 @@ interface UserService {
         @Path("id") addressId: Int,
         @Body request: AddressUpdateRequest
     ): AddressDetailResponse
+
+
 }

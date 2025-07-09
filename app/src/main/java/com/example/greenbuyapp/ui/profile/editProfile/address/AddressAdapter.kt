@@ -1,4 +1,4 @@
-package com.example.greenbuyapp.ui.profile.address
+package com.example.greenbuyapp.ui.profile.editProfile.address
 
 import android.view.LayoutInflater
 import android.view.View

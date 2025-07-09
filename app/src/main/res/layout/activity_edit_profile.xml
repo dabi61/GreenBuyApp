@@ -44,6 +44,7 @@
 
         <!-- Mục 1: Thông tin cá nhân -->
         <LinearLayout
+            android:id="@+id/ll_infor"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:paddingStart="16dp"
@@ -62,6 +63,7 @@
                 android:textColor="@android:color/black" />
 
             <ImageView
+                android:id="@+id/txtPersonalInfo2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_arrow_right" />
@@ -142,7 +144,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/bottomButton"
+        android:id="@+id/bt_logout"
         android:layout_width="@dimen/_267sdp"
         android:layout_height="@dimen/_51sdp"
         android:text="Đăng xuất"
