@@ -45,8 +45,9 @@ class AddressUpdateActivity : BaseActivity<ActivityAddressUpdateBinding>() {
         lifecycleScope.launch {
             // Quan sát dữ liệu địa chỉ
             launch {
-                viewModel.address.collectLatest { address ->
+                viewModel.address.collect { address ->
                     address?.let {
+
                         binding.edtPhone.setText(it.phoneNumber)
                         binding.edtStreet.setText(it.street)
                         binding.edtCity.setText(it.city)
@@ -60,7 +61,7 @@ class AddressUpdateActivity : BaseActivity<ActivityAddressUpdateBinding>() {
 
             // Quan sát khi cập nhật thành công
             launch {
-                viewModel.updateSuccess.collectLatest { success ->
+                viewModel.updateSuccess.collect { success ->
                     if (success) {
                         showToast("✅ Cập nhật địa chỉ thành công")
                         finish()
@@ -70,7 +71,7 @@ class AddressUpdateActivity : BaseActivity<ActivityAddressUpdateBinding>() {
 
             // Quan sát khi có lỗi
             launch {
-                viewModel.errorMessage.collectLatest { msg ->
+                viewModel.errorMessage.collect { msg ->
                     msg?.let {
                         showToast("❌ $it")
                         viewModel.clearError()

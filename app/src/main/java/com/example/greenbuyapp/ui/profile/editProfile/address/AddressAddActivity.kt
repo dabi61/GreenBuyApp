@@ -36,6 +36,7 @@ class AddressAddActivity : BaseActivity<ActivityAddressAddBinding>() {
     }
 
     private fun saveAddress() {
+
         val street = binding.edtStreet.text.toString()
         val city = binding.edtCity.text.toString()
         val state = binding.edtState.text.toString()

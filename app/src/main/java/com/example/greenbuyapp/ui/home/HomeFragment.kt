@@ -25,6 +25,7 @@ import android.os.Handler
 import android.os.Looper
 import com.example.greenbuyapp.ui.product.trending.TrendingProductActivity
 import com.example.greenbuyapp.ui.product.trending.TrendingProductViewModel
+import kotlinx.coroutines.flow.combineTransform
 
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     // TODO: Rename and change types of parameters
@@ -116,8 +117,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
 
         trendingAdapter = TrendingAdapter { trendingProduct ->
-            // Handle product click
-            // TODO: Navigate to product detail
+            val intent = ProductActivity.createIntent(
+                requireContext(),
+                trendingProduct.product_id,
+                trendingProduct.shop_id,
+                trendingProduct.description
+            )
+            startActivity(intent)
+
         }
         
         binding.rvProduct.apply {
@@ -200,7 +207,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.svProduct.addTextChangedListener { text ->
             viewModel.updateSearchQuery(text?.toString() ?: "")
         }
-        
+
+
         // Setup cart button click
         binding.icCart.setOnClickListener {
             val intent = CartActivity.createIntent(requireContext())

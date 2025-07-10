@@ -27,6 +27,7 @@ val repositoryModule = module {
     single(createdAtStart = true) { CartRepository(get()) }
     single(createdAtStart = true) { NoticeRepository(get()) }
     single(createdAtStart = true) { FollowRepository(get()) }
+
 //    single(createdAtStart = true) { BillingRepository(androidApplication()) }
 //
 //    single { AutoWallpaperRepository(get(), get()) }

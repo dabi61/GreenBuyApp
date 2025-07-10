@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.greenbuyapp.databinding.ActivityTrendingProductBinding
 import com.example.greenbuyapp.ui.base.BaseActivity
+import com.example.greenbuyapp.ui.product.ProductActivity
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -19,7 +20,7 @@ class TrendingProductActivity : BaseActivity<ActivityTrendingProductBinding>() {
         ActivityTrendingProductBinding.inflate(layoutInflater)
     }
 
-    private lateinit var adapter: TrendingProductAdapter
+    private lateinit var trendingProductAdapter : TrendingProductAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(binding.root)
@@ -35,12 +36,21 @@ class TrendingProductActivity : BaseActivity<ActivityTrendingProductBinding>() {
         binding.toolbar.setNavigationOnClickListener {
             finish()
         }
+        trendingProductAdapter = TrendingProductAdapter{ trendingProduct ->
+            val intent = ProductActivity.createIntent(
+                this@TrendingProductActivity,
+                trendingProduct.product_id,
+                trendingProduct.shop_id,
+                trendingProduct.description
+            )
+            startActivity(intent)
+        }
     }
 
     private fun initRecyclerView() {
-        adapter = TrendingProductAdapter()
         binding.recyclerViewTrendingProduct.layoutManager = LinearLayoutManager(this)
-        binding.recyclerViewTrendingProduct.adapter = adapter
+        binding.recyclerViewTrendingProduct.adapter = trendingProductAdapter
+
 
         // (Optional) Nếu bạn muốn thêm sự kiện khi click sản phẩm
         // adapter.onItemClick = { product -> ... }
@@ -50,7 +60,7 @@ class TrendingProductActivity : BaseActivity<ActivityTrendingProductBinding>() {
         lifecycleScope.launch {
             launch {
                 viewModel.trendingProducts.collectLatest { productList ->
-                    adapter.submitList(productList)
+                    trendingProductAdapter.submitList(productList)
                     println("🔥 Trending products updated: ${productList.size}")
                 }
             }

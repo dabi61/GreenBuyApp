@@ -41,6 +41,12 @@ class UserRepository(
 //    suspend fun getMe() =
 //        safeApiCall(dispatcher) { userService.getMe() }
 
+    suspend fun getListAddress(): Result<List<AddressResponse>> {
+        return safeApiCall(dispatcher) {
+            userService.getAddresses()
+        }
+    }
+
     suspend fun createAddress(
         street: String,
         city: String,
@@ -67,7 +73,6 @@ class UserRepository(
 
     suspend fun getAddressById(id: Int): Result<AddressDetailResponse> {
         return safeApiCall(dispatcher) {
-
             userService.getAddressDetail(id)
         }
     }
@@ -113,11 +118,7 @@ class UserRepository(
             userService.getCustomerOrderDetail(orderId)
         }
     }
-    suspend fun getListAddress(): Result<List<AddressResponse>> {
-        return safeApiCall(dispatcher) {
-            userService.getAddresses()
-        }
-    }
+
 
     suspend fun getUserMeDirect(): UserMeResponse {
         return userService.getUserMe()

@@ -23,7 +23,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#2CCE75"
+
             app:navigationIcon="@drawable/ic_back"
             app:navigationIconTint="@android:color/black"
             app:title="Top bán chạy"
