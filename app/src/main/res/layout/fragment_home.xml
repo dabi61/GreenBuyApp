@@ -268,7 +268,7 @@
                         android:layout_height="wrap_content"
                         android:background="@color/white"
                         android:overScrollMode="never"
-                        android:nestedScrollingEnabled="false"
+                        android:nestedScrollingEnabled="true"
                         android:paddingBottom="16dp"
                         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                         tools:itemCount="6"

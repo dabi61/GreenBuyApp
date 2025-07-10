@@ -72,7 +72,6 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
         runCatching {
             viewModel.checkShop()
             viewModel.shopInfo()
-
             onClickWelcome()
             setupAvatarPicker()
             setupCreateShopButton()
@@ -110,7 +109,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
                 // ✅ Null check trước khi start activity
                 if (isAdded && activity != null) {
                     try {
-                        val intent = ShopDashboardDetailActivity.createIntent(requireActivity(), 1)
+                        val intent = ShopDashboardDetailActivity.createIntent(requireActivity(), 0)
                         startActivity(intent)
                         println("✅ Opened ShopDashboardDetail with position 1 (Chờ lấy hàng)")
                     } catch (e: Exception) {
@@ -138,7 +137,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
                 // ✅ Null check trước khi start activity
                 if (isAdded && activity != null) {
                     try {
-                        val intent = ShopDashboardDetailActivity.createIntent(requireActivity(), 0)
+                        val intent = ShopDashboardDetailActivity.createIntent(requireActivity(), 1)
                         startActivity(intent)
                         println("✅ Opened ShopDashboardDetail with position 0 (Chờ xác nhận)")
                     } catch (e: Exception) {
@@ -206,9 +205,9 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
             viewModel.myShopStats.collect { shopStats ->
                 binding.apply {
                     // ✅ Mapping với OrderStats API mới
-                    tvItem1.text = shopStats?.pendingOrders.toString() // pending_orders thay vì pending_pickup
-                    tvItem2.text = shopStats?.cancelledOrders.toString() // cancelled_orders
-                    tvItem3.text = shopStats?.totalOrders.toString() // total_orders
+                    tvItem2.text = shopStats?.pendingOrders.toString() // pending_orders thay vì pending_pickup
+                    tvItem1.text = shopStats?.cancelledOrders.toString() // cancelled_orders
+                    tvItem3.text = shopStats?.deliveredOrders.toString() // total_orders
                     tvItem4.text = shopStats?.pendingRatings.toString() // pending_ratings thay vì ratings_count
                 }
             }

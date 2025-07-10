@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.greenbuyapp.R
 import com.example.greenbuyapp.databinding.FragmentHomeBinding
@@ -38,6 +39,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private val bannerHandler = Handler(Looper.getMainLooper())
     private var bannerRunnable: Runnable? = null
     private var isUserScrolling = false
+    
+    // ✅ Throttling cho infinite scroll
+    private var lastScrollTime = 0L
+    private val scrollThrottleMs = 500L // 500ms throttle
+    
+    // ✅ Thêm flag để tránh duplicate load more calls
+    private var isLoadMoreTriggered = false
 
     override fun getLayoutResourceId(): Int = R.layout.fragment_home
 
@@ -54,7 +62,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             setupRecyclerView()
             setupBanner()
             setupSearchView()
-            
+
             // Load categories khi init
             viewModel.loadCategories()
             
@@ -111,24 +119,140 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             // TODO: Navigate to product detail
         }
         
+        // ✅ Setup product RecyclerView với performance optimizations
         binding.rvProduct.apply {
-            layoutManager = GridLayoutManager(context, 2)
+            val gridLayoutManager = GridLayoutManager(context, 2)
+            layoutManager = gridLayoutManager
             adapter = productAdapter
+            
+            // ✅ Performance optimizations
+            isNestedScrollingEnabled = false
+            setHasFixedSize(true)
+            
+            // ✅ Thêm hardware acceleration để tránh lỗi OpenGL
+            setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null)
+            
+            // ✅ Tối ưu hóa drawing
+            setItemViewCacheSize(20)
+            setDrawingCacheEnabled(true)
+            drawingCacheQuality = android.view.View.DRAWING_CACHE_QUALITY_HIGH
+            
+            // ✅ Disable over scroll để tránh lỗi render
+            overScrollMode = android.view.View.OVER_SCROLL_NEVER
         }
 
-        // ✅ Setup category RecyclerView with horizontal orientation
+        // ✅ Setup category RecyclerView với horizontal orientation
         binding.rvCategory.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = categoryAdapter
+            setHasFixedSize(true)
+            
+            // ✅ Performance optimizations
+            setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null)
+            overScrollMode = android.view.View.OVER_SCROLL_NEVER
         }
 
-        // ✅ Setup trending RecyclerView with horizontal orientation
+        // ✅ Setup trending RecyclerView với horizontal orientation
         binding.rvTrending.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = trendingAdapter
+            setHasFixedSize(true)
+            
+            // ✅ Performance optimizations
+            setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null)
+            overScrollMode = android.view.View.OVER_SCROLL_NEVER
         }
     }
-
+    
+    /**
+     * ✅ Setup infinite scrolling cho NestedScrollView
+     */
+    private fun setupInfiniteScrolling() {
+        println("🔧 Setting up infinite scrolling...")
+        
+        // Tìm NestedScrollView trong view hierarchy
+        val nestedScrollView = findNestedScrollViewInHierarchy(binding.root)
+        
+        if (nestedScrollView != null) {
+            println("✅ Found NestedScrollView, setting up scroll listener")
+            
+            nestedScrollView.setOnScrollChangeListener { _: androidx.core.widget.NestedScrollView, 
+                scrollX: Int, scrollY: Int, oldScrollX: Int, oldScrollY: Int ->
+                
+                val currentTime = System.currentTimeMillis()
+                
+                // ✅ Throttling - chỉ process scroll event mỗi 500ms
+                if (currentTime - lastScrollTime < scrollThrottleMs) {
+                    return@setOnScrollChangeListener
+                }
+                lastScrollTime = currentTime
+                
+                val child = nestedScrollView.getChildAt(0)
+                val childHeight = child.height
+                val scrollViewHeight = nestedScrollView.height
+                val scrollPosition = scrollY
+                
+                // Tính toán khoảng cách đến cuối
+                val distanceToBottom = childHeight - scrollViewHeight - scrollPosition
+                
+                // ✅ Tăng threshold lên 800px để dễ trigger hơn
+                val threshold = 800
+                val isScrollingDown = scrollY > oldScrollY
+                
+                println("📊 Scroll info: scrollY=$scrollY, childHeight=$childHeight, scrollViewHeight=$scrollViewHeight, distanceToBottom=$distanceToBottom")
+                println("🔍 Infinite scroll check: distanceToBottom=$distanceToBottom, threshold=$threshold, isScrollingDown=$isScrollingDown")
+                
+                // ✅ Chỉ trigger khi đang scroll xuống và gần cuối
+                if (distanceToBottom <= threshold && !isLoadMoreTriggered) {
+                    println("🔄 NestedScrollView reached near end, triggering load more...")
+                    println("📊 Current products count: ${productAdapter.getCurrentItemCount()}")
+                    println("📊 Distance to bottom: $distanceToBottom, threshold: $threshold")
+                    println("📊 isScrollingDown: $isScrollingDown")
+                    isLoadMoreTriggered = true
+                    viewModel.loadMoreProducts()
+                    
+                    // ✅ Reset flag sau 2 giây
+                    view?.postDelayed({
+                        isLoadMoreTriggered = false
+                        println("🔄 Reset load more flag")
+                    }, 2000)
+                } else if (distanceToBottom <= threshold && isLoadMoreTriggered) {
+                    println("⏸️ Load more already triggered, waiting...")
+                }
+                
+                // ✅ Debug: Log scroll info để theo dõi
+                if (distanceToBottom <= 1000) {
+                    println("🔍 Near bottom: distanceToBottom=$distanceToBottom, isScrollingDown=$isScrollingDown, isLoadMoreTriggered=$isLoadMoreTriggered")
+                }
+            }
+        } else {
+            println("❌ NestedScrollView not found!")
+            // Fallback: Thử setup sau 1 giây
+            view?.postDelayed({
+                setupInfiniteScrolling()
+            }, 1000)
+        }
+    }
+    
+    /**
+     * Tìm NestedScrollView trong view hierarchy
+     */
+    private fun findNestedScrollViewInHierarchy(view: android.view.View): androidx.core.widget.NestedScrollView? {
+        if (view is androidx.core.widget.NestedScrollView) {
+            println("🎯 Found NestedScrollView: $view")
+            return view
+        }
+        
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                val found = findNestedScrollViewInHierarchy(view.getChildAt(i))
+                if (found != null) return found
+            }
+        }
+        
+        return null
+    }
+    
     private fun setupBanner() {
         // ✅ Null check
         if (!isAdded || activity == null) return
@@ -166,7 +290,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     super.onPageSelected(position)
                     // ✅ Null check cho binding
                     if (isAdded && isBindingInitialized()) {
-                    binding.indicatorView.onPageSelected(position)
+                        binding.indicatorView.onPageSelected(position)
                     }
                 }
             })
@@ -198,7 +322,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             startActivity(intent)
             println("🛒 Opening CartActivity")
         }
+        
+        // ✅ Setup pull-to-refresh cho NestedScrollView (nếu có trong layout)
     }
+
     
     /**
      * Observe products với StateFlow architecture
@@ -208,11 +335,31 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.products.collect { products ->
                 println("🛍️ Products updated: ${products.size} items")
-                productAdapter.submitList(products)
+                println("🛍️ Products list: ${products.map { it.name }}")
+                println("🛍️ Products IDs: ${products.map { it.product_id }}")
                 
-                // Debug: Print first few products
-                products.take(3).forEach { product ->
-                    println("   Product: ${product.name}")
+                // ✅ Xử lý trường hợp không có sản phẩm
+                if (products.isEmpty()) {
+                    println("📭 No products available")
+                    // TODO: Hiển thị empty state
+                    // binding.emptyState.visibility = View.VISIBLE
+                    // binding.rvProduct.visibility = View.GONE
+                } else {
+                    println("📦 Products available: ${products.size} items")
+                    // TODO: Ẩn empty state
+                    // binding.emptyState.visibility = View.GONE
+                    // binding.rvProduct.visibility = View.VISIBLE
+                }
+                
+                // Submit new list
+                productAdapter.submitList(products) {
+                    // Callback được gọi khi submitList hoàn tất
+                    println("✅ ProductAdapter submitList completed")
+                    println("📊 Current adapter item count: ${productAdapter.getCurrentItemCount()}")
+                    println("📊 Last item position: ${productAdapter.getLastItemPosition()}")
+                    println("🟢 Adapter list size: ${productAdapter.currentList.size}")
+                    println("🟢 All product IDs: ${productAdapter.currentList.map { it.product_id }}")
+                    println("🟢 All product names: ${productAdapter.currentList.map { it.name }}")
                 }
             }
         }
@@ -223,6 +370,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 println("⏳ Products loading: $isLoading")
                 // TODO: Show/hide loading indicator
                 // binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
+                
+                // ✅ Visual feedback cho loading state
+                if (isLoading) {
+                    println("🔄 Showing loading indicator...")
+                    // ✅ Reset load more flag khi bắt đầu loading
+                    isLoadMoreTriggered = false
+                } else {
+                    println("✅ Hiding loading indicator...")
+                }
             }
         }
         
@@ -403,6 +559,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         super.onCreate(savedInstanceState)
     }
     
+    override fun onViewCreated(view: android.view.View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        
+        println("🎯 onViewCreated called")
+        
+        // ✅ Setup infinite scrolling sau khi view hierarchy hoàn tất
+        view.post {
+            println("🎯 Post runnable executing - setting up infinite scrolling")
+            setupInfiniteScrolling()
+        }
+    }
+
     companion object {
         /**
          * Use this factory method to create a new instance of

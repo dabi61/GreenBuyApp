@@ -61,9 +61,16 @@ private fun createOkHttpClient(
         .addInterceptor(accessTokenInterceptor)
         .addInterceptor(createCacheInterceptor())
         .cache(Cache(context.cacheDir, 50 * 1024 * 1024))
-        .connectTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(15, TimeUnit.SECONDS)
-        .writeTimeout(10, TimeUnit.SECONDS)
+        // ✅ Tối ưu timeout cho upload ảnh
+        .connectTimeout(30, TimeUnit.SECONDS)  // Tăng từ 10s lên 30s
+        .readTimeout(60, TimeUnit.SECONDS)     // Tăng từ 15s lên 60s  
+        .writeTimeout(60, TimeUnit.SECONDS)    // Tăng từ 10s lên 60s
+        // ✅ Thêm connection pool để tái sử dụng connection
+        .connectionPool(okhttp3.ConnectionPool(5, 5, TimeUnit.MINUTES))
+        // ✅ Thêm retry interceptor cho upload
+        .addInterceptor(createRetryInterceptor())
+        // ✅ Thêm progress interceptor cho upload
+        .addInterceptor(createProgressInterceptor())
         .build()
 }
 
@@ -102,6 +109,66 @@ private fun createCacheInterceptor(): Interceptor {
                 .build()
         } else {
             response
+        }
+    }
+}
+
+/**
+ * ✅ Retry interceptor cho upload ảnh
+ */
+private fun createRetryInterceptor(): Interceptor {
+    return Interceptor { chain ->
+        val request = chain.request()
+        var response = chain.proceed(request)
+        var retryCount = 0
+        val maxRetries = 3
+        
+        // ✅ Chỉ retry cho POST/PUT requests (upload)
+        while (!response.isSuccessful && retryCount < maxRetries && 
+               (request.method == "POST" || request.method == "PUT")) {
+            retryCount++
+            println("🔄 Retry attempt $retryCount for ${request.method} ${request.url}")
+            
+            // Đóng response cũ
+            response.close()
+            
+            // Chờ một chút trước khi retry
+            Thread.sleep(1000L * retryCount)
+            
+            // Thử lại
+            response = chain.proceed(request)
+        }
+        
+        response
+    }
+}
+
+/**
+ * ✅ Progress interceptor để theo dõi tiến trình upload
+ */
+private fun createProgressInterceptor(): Interceptor {
+    return Interceptor { chain ->
+        val request = chain.request()
+        
+        // ✅ Chỉ track progress cho upload requests
+        if (request.method == "POST" || request.method == "PUT") {
+            println("📤 Starting upload: ${request.method} ${request.url}")
+            val startTime = System.currentTimeMillis()
+            
+            val response = chain.proceed(request)
+            
+            val endTime = System.currentTimeMillis()
+            val duration = endTime - startTime
+            
+            if (response.isSuccessful) {
+                println("✅ Upload completed in ${duration}ms")
+            } else {
+                println("❌ Upload failed in ${duration}ms: ${response.code}")
+            }
+            
+            response
+        } else {
+            chain.proceed(request)
         }
     }
 }

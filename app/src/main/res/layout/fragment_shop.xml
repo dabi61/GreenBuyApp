@@ -711,7 +711,7 @@
                             app:layout_constraintEnd_toEndOf="@id/tv_item_2"
                             android:textColor="@color/grey_700"
                             android:textSize="@dimen/_8sdp"
-                            android:text="Chờ lấy hàng"/>
+                            android:text="Chờ xác nhận"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -796,7 +796,7 @@
                             android:textColor="@color/grey_700"
                             android:textSize="@dimen/_8sdp"
                             android:textAlignment="center"
-                            android:text="Tổng số đơn hàng"/>
+                            android:text="Đã giao"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
 
