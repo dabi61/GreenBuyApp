@@ -204,7 +204,7 @@ class CustomerInformationActivity : BaseActivity<ActivityCustomerInformationBind
             avatarUrl, // Có thể null nếu không chọn ảnh mới
             ho,
             ten,
-            phone.toInt(),
+            phone,
             selectedBirthDate!!
         )
 

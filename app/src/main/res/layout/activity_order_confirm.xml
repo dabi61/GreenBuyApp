@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@id/main"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.order.OrderConfirmActivity">
 
@@ -26,6 +27,7 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_parent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -345,5 +347,43 @@ Phường  Trung Văn, Quận Nam Từ Liêm, Hà Nội"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="gone" />
+
+    <!-- Layout hiển thị khi đánh giá thành công -->
+    <LinearLayout
+        android:id="@+id/successLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@android:color/white"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/ic_check_circle_green" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Đặt hàng thành công !"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#2CCE75"
+            android:layout_marginTop="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cảm ơn vì đã ủng hộ chúng tôi"
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -139,7 +139,7 @@ class UserRepository(
         avatar: Uri?,
         firstName: String,
         lastName: String,
-        phoneNumber: Int,
+        phoneNumber: String,
         birthDate: String,
     ): Result<UpdateUserProfileResponse> {
         return safeApiCall(dispatcher) {

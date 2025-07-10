@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.greenbuyapp.data.cart.model.CartShop
 import com.example.greenbuyapp.data.cart.model.PaymentResponse
+import com.example.greenbuyapp.data.product.model.CreateAttributeResponse
 import com.example.greenbuyapp.domain.cart.CartRepository
+import com.example.greenbuyapp.ui.shop.addProduct.AddVariantUiState
 import com.example.greenbuyapp.util.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,6 +15,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
+
+sealed class PaymentUiState {
+    object Idle : PaymentUiState()
+    object Loading : PaymentUiState()
+    data class Success(val paymentResponse: PaymentResponse) : PaymentUiState()
+    data class Error(val message: String) : PaymentUiState()
+}
 
 class CartViewModel(
     private val cartRepository: CartRepository
@@ -37,6 +46,10 @@ class CartViewModel(
     // Selected attribute IDs
     private val _selectedAttributeIds = MutableStateFlow<Set<Int>>(emptySet())
     val selectedAttributeIds: StateFlow<Set<Int>> = _selectedAttributeIds.asStateFlow()
+
+    // UI State cho việc tạo variants
+    private val _paymentState = MutableStateFlow<PaymentUiState>(PaymentUiState.Idle)
+    val paymentState: StateFlow<PaymentUiState> = _paymentState.asStateFlow()
 
     init {
         loadCart()
@@ -350,14 +363,17 @@ class CartViewModel(
                     shop, shippingAddress, phoneNumber, recipientName, deliveryNotes, billingAddress
                 )) {
                     is Result.Success -> {
+                        _paymentState.value = PaymentUiState.Success(result.value)
                         paymentResults.add(result.value)
                         Log.d("Payment", result.value.toString())
                     }
                     is Result.Error -> {
+                        _paymentState.value = PaymentUiState.Error(result.error ?: "Lỗi tạo payment")
                         Log.d("Payment", result.error.toString())
                         // Xử lý lỗi từng shop nếu cần
                     }
                     is Result.NetworkError -> {
+                        _paymentState.value = PaymentUiState.Error("Lỗi kết nối mạng khi tạo variant")
                         Log.d("Payment", "Network error")
                         // Xử lý lỗi mạng nếu cần
                     }

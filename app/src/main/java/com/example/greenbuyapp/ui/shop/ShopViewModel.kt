@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.greenbuyapp.R
 import com.example.greenbuyapp.data.shop.model.OrderStats
 import com.example.greenbuyapp.data.shop.model.Shop
+import com.example.greenbuyapp.domain.approve.ApproveRepository
 import com.example.greenbuyapp.domain.shop.ShopRepository
 import com.example.greenbuyapp.util.Result
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ShopViewModel(
-    private val shopRepository: ShopRepository
+    private val shopRepository: ShopRepository,
+    private val approveRepository: ApproveRepository
 ) : ViewModel() {
 
     // ✅ Cleaned up - removed unused register-related StateFlows

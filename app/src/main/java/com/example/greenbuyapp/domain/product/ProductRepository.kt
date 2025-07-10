@@ -18,6 +18,7 @@ import com.example.greenbuyapp.util.Result
 import com.example.greenbuyapp.util.safeApiCall
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import com.example.greenbuyapp.data.product.model.ApproveProductRequest
 
 class ProductRepository(
     private val productService: ProductService,
@@ -400,6 +401,38 @@ class ProductRepository(
     suspend fun deleteAttribute(attributeId: Int): Result<MessageResponse> {
         return safeApiCall(dispatcher) {
             productService.deleteAttribute(attributeId)
+        }
+    }
+
+    /**
+     * ✅ Duyệt sản phẩm
+     * @param productId ID sản phẩm cần duyệt
+     * @param approvalNote Ghi chú duyệt (optional)
+     * @return Result<Product> kết quả duyệt
+     */
+    suspend fun approveProduct(productId: Int, approvalNote: String = "Đã duyệt"): Result<Product> {
+        return safeApiCall(dispatcher) {
+            val requestBody = ApproveProductRequest(
+                approved = true,
+                approval_note = approvalNote
+            )
+            productService.approveProduct(productId, requestBody)
+        }
+    }
+
+    /**
+     * ✅ Từ chối sản phẩm
+     * @param productId ID sản phẩm cần từ chối
+     * @param reason Lý do từ chối
+     * @return Result<Product> kết quả từ chối
+     */
+    suspend fun rejectProduct(productId: Int, reason: String = "Đã từ chối"): Result<Product> {
+        return safeApiCall(dispatcher) {
+            val requestBody = ApproveProductRequest(
+                approved = false,
+                approval_note = reason
+            )
+            productService.rejectProduct(productId, requestBody)
         }
     }
 

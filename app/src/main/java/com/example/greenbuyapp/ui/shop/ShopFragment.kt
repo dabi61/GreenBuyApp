@@ -1,8 +1,7 @@
 package com.example.greenbuyapp.ui.shop
 
+import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,28 +10,25 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.transition.Visibility
 import androidx.viewpager2.widget.ViewPager2
 import com.example.greenbuyapp.R
-import com.example.greenbuyapp.databinding.FragmentHomeBinding
 import com.example.greenbuyapp.databinding.FragmentShopBinding
 import com.example.greenbuyapp.ui.base.BaseFragment
 import com.example.greenbuyapp.ui.home.BannerAdapter
 import com.example.greenbuyapp.ui.shop.dashboard.ShopDashboardDetailActivity
 import com.example.greenbuyapp.ui.shop.productManagement.ProductManagementActivity
-import com.example.greenbuyapp.ui.shop.shopDetail.ShopDetailActivity
 import com.example.greenbuyapp.util.ImageTransform
 import com.example.greenbuyapp.util.loadAvatar
 import com.example.greenbuyapp.util.loadUrl
 import com.zhpan.indicator.enums.IndicatorSlideMode
 import com.zhpan.indicator.enums.IndicatorStyle
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
+import com.example.greenbuyapp.ui.admin.approve.product.ApproveProductActivity
 
 /**
  * Fragment hiển thị màn hình shop
@@ -81,13 +77,20 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
             setupCreateShopButton()
             setupBanner()
             setupProductManagement()
-
+            onClickApproveProduct()
             viewModel.getMyShopStats()
             viewModel.loadBannerItems()
 
             openDashboardDetail()
         }.onFailure { e ->
             println("❌ Error in initView: ${e.message}")
+        }
+    }
+
+    private fun onClickApproveProduct() {
+        binding.cvProductApproval.setOnClickListener {
+            val intent = Intent(requireActivity(), ApproveProductActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -405,7 +408,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
                     clWelcome.visibility = View.VISIBLE
                     clShopCreate.visibility = View.GONE
                     clDashboard.visibility = View.GONE
-                    clApprove.visibility = View.GONE
+                    clAdmin.visibility = View.GONE
                 }
             }
             2 -> {
@@ -413,7 +416,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
                     clWelcome.visibility = View.GONE
                     clShopCreate.visibility = View.VISIBLE
                     clDashboard.visibility = View.GONE
-                    clApprove.visibility = View.GONE
+                    clAdmin.visibility = View.GONE
                 }
             }
             3 -> {
@@ -421,7 +424,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
                     clWelcome.visibility = View.GONE
                     clShopCreate.visibility = View.GONE
                     clDashboard.visibility = View.VISIBLE
-                    clApprove.visibility = View.GONE
+                    clAdmin.visibility = View.GONE
                 }
             }
             4 -> {
@@ -429,7 +432,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
                     clWelcome.visibility = View.GONE
                     clShopCreate.visibility = View.GONE
                     clDashboard.visibility = View.GONE
-                    clApprove.visibility = View.VISIBLE
+                    clAdmin.visibility = View.VISIBLE
                 }
             }
         }
