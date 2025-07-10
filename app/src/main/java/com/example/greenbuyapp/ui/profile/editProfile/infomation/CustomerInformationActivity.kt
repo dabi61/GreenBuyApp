@@ -115,7 +115,7 @@ class CustomerInformationActivity : BaseActivity<ActivityCustomerInformationBind
                     is UpdateInfomationUiState.Success -> {
                         binding.btnSaveInfor.isEnabled = true
                         binding.btnSaveInfor.text = "Lưu thành công"
-                        Toast.makeText(this@CustomerInformationActivity, "✅ Tạo sản phẩm thành công!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@CustomerInformationActivity, "✅ Cập nhật thông tin thành công!", Toast.LENGTH_SHORT).show()
                         backToProfile()
                     }
                     is UpdateInfomationUiState.Error -> {
@@ -186,10 +186,15 @@ class CustomerInformationActivity : BaseActivity<ActivityCustomerInformationBind
             binding.edtPhone.error = "Số điện thoại không được để trống"
             return
         }
+        if (phone.matches(Regex("^\\d{10}$"))){
+            binding.edtPhone.error = "Số điện thoại không hợp lệ"
+            return
+        }
         if (selectedBirthDate.isNullOrEmpty()) {
             Toast.makeText(this, "Vui lòng chọn ngày sinh", Toast.LENGTH_SHORT).show()
             return
         }
+
 
         // In log kiểm tra dữ liệu thật được gửi đi
         println("📤 Đang gửi PUT với dữ liệu:")
