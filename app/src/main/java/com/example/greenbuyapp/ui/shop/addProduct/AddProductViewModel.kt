@@ -31,6 +31,13 @@ sealed class AddVariantUiState {
     data class Error(val message: String) : AddVariantUiState()
 }
 
+sealed class DeleteAttributeUiState {
+    object Idle : DeleteAttributeUiState()
+    object Loading : DeleteAttributeUiState()
+    data class Success(val attributeId: Int) : DeleteAttributeUiState()
+    data class Error(val message: String) : DeleteAttributeUiState()
+}
+
 class AddProductViewModel(
     private val productRepository: ProductRepository,
     private val categoryRepository: CategoryRepository
@@ -43,6 +50,10 @@ class AddProductViewModel(
     // UI State cho việc tạo variants
     private val _addVariantState = MutableStateFlow<AddVariantUiState>(AddVariantUiState.Idle)
     val addVariantState: StateFlow<AddVariantUiState> = _addVariantState.asStateFlow()
+
+    // UI State cho việc xóa attribute
+    private val _deleteAttributeState = MutableStateFlow<DeleteAttributeUiState>(DeleteAttributeUiState.Idle)
+    val deleteAttributeState: StateFlow<DeleteAttributeUiState> = _deleteAttributeState.asStateFlow()
 
     // Error message
     private val _errorMessage = MutableStateFlow<String?>(null)
@@ -492,6 +503,7 @@ class AddProductViewModel(
     fun resetState() {
         _addProductState.value = AddProductUiState.Idle
         _addVariantState.value = AddVariantUiState.Idle
+        _deleteAttributeState.value = DeleteAttributeUiState.Idle
         _errorMessage.value = null
         _productId.value = null
         _variants.value = listOf(ProductVariant())
@@ -514,6 +526,13 @@ class AddProductViewModel(
      */
     fun clearErrorMessage() {
         _errorMessage.value = null
+    }
+    
+    /**
+     * Reset delete attribute state
+     */
+    fun resetDeleteAttributeState() {
+        _deleteAttributeState.value = DeleteAttributeUiState.Idle
     }
 
     /**
@@ -644,23 +663,25 @@ class AddProductViewModel(
             // ✅ Kiểm tra productId trước khi sử dụng
             val currentProductId = _productId.value
             if (currentProductId == null) {
-                _errorMessage.value = "Lỗi: Không có Product ID để xóa thuộc tính"
+                _deleteAttributeState.value = DeleteAttributeUiState.Error("Lỗi: Không có Product ID để xóa thuộc tính")
                 println("❌ Error: Product ID is null when deleting attribute")
                 return@launch
             }
             
+            _deleteAttributeState.value = DeleteAttributeUiState.Loading
+            
             when (val result = productRepository.deleteAttribute(attributeId)) {
                 is Result.Success -> {
                     loadProductAttributes(currentProductId) // ✅ Sử dụng safe productId
+                    _deleteAttributeState.value = DeleteAttributeUiState.Success(attributeId)
                     println("✅ Product attribute deleted successfully")
-                    _errorMessage.value = "Thuộc tính đã được xóa"
                 }
                 is Result.Error -> {
-                    _errorMessage.value = "Lỗi xóa thuộc tính sản phẩm: ${result.error}"
+                    _deleteAttributeState.value = DeleteAttributeUiState.Error("Lỗi xóa thuộc tính sản phẩm: ${result.error}")
                     println("❌ Error deleting product attribute: ${result.error}")
-                    }
+                }
                 is Result.NetworkError -> {
-                    _errorMessage.value = "Lỗi kết nối mạng khi xóa thuộc tính sản phẩm"
+                    _deleteAttributeState.value = DeleteAttributeUiState.Error("Lỗi kết nối mạng khi xóa thuộc tính sản phẩm")
                     println("❌ Network error deleting product attribute")
                 }
                 is Result.Loading -> {

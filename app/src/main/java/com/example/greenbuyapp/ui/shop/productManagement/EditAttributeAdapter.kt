@@ -93,6 +93,16 @@ class EditAttributeAdapter(
                 etPrice.setText(attribute.price.toString())
                 etQuantity.setText(attribute.quantity.toString())
                 
+                // ✅ Hiển thị trạng thái khác nhau cho saved và unsaved attributes
+                val isSaved = attribute.attribute_id > 0
+                if (isSaved) {
+                    // Attribute đã save - hiển thị bình thường
+                    btnSave.text = "Cập nhật"
+                } else {
+                    // Attribute chưa save - hiển thị khác
+                    btnSave.text = "Lưu"
+                }
+                
                 // Load image if exists
                 val imageUrl = if (attribute.image.isNotEmpty()) {
                     if (attribute.image.startsWith("http")) {
