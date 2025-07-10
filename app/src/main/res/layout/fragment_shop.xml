@@ -192,7 +192,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/backgroundLight"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <!-- Toolbar -->
         <com.google.android.material.appbar.AppBarLayout
@@ -521,7 +521,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/backgroundLight"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <!-- Toolbar -->
         <com.google.android.material.appbar.AppBarLayout
@@ -570,7 +570,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toEndOf="@id/iv_avatar_dashboard"
                     app:layout_constraintTop_toTopOf="@id/iv_avatar_dashboard"
-                    app:layout_constraintEnd_toStartOf="@id/bt_shop_dashboard"
+                    app:layout_constraintEnd_toStartOf="@id/bt_lock_shop"
                     android:layout_marginStart="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_4sdp"
                     android:textColor="@color/black"
@@ -586,12 +586,12 @@
                     app:layout_constraintTop_toBottomOf="@id/tv_name_dashboard"
                     app:layout_constraintStart_toStartOf="@id/tv_name_dashboard"
                     android:textColor="@color/grey_600"
-                    app:layout_constraintEnd_toStartOf="@id/bt_shop_dashboard"
+                    app:layout_constraintEnd_toStartOf="@id/bt_lock_shop"
                     android:text="greenbuy.site/name"
                     />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/bt_shop_dashboard"
+                    android:id="@+id/bt_lock_shop"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"

@@ -29,6 +29,7 @@ import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
 import com.example.greenbuyapp.ui.admin.approve.product.ApproveProductActivity
+import com.example.greenbuyapp.ui.shop.myShopDetail.MyShopDetailActivity
 
 /**
  * Fragment hiển thị màn hình shop
@@ -78,12 +79,20 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
             setupBanner()
             setupProductManagement()
             onClickApproveProduct()
+            onClickLockShop()
             viewModel.getMyShopStats()
             viewModel.loadBannerItems()
 
             openDashboardDetail()
         }.onFailure { e ->
             println("❌ Error in initView: ${e.message}")
+        }
+    }
+
+    private fun onClickLockShop() {
+        binding.btLockShop.setOnClickListener {
+            val intent = Intent(requireActivity(), MyShopDetailActivity::class.java)
+            startActivity(intent)
         }
     }
 
