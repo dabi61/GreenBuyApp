@@ -5,18 +5,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.example.greenbuyapp.R
 import com.example.greenbuyapp.databinding.FragmentHomeBinding
 import com.example.greenbuyapp.ui.base.BaseFragment
 import com.example.greenbuyapp.ui.product.ProductActivity
 import com.example.greenbuyapp.ui.cart.CartActivity
-import com.example.greenbuyapp.util.NetworkState
 import com.zhpan.indicator.enums.IndicatorSlideMode
 import com.zhpan.indicator.enums.IndicatorStyle
 import kotlinx.coroutines.launch
@@ -537,10 +534,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override fun onResume() {
         super.onResume()
         if (::bannerAdapter.isInitialized && bannerAdapter.itemCount > 0) {
-        startAutoScroll()
+            startAutoScroll()
         }
-
-        viewModel.loadProducts(isRefresh = true)
+        // ❌ Không gọi lại loadProducts(isRefresh = true) ở đây để tránh reset danh sách khi quay lại màn hình
+        // viewModel.loadProducts(isRefresh = true)
     }
     
     override fun onPause() {

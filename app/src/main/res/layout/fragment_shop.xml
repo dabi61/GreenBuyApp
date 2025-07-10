@@ -192,7 +192,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/backgroundLight"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <!-- Toolbar -->
         <com.google.android.material.appbar.AppBarLayout
@@ -264,21 +264,9 @@
                             android:layout_marginStart="16dp"
                             app:layout_constraintStart_toEndOf="@id/iv_order_approval"
                             app:layout_constraintTop_toTopOf="@id/iv_order_approval"
-                            app:layout_constraintEnd_toStartOf="@id/tv_order_approval_count" />
+                            app:layout_constraintEnd_toEndOf="parent"/>
 
-                        <TextView
-                            android:id="@+id/tv_order_approval_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="12"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/main_color"
-                            android:paddingHorizontal="8dp"
-                            android:paddingVertical="4dp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@id/tv_order_approval_title"
-                            app:layout_constraintBottom_toBottomOf="@id/tv_order_approval_title" />
+
 
                         <TextView
                             android:id="@+id/tv_order_approval_subtitle"
@@ -332,21 +320,9 @@
                             android:layout_marginStart="16dp"
                             app:layout_constraintStart_toEndOf="@id/iv_product_approval"
                             app:layout_constraintTop_toTopOf="@id/iv_product_approval"
-                            app:layout_constraintEnd_toStartOf="@id/tv_product_approval_count" />
+                            app:layout_constraintEnd_toEndOf="parent" />
 
-                        <TextView
-                            android:id="@+id/tv_product_approval_count"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="8"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:textColor="@color/green_600"
-                            android:paddingHorizontal="8dp"
-                            android:paddingVertical="4dp"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@id/tv_product_approval_title"
-                            app:layout_constraintBottom_toBottomOf="@id/tv_product_approval_title" />
+
 
                         <TextView
                             android:id="@+id/tv_product_approval_subtitle"
@@ -521,7 +497,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/backgroundLight"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <!-- Toolbar -->
         <com.google.android.material.appbar.AppBarLayout
@@ -862,7 +838,7 @@
                     android:id="@+id/iv_func_item_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_smile_star"
+                    android:src="@drawable/ic_my_product"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -875,7 +851,7 @@
                     android:id="@+id/iv_func_item_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_smile_star"
+                    android:src="@drawable/ic_my_finance"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/iv_func_item_1"
                     app:layout_constraintBottom_toBottomOf="@id/iv_func_item_1"
@@ -885,7 +861,7 @@
                     android:id="@+id/iv_func_item_3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_smile_star"
+                    android:src="@drawable/ic_effect_sold"
                     app:layout_constraintStart_toEndOf="@id/iv_func_item_2"
                     app:layout_constraintTop_toTopOf="@id/iv_func_item_2"
                     app:layout_constraintBottom_toBottomOf="@id/iv_func_item_2"

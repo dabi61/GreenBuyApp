@@ -117,7 +117,7 @@ class HomeViewModel(
                 val result = withTimeoutOrNull(30000L) { // 30 giây timeout
                     productRepository.getProducts(
                         page = currentPage,
-                        limit = 15,
+                        limit = 10,
                         search = _searchQuery.value.takeIf { it.isNotBlank() },
                         categoryId = _categoryId.value,
                         subCategoryId = _subCategoryId.value,
@@ -145,13 +145,18 @@ class HomeViewModel(
                         println("📦 API response details: page=${response.page}, total=${response.total}, total_pages=${response.total_pages}")
                         println("📦 Current products before append: ${_products.value.size}")
                         
-                        // ✅ Kiểm tra nếu API trả về 0 items
+                        // ✅ Luôn cộng dồn sản phẩm, kể cả khi has_next = false (trang cuối)
                         if (newProducts.isEmpty()) {
                             println("⚠️ API returned 0 items for page $currentPage")
                             println("🔍 Debug: currentPage=$currentPage, totalPages=${response.total_pages}, total=${response.total}")
-                            
+
+                            // ✅ Luôn thêm trang đã gọi vào loadedPages
+                            loadedPages.add(currentPage)
+                            val oldPage = currentPage
+                            currentPage++
+
                             // ✅ Nếu là trang đầu tiên và không có sản phẩm nào
-                            if (currentPage == 1) {
+                            if (oldPage == 1) {
                                 println("🚫 No products available in the system")
                                 _products.value = emptyList()
                                 hasMoreProducts = false
@@ -160,6 +165,8 @@ class HomeViewModel(
                                 println("🏁 Reached end of products, stopping pagination")
                                 hasMoreProducts = false
                             }
+                            println("📄 Page updated: $oldPage -> $currentPage")
+                            println("📄 Loaded pages: $loadedPages")
                         } else {
                             println("🔍 Processing ${newProducts.size} new products...")
                             println("🔍 Current products count before append: ${_products.value.size}")
@@ -180,11 +187,12 @@ class HomeViewModel(
                             println("🔍 Final products count: ${_products.value.size}")
                             println("🔍 Final product IDs: ${_products.value.map { it.product_id }}")
                             
-                            // ✅ Sử dụng has_next từ API response thay vì tự tính
-                            hasMoreProducts = response.has_next
+                            // ✅ Luôn thêm trang đã gọi vào loadedPages
                             loadedPages.add(currentPage)
                             val oldPage = currentPage
                             currentPage++
+                            // ✅ Sử dụng has_next để dừng phân trang, nhưng luôn cộng dồn sản phẩm trang cuối
+                            hasMoreProducts = response.has_next
                             println("📄 Page updated: $oldPage -> $currentPage")
                             println("📄 Loaded pages: $loadedPages")
                         }
