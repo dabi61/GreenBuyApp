@@ -25,6 +25,7 @@ import com.example.greenbuyapp.ui.profile.editProfile.address.AddressAddViewMode
 import com.example.greenbuyapp.ui.profile.editProfile.address.AddressUpdateViewModel
 import com.example.greenbuyapp.ui.profile.editProfile.infomation.CustomerInformationViewModel
 import com.example.greenbuyapp.ui.admin.approve.product.ApproveProductViewModel
+import com.example.greenbuyapp.ui.shop.shopDetail.EditShopViewModel
 
 val viewModelModule = module {
 
@@ -59,6 +60,7 @@ val viewModelModule = module {
     viewModel { ShopReviewViewModel(get()) }
     viewModel { RatingShopViewModel(get()) }
     viewModel { ApproveProductViewModel(get()) }
+    viewModel { EditShopViewModel(get()) }
 
 
 //    viewModel { SettingsViewModel(androidContext()) }

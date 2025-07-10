@@ -4,12 +4,15 @@ import com.example.greenbuyapp.data.shop.model.OrderDetail
 import com.example.greenbuyapp.data.shop.model.OrderStats
 import com.example.greenbuyapp.data.shop.model.Shop
 import com.example.greenbuyapp.data.shop.model.ShopOrderResponse
+import com.example.greenbuyapp.data.shop.model.UpdateShopResponse
+import com.example.greenbuyapp.data.user.model.UpdateUserProfileResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -64,5 +67,16 @@ interface ShopService {
         @Part avatar: MultipartBody.Part?
     ): Shop
 
-
+    /**
+     * Cập nhật shop của tôi
+     */
+    @Multipart
+    @PUT("api/shops/me")
+    suspend fun updateMyShop(
+        @Part("name") name: RequestBody,
+        @Part("phone_number") phone: RequestBody,
+        @Part("is_active") isActive: RequestBody,
+        @Part("is_online") isOnline: RequestBody,
+        @Part avatar: MultipartBody.Part?,
+    ): UpdateShopResponse
 }

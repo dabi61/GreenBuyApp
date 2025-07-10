@@ -30,6 +30,7 @@ import android.os.Handler
 import android.os.Looper
 import com.example.greenbuyapp.ui.admin.approve.product.ApproveProductActivity
 import com.example.greenbuyapp.ui.shop.myShopDetail.MyShopDetailActivity
+import com.example.greenbuyapp.ui.shop.shopDetail.ShopDetailActivity
 
 /**
  * Fragment hiển thị màn hình shop
@@ -91,8 +92,14 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
 
     private fun onClickLockShop() {
         binding.btLockShop.setOnClickListener {
-            val intent = Intent(requireActivity(), MyShopDetailActivity::class.java)
-            startActivity(intent)
+            val shopId = viewModel.shopInfo.value?.id
+
+            if (shopId != null && shopId > 0) {
+                val intent = ShopDetailActivity.createIntent(requireContext(), shopId)
+                startActivity(intent)
+            } else {
+                Toast.makeText(context, "❌ Không thể mở chi tiết shop (thiếu shopId)", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

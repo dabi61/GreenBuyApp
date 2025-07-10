@@ -8,6 +8,7 @@ import com.example.greenbuyapp.data.shop.model.OrderDetail
 import com.example.greenbuyapp.data.shop.model.OrderStats
 import com.example.greenbuyapp.data.shop.model.Shop
 import com.example.greenbuyapp.data.shop.model.ShopOrderResponse
+import com.example.greenbuyapp.data.shop.model.UpdateShopResponse
 import com.example.greenbuyapp.data.user.UserService
 import com.example.greenbuyapp.data.user.model.ChangeRoleRequest
 import com.example.greenbuyapp.data.user.model.UserMeResponse
@@ -134,5 +135,37 @@ class ShopRepository(
             shopService.getOrderDetail(orderId)
         }
     }
+
+    /**
+     * Cập nhật shop của tôi (gửi lên name, phone_number, is_active, is_online, avatar)
+     */
+    suspend fun updateMyShop(
+        context: Context,
+        avatarUri: Uri?,
+        name: String,
+        phoneNumber: String,
+        isActive: Boolean = true,
+        isOnline: Boolean = true
+    ): Result<UpdateShopResponse> {
+        return safeApiCall(dispatcher) {
+            val namePart = MultipartUtils.createTextPart(name)
+            val phonePart = MultipartUtils.createTextPart(phoneNumber)
+            val isActivePart = MultipartUtils.createTextPart(isActive.toString())
+            val isOnlinePart = MultipartUtils.createTextPart(isOnline.toString())
+            val avatarPart = avatarUri?.let {
+                MultipartUtils.createImagePart(context, "avatar", it)
+            }
+
+            shopService.updateMyShop(
+                name = namePart,
+                phone = phonePart,
+                isActive = isActivePart,
+                isOnline = isOnlinePart,
+                avatar = avatarPart
+            )
+        }
+    }
+
+
 
 }
