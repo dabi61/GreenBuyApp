@@ -43,7 +43,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
-                app:cardElevation="2dp"
+                app:cardElevation="0dp"
                 app:cardBackgroundColor="@color/white">
 
                 <LinearLayout
@@ -217,7 +217,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="8dp"
+                    app:cardElevation="0dp"
                     app:cardBackgroundColor="@color/white">
 
                     <LinearLayout
@@ -308,16 +308,16 @@
                 <!-- Reject Button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnReject"
-                    style="@style/Widget.Material3.Button.OutlinedButton"
                     android:layout_width="0dp"
                     android:layout_height="56dp"
                     android:layout_marginEnd="16dp"
                     android:layout_weight="1"
                     android:text="Từ chối"
-                    android:textColor="@color/red_600"
+                    android:backgroundTint="@color/red_900"
+                    android:textColor="@color/white"
                     app:icon="@drawable/ic_close"
                     app:iconGravity="textStart"
-                    app:iconTint="@color/red_600"
+                    app:iconTint="@color/white"
                     app:strokeColor="@color/red_600" />
 
                 <!-- Approve Button -->
