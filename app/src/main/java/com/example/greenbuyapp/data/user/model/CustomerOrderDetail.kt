@@ -108,12 +108,40 @@ data class CustomerOrderItem(
     @Json(name = "attribute_id") val attributeId: Int,
     @Json(name = "product_name") val productName: String,
     @Json(name = "product_image") val productImage: String? = null,
+    @Json(name = "attribute_image") val attributeImage: String? = null, // ✅ Thêm attribute_image
     @Json(name = "attribute_details") val attributeDetails: String? = null,
     @Json(name = "quantity") val quantity: Int,
     @Json(name = "unit_price") val unitPrice: Double,
     @Json(name = "total_price") val totalPrice: Double,
     @Json(name = "created_at") val createdAt: String
 ) : Parcelable {
+    
+    /**
+     * ✅ Lấy URL hình ảnh - ưu tiên attribute_image trước, fallback về product_image
+     */
+    fun getImageUrl(): String? {
+        val baseUrl = "https://www.utt-school.site"
+        
+        return when {
+            // ✅ Ưu tiên attribute_image trước (giống CartItem)
+            !attributeImage.isNullOrBlank() -> {
+                if (attributeImage.startsWith("http")) {
+                    attributeImage
+                } else {
+                    "$baseUrl$attributeImage"
+                }
+            }
+            // ✅ Fallback về product_image
+            !productImage.isNullOrBlank() -> {
+                if (productImage.startsWith("http")) {
+                    productImage
+                } else {
+                    "$baseUrl$productImage"
+                }
+            }
+            else -> null
+        }
+    }
     
     fun getFormattedUnitPrice(): String = getCurrencyFormatter().format(unitPrice)
     fun getFormattedTotalPrice(): String = getCurrencyFormatter().format(totalPrice)

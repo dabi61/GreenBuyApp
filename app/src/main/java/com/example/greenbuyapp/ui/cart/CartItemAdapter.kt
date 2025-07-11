@@ -44,7 +44,17 @@ class CartItemAdapter(
                 tvTotalPrice.text = cartItem.getFormattedTotalPrice()
                 tvAvailableQuantity.text = "Còn lại: ${cartItem.availableQuantity} sản phẩm"
 
-                ivProductImage.setImageResource(R.drawable.pic_item_product)
+                // ✅ Load product image từ dữ liệu thực tế
+                val imageUrl = cartItem.getImageUrl()
+                if (!imageUrl.isNullOrEmpty()) {
+                    ivProductImage.loadUrl(
+                        imageUrl = imageUrl,
+                        placeholder = R.drawable.pic_item_product,
+                        error = R.drawable.pic_item_product
+                    )
+                } else {
+                    ivProductImage.setImageResource(R.drawable.pic_item_product)
+                }
 
                 // Checkbox state
                 cbItem.isChecked = selectedIds.contains(cartItem.attributeId)

@@ -2,6 +2,7 @@ package com.example.greenbuyapp.data.product
 
 import com.example.greenbuyapp.data.MessageResponse
 import com.example.greenbuyapp.data.product.model.Product
+import com.example.greenbuyapp.data.product.model.ProductAttribute
 import com.example.greenbuyapp.data.product.model.ProductAttributeList
 import com.example.greenbuyapp.data.product.model.ProductListResponse
 import com.example.greenbuyapp.data.product.model.TrendingProduct
@@ -56,6 +57,14 @@ interface ProductService {
     suspend fun getProductAttributes(
         @Path("product_id") productId: Int
     ): ProductAttributeList
+
+    /**
+     * ✅ Lấy attribute theo ID
+     */
+    @GET("api/attribute/{attribute_id}")
+    suspend fun getAttribute(
+        @Path("attribute_id") attributeId: Int
+    ): ProductAttribute
 
     /**
      * Lấy product theo ID

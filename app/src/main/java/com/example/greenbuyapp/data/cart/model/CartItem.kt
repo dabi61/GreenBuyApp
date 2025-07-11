@@ -54,12 +54,24 @@ data class CartItem(
      * Lấy URL hình ảnh (ưu tiên attribute_image, fallback về cover)
      */
     fun getImageUrl(): String? {
-        return if (!attributeImage.isNullOrBlank()) {
-            "https://api.unsplash.com/photos/random?query=product&w=300&h=300"
-        } else if (!cover.isNullOrBlank()) {
-            "https://api.unsplash.com/photos/random?query=product&w=300&h=300"
-        } else {
-            null
+        val baseUrl = "https://www.utt-school.site"
+        
+        return when {
+            !attributeImage.isNullOrBlank() -> {
+                if (attributeImage.startsWith("http")) {
+                    attributeImage
+                } else {
+                    "$baseUrl$attributeImage"
+                }
+            }
+            !cover.isNullOrBlank() -> {
+                if (cover.startsWith("http")) {
+                    cover
+                } else {
+                    "$baseUrl$cover"
+                }
+            }
+            else -> null
         }
     }
     

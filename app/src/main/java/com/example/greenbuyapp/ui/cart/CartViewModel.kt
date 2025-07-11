@@ -103,6 +103,46 @@ class CartViewModel(
     }
 
     /**
+     * Thêm sản phẩm vào giỏ hàng
+     */
+    fun addToCart(attributeId: Int, quantity: Int) {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                _errorMessage.value = null
+
+                when (val result = cartRepository.addToCart(attributeId, quantity)) {
+                    is Result.Success -> {
+                        _successMessage.value = result.value.message
+                        // Reload cart để cập nhật UI
+                        loadCart()
+                        println("✅ Added to cart: ${result.value.message}")
+                    }
+                    is Result.Error -> {
+                        val errorMsg = result.error ?: "Lỗi không xác định"
+                        _errorMessage.value = errorMsg
+                        println("❌ $errorMsg")
+                    }
+                    is Result.NetworkError -> {
+                        val errorMsg = "Lỗi mạng khi thêm vào giỏ hàng"
+                        _errorMessage.value = errorMsg
+                        println("🌐 $errorMsg")
+                    }
+                    is Result.Loading -> {
+                        // Loading được handle bởi isLoading state
+                    }
+                }
+            } catch (e: Exception) {
+                val errorMsg = "Lỗi thêm vào giỏ hàng: ${e.message}"
+                _errorMessage.value = errorMsg
+                println("💥 $errorMsg")
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
+
+    /**
      * Cập nhật số lượng sản phẩm
      */
     fun updateCartItemQuantity(attributeId: Int, newQuantity: Int) {

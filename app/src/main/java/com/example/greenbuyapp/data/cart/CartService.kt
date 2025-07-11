@@ -13,6 +13,14 @@ interface CartService {
     suspend fun getCart(): Response<List<CartShop>>
     
     /**
+     * Thêm sản phẩm vào giỏ hàng
+     */
+    @POST("api/cart/add")
+    suspend fun addToCart(
+        @Body request: AddToCartRequest
+    ): Response<AddToCartResponse>
+    
+    /**
      * Cập nhật số lượng sản phẩm trong giỏ hàng
      */
     @PUT("api/cart/attribute/{attribute_id}")

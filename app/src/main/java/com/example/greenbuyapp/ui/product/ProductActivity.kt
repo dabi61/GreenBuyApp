@@ -20,11 +20,13 @@ import com.example.greenbuyapp.ui.shop.shopDetail.ShopDetailActivity
 import com.example.greenbuyapp.util.loadAvatar
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.example.greenbuyapp.ui.cart.CartViewModel
 
 class ProductActivity : BaseActivity<ActivityProductBinding>() {
 
     override val viewModel: ProductViewModel by viewModel()
     private val productViewModel : HomeViewModel by viewModel()
+    private val cartViewModel: CartViewModel by viewModel() // ✅ Thêm CartViewModel
 
     private lateinit var productAdapter: ProductAdapter
 
@@ -144,6 +146,9 @@ class ProductActivity : BaseActivity<ActivityProductBinding>() {
         val currentAttribute = viewModel.getCurrentAttribute()
         
         if (currentAttribute != null) {
+            // ✅ Ẩn bottom navigation khi hiển thị BottomSheet
+            binding.bottomNavContainer.visibility = View.GONE
+            
             val bottomSheet = ProductActionBottomSheet.newInstance(
                 productAttribute = currentAttribute,
                 actionType = actionType
@@ -151,6 +156,12 @@ class ProductActivity : BaseActivity<ActivityProductBinding>() {
             
             bottomSheet.setOnActionListener { attribute, quantity, action ->
                 handleProductAction(attribute, quantity, action)
+            }
+            
+            // ✅ Xử lý khi BottomSheet bị đóng
+            bottomSheet.setOnDismissListener {
+                // Hiện lại bottom navigation khi BottomSheet bị đóng
+                binding.bottomNavContainer.visibility = View.VISIBLE
             }
             
             bottomSheet.show(supportFragmentManager, "ProductActionBottomSheet")
@@ -192,17 +203,21 @@ class ProductActivity : BaseActivity<ActivityProductBinding>() {
         println("   Color: ${attribute.color}")
         println("   Size: ${attribute.size}")
         println("   Quantity: $quantity")
+        println("   Available stock: ${attribute.quantity}")
         println("   Unit Price: ${attribute.price}")
         
-        // TODO: Implement add to cart API call
-        // cartViewModel.addToCart(attribute.attribute_id, quantity)
+        // ✅ Validate quantity không vượt quá stock
+        if (quantity > attribute.quantity) {
+            android.widget.Toast.makeText(
+                this,
+                "❌ Số lượng vượt quá hàng tồn kho (${attribute.quantity} sản phẩm)",
+                android.widget.Toast.LENGTH_LONG
+            ).show()
+            return
+        }
         
-        // Show success message
-        android.widget.Toast.makeText(
-            this,
-            "✅ Đã thêm $quantity sản phẩm vào giỏ hàng",
-            android.widget.Toast.LENGTH_SHORT
-        ).show()
+        // ✅ Gọi API thêm vào giỏ hàng
+        cartViewModel.addToCart(attribute.attribute_id, quantity)
     }
     
     /**
@@ -215,19 +230,79 @@ class ProductActivity : BaseActivity<ActivityProductBinding>() {
         println("   Color: ${attribute.color}")
         println("   Size: ${attribute.size}")
         println("   Quantity: $quantity")
+        println("   Available stock: ${attribute.quantity}")
         println("   Unit Price: ${attribute.price}")
         println("   Total: ${attribute.price * quantity}")
         
-        // TODO: Navigate to checkout screen
-        // val intent = CheckoutActivity.createIntent(this, attribute.attribute_id, quantity)
-        // startActivity(intent)
+        // ✅ Validate quantity không vượt quá stock
+        if (quantity > attribute.quantity) {
+            android.widget.Toast.makeText(
+                this,
+                "❌ Số lượng vượt quá hàng tồn kho (${attribute.quantity} sản phẩm)",
+                android.widget.Toast.LENGTH_LONG
+            ).show()
+            return
+        }
         
-        // Show temporary message
-        android.widget.Toast.makeText(
-            this,
-            "💰 Mua ngay $quantity sản phẩm với giá ${attribute.getFormattedPrice()}",
-            android.widget.Toast.LENGTH_SHORT
-        ).show()
+        // ✅ Tạo CartItem tạm thời để navigate đến OrderConfirmActivity
+        val cartItem = com.example.greenbuyapp.data.cart.model.CartItem(
+            attributeId = attribute.attribute_id,
+            quantity = quantity,
+            productId = attribute.product_id,
+            productName = name,
+            price = attribute.price,
+            cover = attribute.image,
+            color = attribute.color,
+            size = attribute.size,
+            attributeImage = attribute.image,
+            availableQuantity = attribute.quantity
+        )
+        
+        val cartShop = com.example.greenbuyapp.data.cart.model.CartShop(
+            shopId = shopId,
+            shopName = viewModel.shop.value?.name ?: "Shop",
+            items = listOf(cartItem)
+        )
+        
+        // ✅ Navigate đến OrderConfirmActivity
+        val intent = com.example.greenbuyapp.ui.order.OrderConfirmActivity.createIntent(
+            this, 
+            arrayListOf(cartShop)
+        )
+        startActivity(intent)
+        
+        println("🚀 Navigating to OrderConfirmActivity")
+    }
+    
+    /**
+     * ✅ Quan sát CartViewModel
+     */
+    private fun observeCart() {
+        lifecycleScope.launch {
+            cartViewModel.successMessage.collect { message ->
+                message?.let {
+                    android.widget.Toast.makeText(
+                        this@ProductActivity,
+                        "✅ $it",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                    cartViewModel.clearSuccessMessage()
+                }
+            }
+        }
+        
+        lifecycleScope.launch {
+            cartViewModel.errorMessage.collect { error ->
+                error?.let {
+                    android.widget.Toast.makeText(
+                        this@ProductActivity,
+                        "❌ $it",
+                        android.widget.Toast.LENGTH_LONG
+                    ).show()
+                    cartViewModel.clearErrorMessage()
+                }
+            }
+        }
     }
 
     private fun openShopDetail() {
@@ -275,6 +350,7 @@ class ProductActivity : BaseActivity<ActivityProductBinding>() {
         observeLoading()
         observeError()
         observeProductsViewModel()
+        observeCart() // ✅ Quan sát CartViewModel
     }
 
     private fun observeShop() {

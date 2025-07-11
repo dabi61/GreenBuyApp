@@ -38,8 +38,17 @@ class OrderItemAdapter(
                 tvUnitPrice.text = cartItem.getFormattedUnitPrice()
                 tvQuantity.text = "Số lượng: " + cartItem.quantity.toString()
 
-                // Product image
-                ivProductImage.setImageResource(R.drawable.pic_item_product)
+                // ✅ Load product image từ dữ liệu thực tế
+                val imageUrl = cartItem.getImageUrl()
+                if (!imageUrl.isNullOrEmpty()) {
+                    ivProductImage.loadUrl(
+                        imageUrl = imageUrl,
+                        placeholder = R.drawable.pic_item_product,
+                        error = R.drawable.pic_item_product
+                    )
+                } else {
+                    ivProductImage.setImageResource(R.drawable.pic_item_product)
+                }
 
                 println("🛒 Cart item bound: ${cartItem.productName} x${cartItem.quantity}")
             }

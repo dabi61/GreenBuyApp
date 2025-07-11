@@ -29,6 +29,7 @@ class ProductActionBottomSheet : BottomSheetDialogFragment() {
     private var actionType: ActionType = ActionType.ADD_TO_CART
     private var quantity: Int = 1
     private var onActionListener: ((ProductAttribute, Int, ActionType) -> Unit)? = null
+    private var onDismissListener: (() -> Unit)? = null // ✅ Thêm dismiss listener
     
     enum class ActionType {
         ADD_TO_CART,
@@ -225,12 +226,24 @@ class ProductActionBottomSheet : BottomSheetDialogFragment() {
         binding.tvTotalPrice.text = formatter.format(totalPrice)
     }
     
+    /**
+     * Set listener cho action events
+     */
     fun setOnActionListener(listener: (ProductAttribute, Int, ActionType) -> Unit) {
         onActionListener = listener
+    }
+    
+    /**
+     * ✅ Set listener cho dismiss events
+     */
+    fun setOnDismissListener(listener: () -> Unit) {
+        onDismissListener = listener
     }
     
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        // ✅ Gọi dismiss listener khi view bị destroy
+        onDismissListener?.invoke()
     }
 } 

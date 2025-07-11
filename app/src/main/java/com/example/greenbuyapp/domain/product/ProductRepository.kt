@@ -20,6 +20,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import com.example.greenbuyapp.data.product.model.ApproveProductRequest
 import kotlinx.coroutines.withTimeout
+import com.example.greenbuyapp.data.product.model.ProductAttribute
 
 class ProductRepository(
     private val productService: ProductService,
@@ -97,6 +98,17 @@ class ProductRepository(
     suspend fun getProductAttributes(productId: Int): Result<ProductAttributeList> {
         return safeApiCall(dispatcher) {
             productService.getProductAttributes(productId)
+        }
+    }
+
+    /**
+     * ✅ Lấy attribute theo ID
+     * @param attributeId ID của attribute
+     * @return Result<ProductAttribute> chứa thông tin attribute
+     */
+    suspend fun getAttribute(attributeId: Int): Result<ProductAttribute> {
+        return safeApiCall(dispatcher) {
+            productService.getAttribute(attributeId)
         }
     }
 

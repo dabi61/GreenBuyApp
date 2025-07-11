@@ -11,8 +11,10 @@ import com.example.greenbuyapp.R
 import com.example.greenbuyapp.data.user.model.CustomerOrderDetail
 import com.example.greenbuyapp.databinding.ActivityOrderDetailBinding
 import com.example.greenbuyapp.ui.base.BaseActivity
+import com.example.greenbuyapp.domain.product.ProductRepository
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.android.ext.android.inject
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -22,6 +24,9 @@ class CustomerOrderDetailActivity : BaseActivity<ActivityOrderDetailBinding>() {
     override val binding: ActivityOrderDetailBinding by lazy { 
         ActivityOrderDetailBinding.inflate(layoutInflater) 
     }
+    
+    // ✅ Inject ProductRepository từ Koin
+    private val productRepository: ProductRepository by inject()
     private lateinit var itemAdapter: CustomerOrderDetailItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,14 +62,15 @@ class CustomerOrderDetailActivity : BaseActivity<ActivityOrderDetailBinding>() {
     }
 
     private fun setupRecyclerView() {
-        itemAdapter = CustomerOrderDetailItemAdapter()
+        // ✅ Truyền ProductRepository vào adapter
+        itemAdapter = CustomerOrderDetailItemAdapter(productRepository)
         
         binding.recyclerViewItems.apply {
             adapter = itemAdapter
             layoutManager = LinearLayoutManager(this@CustomerOrderDetailActivity)
         }
         
-        println("✅ RecyclerView setup completed")
+        println("✅ RecyclerView setup completed with ProductRepository injection")
     }
 
     override fun observeViewModel() {
