@@ -47,7 +47,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             navigateToLogin()
             return
         }
-
         // Hiển thị fragment được chỉ định từ intent hoặc HomeFragment mặc định
         if (savedInstanceState == null) {
             val targetPosition = if (intentFragmentIndex != -1) intentFragmentIndex else 0

@@ -4,7 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.greenbuyapp.R
 import com.example.greenbuyapp.databinding.ActivityShopReviewBinding
 import com.example.greenbuyapp.ui.base.BaseActivity
 import com.example.greenbuyapp.ui.shop.shopDetail.FollowViewModel
@@ -39,7 +41,7 @@ class ShopReviewActivity : BaseActivity<ActivityShopReviewBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
-
+        window.statusBarColor = ContextCompat.getColor(this, R.color.main_color)
         setupToolbar()
         setupRecyclerView()
         observeData()

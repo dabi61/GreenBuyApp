@@ -107,7 +107,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             println("🔍 Product object: $product")
             println("🔍 Product ID being passed: ${product.product_id}")
             
-            val intent = ProductActivity.createIntent(requireContext(), product.product_id, product.shop_id, product.description)
+            val intent = ProductActivity.createIntent(requireContext(), product.product_id, product.shop_id, product.description, product.name)
             println("🔍 Intent created: $intent")
             println("🔍 Intent extras after creation: ${intent.extras}")
             
@@ -126,7 +126,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 requireContext(),
                 trendingProduct.product_id,
                 trendingProduct.shop_id,
-                trendingProduct.description
+                trendingProduct.description,
+                trendingProduct.name
             )
             startActivity(intent)
 

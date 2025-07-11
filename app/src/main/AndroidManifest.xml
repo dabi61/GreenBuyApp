@@ -20,7 +20,8 @@
         android:theme="@style/GreenBuy.Theme.DayNight"
         tools:targetApi="31">
         <activity
-            android:name=".ui.product.trending.TrendingProductActivity" //nganTopProduct
+            android:name=".ui.product.trending.TrendingProductActivity"/>
+        <activity
             android:name=".ui.shop.shopDetail.EditShopActivity"
             android:exported="false" />
         <activity

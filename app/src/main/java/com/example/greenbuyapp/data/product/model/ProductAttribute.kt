@@ -1,7 +1,10 @@
 package com.example.greenbuyapp.data.product.model
 
+import android.os.Parcelable
 import com.squareup.moshi.JsonClass
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @JsonClass(generateAdapter = true)
 data class ProductAttribute(
     val attribute_id: Int,
@@ -12,7 +15,7 @@ data class ProductAttribute(
     val image: String,
     val quantity: Int,
     val create_at: String
-) {
+) : Parcelable {
     /**
      * Get full image URL
      */

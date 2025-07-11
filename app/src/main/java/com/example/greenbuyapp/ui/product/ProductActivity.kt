@@ -35,6 +35,7 @@ class ProductActivity : BaseActivity<ActivityProductBinding>() {
     private var productId: Int = -1
     private var shopId: Int = -1
     private var description: String = ""
+    private var name: String = ""
     
     // Adapters
     private lateinit var imageAdapter: ProductImageAdapter
@@ -44,8 +45,9 @@ class ProductActivity : BaseActivity<ActivityProductBinding>() {
         private const val EXTRA_PRODUCT_ID = "extra_product_id"
         private const val EXTRA_SHOP_ID = "extra_shop_id"
         private const val EXTRA_DESCRIPTION = "extra_description"
+        private const val EXTRA_NAME = "extra_name"
         
-        fun createIntent(context: Context, productId: Int, shopId: Int, description: String): Intent {
+        fun createIntent(context: Context, productId: Int, shopId: Int, description: String, name: String): Intent {
             println("🏭 Creating intent for productId: $productId")
             println("🏭 EXTRA_PRODUCT_ID key: $EXTRA_PRODUCT_ID")
             
@@ -53,6 +55,7 @@ class ProductActivity : BaseActivity<ActivityProductBinding>() {
                 putExtra(EXTRA_PRODUCT_ID, productId)
                 putExtra(EXTRA_SHOP_ID, shopId)
                 putExtra(EXTRA_DESCRIPTION, description)
+                putExtra(EXTRA_NAME, name)
 
                 println("🏭 Intent created with extras: ${this.extras}")
                 println("🏭 Verifying extra value: ${this.getIntExtra(EXTRA_PRODUCT_ID, -999)}")
@@ -65,10 +68,13 @@ class ProductActivity : BaseActivity<ActivityProductBinding>() {
         productId = intent.getIntExtra(EXTRA_PRODUCT_ID, -1)
         shopId = intent.getIntExtra(EXTRA_SHOP_ID, -1)
         description = intent.getStringExtra(EXTRA_DESCRIPTION) ?: "Sản phẩm này hiện chưa có thông tin chi tiết. Vui lòng liên hệ để biết thêm thông tin."
+        name = intent.getStringExtra(EXTRA_NAME) ?: "Tên sản phẩm"
         
         println("🔍 Intent extras: ${intent.extras}")
         println("🔍 EXTRA_PRODUCT_ID value: ${intent.getIntExtra(EXTRA_PRODUCT_ID, -999)}")
         println("🔍 ProductId received: $productId")
+        println("🔍 Product name received: '$name'")
+        println("🔍 Description received: '$description'")
         
         if (productId == -1) {
             println("❌ Invalid product ID, closing activity")
@@ -98,12 +104,130 @@ class ProductActivity : BaseActivity<ActivityProductBinding>() {
         setupViewPager()
         setupImageIndicator()
         setupRecyclerView()
+        setupBottomNavigation() // ✅ Thêm setup bottom navigation
         loadProduct()
         loadShop()
         openShopDetail()
         //Load Product
         productViewModel.loadProducts()
+    }
 
+    /**
+     * ✅ Setup bottom navigation với BottomSheet
+     */
+    private fun setupBottomNavigation() {
+        binding.apply {
+            // Chat button
+            clMessage.setOnClickListener {
+                println("🗨️ Chat button clicked")
+                // TODO: Implement chat functionality
+            }
+            
+            // Add to cart button
+            clAddToCart.setOnClickListener {
+                println("🛒 Add to cart button clicked")
+                showProductActionBottomSheet(ProductActionBottomSheet.ActionType.ADD_TO_CART)
+            }
+            
+            // Buy now button  
+            clBuy.setOnClickListener {
+                println("💰 Buy now button clicked")
+                showProductActionBottomSheet(ProductActionBottomSheet.ActionType.BUY_NOW)
+            }
+        }
+    }
+    
+    /**
+     * ✅ Hiển thị BottomSheet cho action sản phẩm
+     */
+    private fun showProductActionBottomSheet(actionType: ProductActionBottomSheet.ActionType) {
+        val currentAttribute = viewModel.getCurrentAttribute()
+        
+        if (currentAttribute != null) {
+            val bottomSheet = ProductActionBottomSheet.newInstance(
+                productAttribute = currentAttribute,
+                actionType = actionType
+            )
+            
+            bottomSheet.setOnActionListener { attribute, quantity, action ->
+                handleProductAction(attribute, quantity, action)
+            }
+            
+            bottomSheet.show(supportFragmentManager, "ProductActionBottomSheet")
+            
+            println("📱 Showing BottomSheet for ${actionType.name}")
+            println("📦 Current attribute: ${currentAttribute.color} ${currentAttribute.size}")
+            println("📊 Available quantity: ${currentAttribute.quantity}")
+        } else {
+            println("❌ No current attribute available")
+            // TODO: Show error message
+        }
+    }
+    
+    /**
+     * ✅ Xử lý action từ BottomSheet
+     */
+    private fun handleProductAction(
+        attribute: ProductAttribute,
+        quantity: Int,
+        actionType: ProductActionBottomSheet.ActionType
+    ) {
+        when (actionType) {
+            ProductActionBottomSheet.ActionType.ADD_TO_CART -> {
+                handleAddToCart(attribute, quantity)
+            }
+            ProductActionBottomSheet.ActionType.BUY_NOW -> {
+                handleBuyNow(attribute, quantity)
+            }
+        }
+    }
+    
+    /**
+     * ✅ Xử lý thêm vào giỏ hàng
+     */
+    private fun handleAddToCart(attribute: ProductAttribute, quantity: Int) {
+        println("🛒 Adding to cart:")
+        println("   Product ID: ${attribute.product_id}")
+        println("   Attribute ID: ${attribute.attribute_id}")
+        println("   Color: ${attribute.color}")
+        println("   Size: ${attribute.size}")
+        println("   Quantity: $quantity")
+        println("   Unit Price: ${attribute.price}")
+        
+        // TODO: Implement add to cart API call
+        // cartViewModel.addToCart(attribute.attribute_id, quantity)
+        
+        // Show success message
+        android.widget.Toast.makeText(
+            this,
+            "✅ Đã thêm $quantity sản phẩm vào giỏ hàng",
+            android.widget.Toast.LENGTH_SHORT
+        ).show()
+    }
+    
+    /**
+     * ✅ Xử lý mua ngay
+     */
+    private fun handleBuyNow(attribute: ProductAttribute, quantity: Int) {
+        println("💰 Buy now:")
+        println("   Product ID: ${attribute.product_id}")
+        println("   Attribute ID: ${attribute.attribute_id}")
+        println("   Color: ${attribute.color}")
+        println("   Size: ${attribute.size}")
+        println("   Quantity: $quantity")
+        println("   Unit Price: ${attribute.price}")
+        println("   Total: ${attribute.price * quantity}")
+        
+        // TODO: Navigate to checkout screen
+        // val intent = CheckoutActivity.createIntent(this, attribute.attribute_id, quantity)
+        // startActivity(intent)
+        
+        // Show temporary message
+        android.widget.Toast.makeText(
+            this,
+            "💰 Mua ngay $quantity sản phẩm với giá ${attribute.getFormattedPrice()}",
+            android.widget.Toast.LENGTH_SHORT
+        ).show()
     }
 
     private fun openShopDetail() {
@@ -131,7 +255,7 @@ class ProductActivity : BaseActivity<ActivityProductBinding>() {
             println("🔍 Product object: $product")
             println("🔍 Product ID being passed: ${product.product_id}")
 
-            val intent = createIntent(this, product.product_id, product.shop_id, product.description)
+            val intent = createIntent(this, product.product_id, product.shop_id, product.description, product.name)
             println("🔍 Intent created: $intent")
             println("🔍 Intent extras after creation: ${intent.extras}")
 
@@ -195,17 +319,7 @@ class ProductActivity : BaseActivity<ActivityProductBinding>() {
         binding.apply {
             // Hiển thị product ID tạm thời
             tvProductId.text = "Product ID: $productId"
-            
-            // Setup button actions
-//            btnAddToCart.setOnClickListener {
-//                println("🛒 Add to cart clicked for product $productId")
-//                // TODO: Add to cart logic
-//            }
-//
-//            btnBuyNow.setOnClickListener {
-//                println("💰 Buy now clicked for product $productId")
-//                // TODO: Buy now logic
-//            }
+            tvProductTitle.text = name
         }
     }
 
@@ -345,6 +459,10 @@ class ProductActivity : BaseActivity<ActivityProductBinding>() {
             tvProductSize.text = "N/A" 
             tvProductQuantity.text = "N/A"
             tvProductDescription.text = description
+            tvProductTitle.text = name
+            
+            println("🔄 Empty state - showing product name: '$name'")
+            println("🔄 Empty state - showing description: '$description'")
         }
     }
 

@@ -121,7 +121,8 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
                 this,
                 product.product_id,
                 product.shop_id,
-                product.description
+                product.description,
+                product.name
             )
             startActivity(intent)
         }

@@ -41,7 +41,8 @@ class TrendingProductActivity : BaseActivity<ActivityTrendingProductBinding>() {
                 this@TrendingProductActivity,
                 trendingProduct.product_id,
                 trendingProduct.shop_id,
-                trendingProduct.description
+                trendingProduct.description,
+                trendingProduct.name
             )
             startActivity(intent)
         }

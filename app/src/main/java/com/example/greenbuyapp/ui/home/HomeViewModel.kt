@@ -325,8 +325,8 @@ class HomeViewModel(
         // Tạo dữ liệu banner mẫu với 3 ảnh
         val bannerData = listOf(
             R.drawable.banner_1,
-            R.drawable.banner_1,
-            R.drawable.banner_1
+            R.drawable.ic_banner_2,
+            R.drawable.ic_banner_3
         )
         
         _bannerItems.value = bannerData
