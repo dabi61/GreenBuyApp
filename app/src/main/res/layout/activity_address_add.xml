@@ -60,6 +60,7 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -68,6 +69,7 @@
                         android:textColor="#000000"
                         android:textSize="16sp"
                         android:textStyle="bold" />
+
 
                     <!-- Số điện thoại -->
                     <EditText

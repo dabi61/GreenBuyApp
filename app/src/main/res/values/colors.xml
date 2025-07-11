@@ -26,4 +26,14 @@
     <color name="yellow">#F6C747</color>
     <color name="orange">#FF9800</color>
 
+    <color name="gold_background">#D8F0D25B</color> <!-- Vàng kim -->
+    <color name="silver_background">#D7D7D7</color>
+    <color name="silver_text">#8C8B8B</color>
+    <color name="bronze_background">#EFB884</color>
+    <color name="bronze_text">#A0522D</color>
+    <color name="orange_red">#FF0000</color>
+
+    <color name="green1_background">#85E085</color>
+    <color name="green2_background">#ADEBAD</color>
+    <color name="green3_background">#D6F5D6</color>
 </resources>

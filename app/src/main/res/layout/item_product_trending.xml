@@ -1,0 +1,97 @@
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="1dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp"
+    app:cardUseCompatPadding="true"
+    app:cardPreventCornerOverlap="false"
+    app:cardBackgroundColor="@android:color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <!-- TOP Rank -->
+        <TextView
+            android:id="@+id/tvTopRank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TOP 1"
+            android:textStyle="bold"
+            android:textColor="#FF7A00"
+            android:paddingBottom="4dp" />
+
+        <!-- Nội dung -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- Ảnh sản phẩm + icon HOT -->
+            <FrameLayout
+                android:layout_width="80dp"
+                android:layout_height="80dp">
+
+                <!-- Ảnh có bo góc -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:id="@+id/imgProduct"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/pic_item_product" />
+                </androidx.cardview.widget.CardView>
+
+                <!-- Icon HOT sát góc trái trên -->
+                <ImageView
+                    android:id="@+id/imgHot"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="top|start"
+                    android:layout_margin="0dp"
+                    android:src="@drawable/ic_hot"
+                    android:visibility="gone"
+                    android:elevation="10dp"
+                    android:scaleType="fitCenter"
+                    android:adjustViewBounds="true" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="8dp">
+
+                <TextView
+                    android:id="@+id/tvName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tên sản phẩm"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end"
+                    android:textSize="24sp" />
+
+                <TextView
+                    android:id="@+id/tvPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="200.000"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:paddingTop="4dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
