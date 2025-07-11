@@ -1,5 +1,6 @@
 package com.example.greenbuyapp.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -20,6 +21,9 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import android.os.Handler
 import android.os.Looper
+import com.example.greenbuyapp.ui.product.trending.TrendingProductActivity
+import com.example.greenbuyapp.ui.product.trending.TrendingProductViewModel
+import kotlinx.coroutines.flow.combineTransform
 
 class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     // TODO: Rename and change types of parameters
@@ -72,6 +76,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             
             // Load banner items
             viewModel.loadBannerItems()
+            //chuyen sang form TrendingProductActivity
+            binding.contraintTrending.setOnClickListener {
+                val intent = Intent(requireContext(), TrendingProductActivity::class.java)
+                startActivity(intent)
+
+            }
             
         } catch (e: Exception) {
             e.printStackTrace()
@@ -112,8 +122,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
 
         trendingAdapter = TrendingAdapter { trendingProduct ->
-            // Handle product click
-            // TODO: Navigate to product detail
+            val intent = ProductActivity.createIntent(
+                requireContext(),
+                trendingProduct.product_id,
+                trendingProduct.shop_id,
+                trendingProduct.description
+            )
+            startActivity(intent)
+
         }
         
         // ✅ Setup product RecyclerView với performance optimizations
@@ -312,7 +328,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.svProduct.addTextChangedListener { text ->
             viewModel.updateSearchQuery(text?.toString() ?: "")
         }
-        
+
+
         // Setup cart button click
         binding.icCart.setOnClickListener {
             val intent = CartActivity.createIntent(requireContext())
