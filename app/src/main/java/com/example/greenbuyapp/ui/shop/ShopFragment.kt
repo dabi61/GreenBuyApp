@@ -28,6 +28,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import com.example.greenbuyapp.ui.admin.approve.product.ApproveProductActivity
 import com.example.greenbuyapp.ui.shop.myShopDetail.MyShopDetailActivity
 import com.example.greenbuyapp.ui.shop.shopDetail.ShopDetailActivity
@@ -173,6 +174,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
     }
 
 
+
     private fun onClickWelcome() {
         binding.apply {
             btWelcome.setOnClickListener {
@@ -229,13 +231,33 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.shopInfo.collect { shop ->
                 binding.apply {
-                    ivAvatar.loadAvatar(
-                        avatarPath = shop?.avatar,
-                        placeholder = R.drawable.avatar_blank,
-                        error = R.drawable.avatar_blank,
-                    )
-                    tvNameDashboard.text = shop?.name
-                    tvShopIdDashboard.text = "greenbuy.site/" + shop?.id
+                    if (shop != null) {
+                        println("🏪 Shop info received:")
+                        println("   Shop ID: ${shop.id}")
+                        println("   Shop name: ${shop.name}")
+                        println("   Avatar path: '${shop.avatar}'")
+                        println("   Avatar empty/null: ${shop.avatar.isNullOrBlank()}")
+                        
+                        // ✅ Kiểm tra avatar path trước khi load
+                        if (shop.avatar.isNotBlank()) {
+                            // ✅ Sửa: Load avatar vào đúng ImageView cho dashboard
+                            binding.ivAvatarDashboard.loadAvatar(
+                                avatarPath = shop.avatar,
+                                placeholder = R.drawable.avatar_blank,
+                                error = R.drawable.avatar_blank,
+                                forceRefresh = true // ✅ Force refresh để đảm bảo ảnh mới nhất
+                            )
+                            println("✅ Loading avatar to ivAvatarDashboard")
+                        } else {
+                            println("⚠️ Shop avatar is empty, using default")
+                            binding.ivAvatarDashboard.setImageResource(R.drawable.avatar_blank)
+                        }
+                    } else {
+                        println("⚠️ Shop info is null")
+                        binding.ivAvatarDashboard.setImageResource(R.drawable.avatar_blank)
+                    }
+                    tvNameDashboard.text = shop?.name ?: "Tên cửa hàng"
+                    tvShopIdDashboard.text = "greenbuy.site/" + (shop?.id?.toString() ?: "")
                 }
             }
         }
@@ -652,6 +674,8 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
         if (::bannerAdapter.isInitialized && bannerAdapter.itemCount > 0) {
             startAutoScroll()
         }
+        Log.d("ShopFragment", "onResume")
+        viewModel.shopInfo()
     }
     
     override fun onPause() {

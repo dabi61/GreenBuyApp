@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -81,6 +82,7 @@ class CustomerInformationActivity : BaseActivity<ActivityCustomerInformationBind
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.main_color)
     }
 
     override fun initViews() {

@@ -9,8 +9,10 @@ import android.os.Looper
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
+import com.example.greenbuyapp.R
 import com.example.greenbuyapp.databinding.ActivityEditShopBinding
 import com.example.greenbuyapp.ui.base.BaseActivity
 import com.example.greenbuyapp.util.Result
@@ -29,6 +31,8 @@ class EditShopActivity : BaseActivity<ActivityEditShopBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
+
+        window.statusBarColor = ContextCompat.getColor(this, R.color.main_color)
 
         // Chọn ảnh
         binding.layoutPickImage.setOnClickListener {

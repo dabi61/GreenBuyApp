@@ -55,7 +55,7 @@ class ShopDetailActivity : BaseActivity<ActivityShopDetailBinding>() {
         }
         setContentView(binding.root)
         super.onCreate(savedInstanceState)
-
+        window.statusBarColor = ContextCompat.getColor(this, R.color.main_color)
         profileViewModel.loadUserProfile()
     }
 

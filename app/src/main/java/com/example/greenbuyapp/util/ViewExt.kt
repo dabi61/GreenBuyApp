@@ -151,6 +151,15 @@ fun ImageView.loadAvatar(
     @DrawableRes error: Int = R.drawable.avatar_blank,
     forceRefresh: Boolean = false
 ) {
+    // ✅ Improved null/empty check
+    if (avatarPath.isNullOrBlank()) {
+        println("⚠️ Avatar path is null or empty, using placeholder")
+        setImageResource(placeholder)
+        return
+    }
+    
+    println("🖼️ Loading avatar: '$avatarPath'")
+    
     loadImage(
         imagePath = avatarPath,
         placeholder = placeholder,
@@ -346,11 +355,24 @@ fun ImageView.loadUrl(
  * Enhanced URL building with validation
  */
 private fun buildImageUrl(imagePath: String): String {
+    // ✅ Kiểm tra imagePath hợp lệ
+    if (imagePath.isBlank()) {
+        println("⚠️ Empty image path provided")
+        return ""
+    }
+    
     val fullUrl = if (imagePath.startsWith("http")) {
         imagePath
     } else {
-        "$BASE_AVATAR_URL$imagePath"
+        // ✅ Đảm bảo luôn có slash giữa base URL và path
+        val cleanPath = if (imagePath.startsWith("/")) imagePath else "/$imagePath"
+        "$BASE_AVATAR_URL$cleanPath"
     }
+    
+    // ✅ Log để debug
+    println("🔗 URL building:")
+    println("   Original path: '$imagePath'")
+    println("   Built URL: '$fullUrl'")
     
     // ✅ Validate URL format
     if (!isValidImagePath(imagePath)) {
@@ -373,7 +395,7 @@ private fun createRequestOptions(
     val options = RequestOptions()
         .placeholder(placeholder)
         .error(error)
-        .timeout(5000) // ✅ Giảm xuống 5s
+        .timeout(10000) // ✅ Tăng lên 10s để đảm bảo đủ thời gian load
         .dontAnimate()
         .override(600, 600) // ✅ Giảm từ 800x800 xuống 600x600
         .downsample(DownsampleStrategy.CENTER_INSIDE) // ✅ Thêm downsample
