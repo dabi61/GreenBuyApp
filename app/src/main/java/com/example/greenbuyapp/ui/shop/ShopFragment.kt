@@ -1,8 +1,7 @@
 package com.example.greenbuyapp.ui.shop
 
+import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,28 +10,28 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.transition.Visibility
 import androidx.viewpager2.widget.ViewPager2
 import com.example.greenbuyapp.R
-import com.example.greenbuyapp.databinding.FragmentHomeBinding
 import com.example.greenbuyapp.databinding.FragmentShopBinding
 import com.example.greenbuyapp.ui.base.BaseFragment
 import com.example.greenbuyapp.ui.home.BannerAdapter
 import com.example.greenbuyapp.ui.shop.dashboard.ShopDashboardDetailActivity
 import com.example.greenbuyapp.ui.shop.productManagement.ProductManagementActivity
-import com.example.greenbuyapp.ui.shop.shopDetail.ShopDetailActivity
 import com.example.greenbuyapp.util.ImageTransform
 import com.example.greenbuyapp.util.loadAvatar
 import com.example.greenbuyapp.util.loadUrl
 import com.zhpan.indicator.enums.IndicatorSlideMode
 import com.zhpan.indicator.enums.IndicatorStyle
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import android.graphics.drawable.GradientDrawable
 import android.os.Handler
 import android.os.Looper
+import com.example.greenbuyapp.ui.admin.approve.product.ApproveProductActivity
+import com.example.greenbuyapp.ui.shop.myShopDetail.MyShopDetailActivity
+import com.example.greenbuyapp.ui.shop.shopDetail.ShopDetailActivity
+import com.example.greenbuyapp.ui.social.shopReview.ShopReviewActivity
 
 /**
  * Fragment hiển thị màn hình shop
@@ -75,19 +74,39 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
         runCatching {
             viewModel.checkShop()
             viewModel.shopInfo()
-
             onClickWelcome()
             setupAvatarPicker()
             setupCreateShopButton()
             setupBanner()
             setupProductManagement()
-
+            onClickApproveProduct()
+            onClickLockShop()
             viewModel.getMyShopStats()
             viewModel.loadBannerItems()
 
             openDashboardDetail()
         }.onFailure { e ->
             println("❌ Error in initView: ${e.message}")
+        }
+    }
+
+    private fun onClickLockShop() {
+        binding.btLockShop.setOnClickListener {
+            val shopId = viewModel.shopInfo.value?.id
+
+            if (shopId != null && shopId > 0) {
+                val intent = ShopDetailActivity.createIntent(requireContext(), shopId)
+                startActivity(intent)
+            } else {
+                Toast.makeText(context, "❌ Không thể mở chi tiết shop (thiếu shopId)", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun onClickApproveProduct() {
+        binding.cvProductApproval.setOnClickListener {
+            val intent = Intent(requireActivity(), ApproveProductActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -98,7 +117,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
                 // ✅ Null check trước khi start activity
                 if (isAdded && activity != null) {
                     try {
-                        val intent = ShopDashboardDetailActivity.createIntent(requireActivity(), 1)
+                        val intent = ShopDashboardDetailActivity.createIntent(requireActivity(), 0)
                         startActivity(intent)
                         println("✅ Opened ShopDashboardDetail with position 1 (Chờ lấy hàng)")
                     } catch (e: Exception) {
@@ -126,7 +145,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
                 // ✅ Null check trước khi start activity
                 if (isAdded && activity != null) {
                     try {
-                        val intent = ShopDashboardDetailActivity.createIntent(requireActivity(), 0)
+                        val intent = ShopDashboardDetailActivity.createIntent(requireActivity(), 1)
                         startActivity(intent)
                         println("✅ Opened ShopDashboardDetail with position 0 (Chờ xác nhận)")
                     } catch (e: Exception) {
@@ -137,15 +156,17 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
 
             // Đánh giá (position 3 - DELIVERED)
             cvItem4.setOnClickListener {
-                // ✅ Null check trước khi start activity
-                if (isAdded && activity != null) {
+                val shopId = viewModel.shopInfo.value?.id
+                if (isAdded && activity != null && shopId != null && shopId > 0) {
                     try {
-                        val intent = ShopDashboardDetailActivity.createIntent(requireActivity(), 3)
+                        val intent = ShopReviewActivity.createIntent(requireActivity(), shopId)
                         startActivity(intent)
-                        println("✅ Opened ShopDashboardDetail with position 3 (Đã giao)")
+                        println("✅ Opened ShopReviewActivity for shopId=$shopId")
                     } catch (e: Exception) {
-                        println("❌ Error opening shop dashboard: ${e.message}")
+                        println("❌ Error opening ShopReviewActivity: ${e.message}")
                     }
+                } else {
+                    Toast.makeText(context, "❌ Không thể mở đánh giá (thiếu shopId)", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -194,9 +215,9 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
             viewModel.myShopStats.collect { shopStats ->
                 binding.apply {
                     // ✅ Mapping với OrderStats API mới
-                    tvItem1.text = shopStats?.pendingOrders.toString() // pending_orders thay vì pending_pickup
-                    tvItem2.text = shopStats?.cancelledOrders.toString() // cancelled_orders
-                    tvItem3.text = shopStats?.totalOrders.toString() // total_orders
+                    tvItem2.text = shopStats?.pendingOrders.toString() // pending_orders thay vì pending_pickup
+                    tvItem1.text = shopStats?.cancelledOrders.toString() // cancelled_orders
+                    tvItem3.text = shopStats?.deliveredOrders.toString() // total_orders
                     tvItem4.text = shopStats?.pendingRatings.toString() // pending_ratings thay vì ratings_count
                 }
             }
@@ -405,7 +426,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
                     clWelcome.visibility = View.VISIBLE
                     clShopCreate.visibility = View.GONE
                     clDashboard.visibility = View.GONE
-                    clApprove.visibility = View.GONE
+                    clAdmin.visibility = View.GONE
                 }
             }
             2 -> {
@@ -413,7 +434,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
                     clWelcome.visibility = View.GONE
                     clShopCreate.visibility = View.VISIBLE
                     clDashboard.visibility = View.GONE
-                    clApprove.visibility = View.GONE
+                    clAdmin.visibility = View.GONE
                 }
             }
             3 -> {
@@ -421,7 +442,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
                     clWelcome.visibility = View.GONE
                     clShopCreate.visibility = View.GONE
                     clDashboard.visibility = View.VISIBLE
-                    clApprove.visibility = View.GONE
+                    clAdmin.visibility = View.GONE
                 }
             }
             4 -> {
@@ -429,7 +450,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
                     clWelcome.visibility = View.GONE
                     clShopCreate.visibility = View.GONE
                     clDashboard.visibility = View.GONE
-                    clApprove.visibility = View.VISIBLE
+                    clAdmin.visibility = View.VISIBLE
                 }
             }
         }

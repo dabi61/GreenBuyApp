@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".GreenBuyApplication"
@@ -19,7 +20,17 @@
         android:theme="@style/GreenBuy.Theme.DayNight"
         tools:targetApi="31">
         <activity
-            android:name=".ui.product.trending.TrendingProductActivity"
+            android:name=".ui.product.trending.TrendingProductActivity" //nganTopProduct
+            android:name=".ui.shop.shopDetail.EditShopActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.shop.myShopDetail.MyShopDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.admin.approve.product.ApproveProductActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.admin.approve.order.ApproveOrderActivity"
             android:exported="false" />
         <activity
             android:name=".ui.social.shopReview.RatingActivity"

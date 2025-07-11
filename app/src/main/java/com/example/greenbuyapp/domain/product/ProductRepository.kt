@@ -18,6 +18,8 @@ import com.example.greenbuyapp.util.Result
 import com.example.greenbuyapp.util.safeApiCall
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import com.example.greenbuyapp.data.product.model.ApproveProductRequest
+import kotlinx.coroutines.withTimeout
 
 class ProductRepository(
     private val productService: ProductService,
@@ -158,14 +160,7 @@ class ProductRepository(
     }
 
     /**
-     * Tạo sản phẩm mới
-     * @param context Context để xử lý Uri
-     * @param name Tên sản phẩm
-     * @param description Mô tả sản phẩm
-     * @param price Giá sản phẩm
-     * @param subCategoryId ID danh mục con
-     * @param coverUri Uri của ảnh cover
-     * @return Result<CreateProductResponse> chứa thông tin sản phẩm đã tạo
+     * Tạo sản phẩm mới với progress tracking
      */
     suspend fun createProduct(
         context: Context,
@@ -176,20 +171,45 @@ class ProductRepository(
         coverUri: Uri
     ): Result<CreateProductResponse> {
         return safeApiCall(dispatcher) {
-            val namePart = MultipartUtils.createTextPart(name)
-            val descriptionPart = MultipartUtils.createTextPart(description)
-            val pricePart = MultipartUtils.createTextPart(price.toString())
-            val subCategoryPart = MultipartUtils.createTextPart(subCategoryId.toString())
-            val coverPart = MultipartUtils.createImagePart(context, "cover", coverUri)
-                ?: throw IllegalArgumentException("Cannot create image part from Uri")
+            println("🚀 Starting product creation...")
+            val startTime = System.currentTimeMillis()
+            
+            try {
+                // ✅ Thêm timeout 120 giây cho upload
+                withTimeout(120000L) {
+                    val namePart = MultipartUtils.createTextPart(name)
+                    val descriptionPart = MultipartUtils.createTextPart(description)
+                    val pricePart = MultipartUtils.createTextPart(price.toString())
+                    val subCategoryPart = MultipartUtils.createTextPart(subCategoryId.toString())
+                    
+                    println("📸 Processing cover image...")
+                    val coverPart = MultipartUtils.createImagePart(context, "cover", coverUri)
+                        ?: throw IllegalArgumentException("Cannot create image part from Uri")
 
-            productService.createProduct(
-                name = namePart,
-                description = descriptionPart,
-                price = pricePart,
-                subCategoryId = subCategoryPart,
-                cover = coverPart
-            )
+                    println("📤 Uploading to server...")
+                    val response = productService.createProduct(
+                        name = namePart,
+                        description = descriptionPart,
+                        price = pricePart,
+                        subCategoryId = subCategoryPart,
+                        cover = coverPart
+                    )
+                    
+                    val endTime = System.currentTimeMillis()
+                    val duration = endTime - startTime
+                    println("✅ Product created successfully in ${duration}ms")
+                    println("   Product ID: ${response.product_id}")
+                    println("   Product name: ${response.name}")
+                    
+                    response
+                }
+            } catch (e: kotlinx.coroutines.TimeoutCancellationException) {
+                println("⏰ Upload timeout after 120 seconds")
+                throw Exception("Upload timeout: Quá thời gian chờ upload ảnh")
+            } catch (e: Exception) {
+                println("❌ Upload error: ${e.message}")
+                throw e
+            }
         }
     }
 
@@ -400,6 +420,38 @@ class ProductRepository(
     suspend fun deleteAttribute(attributeId: Int): Result<MessageResponse> {
         return safeApiCall(dispatcher) {
             productService.deleteAttribute(attributeId)
+        }
+    }
+
+    /**
+     * ✅ Duyệt sản phẩm
+     * @param productId ID sản phẩm cần duyệt
+     * @param approvalNote Ghi chú duyệt (optional)
+     * @return Result<Product> kết quả duyệt
+     */
+    suspend fun approveProduct(productId: Int, approvalNote: String = "Đã duyệt"): Result<Product> {
+        return safeApiCall(dispatcher) {
+            val requestBody = ApproveProductRequest(
+                approved = true,
+                approval_note = approvalNote
+            )
+            productService.approveProduct(productId, requestBody)
+        }
+    }
+
+    /**
+     * ✅ Từ chối sản phẩm
+     * @param productId ID sản phẩm cần từ chối
+     * @param reason Lý do từ chối
+     * @return Result<Product> kết quả từ chối
+     */
+    suspend fun rejectProduct(productId: Int, reason: String = "Đã từ chối"): Result<Product> {
+        return safeApiCall(dispatcher) {
+            val requestBody = ApproveProductRequest(
+                approved = false,
+                approval_note = reason
+            )
+            productService.rejectProduct(productId, requestBody)
         }
     }
 

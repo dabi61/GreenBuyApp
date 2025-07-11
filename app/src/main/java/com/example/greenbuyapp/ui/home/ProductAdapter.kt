@@ -26,14 +26,41 @@ class ProductAdapter(
             parent,
             false
         )
+        println("🏗️ ProductAdapter onCreateViewHolder called")
         return ProductViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
         val product = getItem(position)
+        println("🔗 ProductAdapter onBindViewHolder: position=$position, product=${product.name}")
         holder.bind(product, onProductClick)
     }
-
+    
+    // ✅ Remove excessive logging in getItemCount
+    override fun getItemCount(): Int {
+        return super.getItemCount()
+    }
+    
+    override fun submitList(list: List<Product>?) {
+        println("📝 ProductAdapter submitList called with ${list?.size ?: 0} items")
+        println("📝 Previous list size: ${currentList.size}")
+        super.submitList(list)
+    }
+    
+    override fun submitList(list: List<Product>?, commitCallback: Runnable?) {
+        println("📝 ProductAdapter submitList with callback called with ${list?.size ?: 0} items")
+        println("📝 Previous list size: ${currentList.size}")
+        super.submitList(list, commitCallback)
+    }
+    
+    // ✅ Thêm method để debug pagination
+    fun getCurrentItemCount(): Int {
+        return currentList.size
+    }
+    
+    fun getLastItemPosition(): Int {
+        return currentList.size - 1
+    }
 
 
     class ProductViewHolder(
@@ -50,22 +77,55 @@ class ProductAdapter(
                     .format(product.price.toLong())
                 tvPrice.text = formattedPrice
 
-                // Load product image
+                // ✅ Cải thiện load product image với error handling tốt hơn
                 val imageView = binding.root.findViewById<android.widget.ImageView>(R.id.img_product)
-                if (!product.cover.isNullOrEmpty()) {
-                    val imageUrl = if (product.cover.startsWith("http")) {
-                        product.cover
+                
+                try {
+                    if (!product.cover.isNullOrEmpty()) {
+                        val imageUrl = if (product.cover.startsWith("http")) {
+                            product.cover
+                        } else {
+                            "https://www.utt-school.site${product.cover}"
+                        }
+                        
+                        println("🖼️ Loading image: $imageUrl")
+                        
+                        Glide.with(itemView.context)
+                            .load(imageUrl)
+                            .placeholder(R.drawable.pic_item_product)
+                            .error(R.drawable.pic_item_product)
+                            .timeout(10000) // 10 giây timeout
+                            .listener(object : com.bumptech.glide.request.RequestListener<android.graphics.drawable.Drawable> {
+                                override fun onLoadFailed(
+                                    e: com.bumptech.glide.load.engine.GlideException?,
+                                    model: Any?,
+                                    target: com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable>?,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    println("❌ Failed to load image: $imageUrl")
+                                    println("❌ Error: ${e?.message}")
+                                    return false // Let Glide handle the error
+                                }
+
+                                override fun onResourceReady(
+                                    resource: android.graphics.drawable.Drawable?,
+                                    model: Any?,
+                                    target: com.bumptech.glide.request.target.Target<android.graphics.drawable.Drawable>?,
+                                    dataSource: com.bumptech.glide.load.DataSource?,
+                                    isFirstResource: Boolean
+                                ): Boolean {
+                                    println("✅ Successfully loaded image: $imageUrl")
+                                    return false
+                                }
+                            })
+                            .into(imageView)
                     } else {
-                        "https://www.utt-school.site${product.cover}"
+                        // Use placeholder image
+                        imageView.setImageResource(R.drawable.pic_item_product)
+                        println("🖼️ Using placeholder image for product: ${product.name}")
                     }
-                    
-                    Glide.with(itemView.context)
-                        .load(imageUrl)
-                        .placeholder(R.drawable.pic_item_product)
-                        .error(R.drawable.pic_item_product)
-                        .into(imageView)
-                } else {
-                    // Use placeholder image
+                } catch (e: Exception) {
+                    println("❌ Exception loading image for product ${product.name}: ${e.message}")
                     imageView.setImageResource(R.drawable.pic_item_product)
                 }
 

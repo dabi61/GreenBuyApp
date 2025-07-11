@@ -11,6 +11,7 @@ import com.example.greenbuyapp.data.product.model.InventoryStatsResponse
 import com.example.greenbuyapp.data.product.model.ProductsByStatusResponse
 import com.example.greenbuyapp.data.product.model.CreateProductResponse
 import com.example.greenbuyapp.data.product.model.CreateAttributeResponse
+import com.example.greenbuyapp.data.product.model.ApproveProductRequest
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import com.example.greenbuyapp.domain.product.ProductRepository
@@ -22,6 +23,8 @@ import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Body
+import retrofit2.http.PATCH
 
 interface ProductService {
     
@@ -183,5 +186,23 @@ interface ProductService {
     suspend fun deleteAttribute(
         @Path("attribute_id") attributeId: Int
     ): MessageResponse
+
+    /**
+     * ✅ Duyệt sản phẩm (approve)
+     */
+    @PATCH("api/product/{product_id}/approve")
+    suspend fun approveProduct(
+        @Path("product_id") productId: Int,
+        @Body requestBody: ApproveProductRequest
+    ): Product
+
+    /**
+     * ✅ Từ chối sản phẩm (reject)
+     */
+    @PATCH("api/product/{product_id}/approve")
+    suspend fun rejectProduct(
+        @Path("product_id") productId: Int,
+        @Body requestBody: ApproveProductRequest
+    ): Product
 
 }

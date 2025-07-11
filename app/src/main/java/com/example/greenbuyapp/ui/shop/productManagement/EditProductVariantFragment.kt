@@ -129,7 +129,7 @@ class EditProductVariantFragment : Fragment() {
         } else {
             // Attribute chưa save - chỉ xóa khỏi adapter
             println("🗑️ Removing unsaved attribute from adapter")
-            attributeAdapter.removeAttribute(position)
+        attributeAdapter.removeAttribute(position)
             
             // Hiển thị thông báo cho unsaved attribute
             Toast.makeText(context, "Đã hủy thuộc tính chưa lưu", Toast.LENGTH_SHORT).show()

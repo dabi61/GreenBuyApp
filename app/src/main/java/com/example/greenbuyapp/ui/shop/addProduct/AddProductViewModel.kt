@@ -679,7 +679,7 @@ class AddProductViewModel(
                 is Result.Error -> {
                     _deleteAttributeState.value = DeleteAttributeUiState.Error("Lỗi xóa thuộc tính sản phẩm: ${result.error}")
                     println("❌ Error deleting product attribute: ${result.error}")
-                }
+                    }
                 is Result.NetworkError -> {
                     _deleteAttributeState.value = DeleteAttributeUiState.Error("Lỗi kết nối mạng khi xóa thuộc tính sản phẩm")
                     println("❌ Network error deleting product attribute")

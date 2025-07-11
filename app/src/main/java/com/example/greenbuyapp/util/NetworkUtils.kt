@@ -69,11 +69,14 @@ object MultipartUtils {
     }
     
     /**
-     * Tạo MultipartBody.Part từ File cho image upload
+     * Tạo MultipartBody.Part từ File cho image upload với nén ảnh
      */
     fun createImagePart(partName: String, file: File): MultipartBody.Part {
+        // ✅ Nén ảnh trước khi upload
+        val compressedFile = compressImageIfNeeded(file)
+        
         // Xác định media type dựa trên extension
-        val mediaType = when (file.extension.lowercase()) {
+        val mediaType = when (compressedFile.extension.lowercase()) {
             "jpg", "jpeg" -> "image/jpeg"
             "png" -> "image/png"
             "gif" -> "image/gif"
@@ -83,14 +86,15 @@ object MultipartUtils {
         
         println("🖼️ Creating image part:")
         println("   Part name: $partName")
-        println("   File name: ${file.name}")
-        println("   File size: ${file.length()} bytes")
-        println("   File extension: ${file.extension}")
+        println("   Original file: ${file.name} (${file.length()} bytes)")
+        println("   Compressed file: ${compressedFile.name} (${compressedFile.length()} bytes)")
+        println("   Compression ratio: ${String.format("%.1f", (1 - compressedFile.length().toDouble() / file.length()) * 100)}%")
+        println("   File extension: ${compressedFile.extension}")
         println("   Media type: $mediaType")
-        println("   File exists: ${file.exists()}")
+        println("   File exists: ${compressedFile.exists()}")
         
-        val requestFile = file.asRequestBody(mediaType)
-        return MultipartBody.Part.createFormData(partName, file.name, requestFile)
+        val requestFile = compressedFile.asRequestBody(mediaType)
+        return MultipartBody.Part.createFormData(partName, compressedFile.name, requestFile)
     }
     
     /**
@@ -305,6 +309,85 @@ object MultipartUtils {
             println("❌ Error in uriToFile: ${e.message}")
             e.printStackTrace()
             throw IllegalArgumentException("Cannot convert URI to File: ${e.message}")
+        }
+    }
+
+    /**
+     * ✅ Nén ảnh nếu cần thiết để giảm kích thước upload
+     */
+    private fun compressImageIfNeeded(file: File): File {
+        // Nếu file nhỏ hơn 500KB thì không cần nén
+        if (file.length() < 500 * 1024) {
+            println("📏 File size < 500KB, skipping compression")
+            return file
+        }
+        
+        return try {
+            println("🗜️ Compressing image: ${file.name} (${file.length()} bytes)")
+            
+            // Tạo file nén trong cache
+            val compressedFileName = "compressed_${System.currentTimeMillis()}.jpg"
+            val compressedFile = File(file.parentFile, compressedFileName)
+            
+            // Đọc ảnh gốc với options để giảm memory usage
+            val options = android.graphics.BitmapFactory.Options().apply {
+                inJustDecodeBounds = true
+            }
+            android.graphics.BitmapFactory.decodeFile(file.absolutePath, options)
+            
+            // Tính toán sample size để giảm memory
+            val maxSize = 1024
+            var sampleSize = 1
+            while (options.outWidth / sampleSize > maxSize || options.outHeight / sampleSize > maxSize) {
+                sampleSize *= 2
+            }
+            
+            // Đọc ảnh với sample size
+            val decodeOptions = android.graphics.BitmapFactory.Options().apply {
+                inSampleSize = sampleSize
+                inPreferredConfig = android.graphics.Bitmap.Config.RGB_565 // Giảm memory usage
+            }
+            
+            val bitmap = android.graphics.BitmapFactory.decodeFile(file.absolutePath, decodeOptions)
+            if (bitmap == null) {
+                println("❌ Cannot decode image, returning original file")
+                return file
+            }
+            
+            // Tính toán kích thước mới (giữ tỷ lệ khung hình)
+            val maxWidth = 800  // Giảm từ 1024 xuống 800
+            val maxHeight = 800
+            val ratio = minOf(maxWidth.toFloat() / bitmap.width, maxHeight.toFloat() / bitmap.height)
+            
+            val newWidth = (bitmap.width * ratio).toInt()
+            val newHeight = (bitmap.height * ratio).toInt()
+            
+            println("📐 Resizing from ${bitmap.width}x${bitmap.height} to ${newWidth}x${newHeight}")
+            
+            // Tạo ảnh mới với kích thước nhỏ hơn
+            val resizedBitmap = android.graphics.Bitmap.createScaledBitmap(bitmap, newWidth, newHeight, true)
+            
+            // Nén thành JPEG với quality 70% (giảm từ 80% xuống 70%)
+            val outputStream = compressedFile.outputStream()
+            resizedBitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 70, outputStream)
+            outputStream.close()
+            
+            // Giải phóng bitmap
+            bitmap.recycle()
+            resizedBitmap.recycle()
+            
+            println("✅ Image compressed: ${compressedFile.length()} bytes (${String.format("%.1f", (1 - compressedFile.length().toDouble() / file.length()) * 100)}% reduction)")
+            
+            // Xóa file gốc nếu khác file nén
+            if (compressedFile.absolutePath != file.absolutePath) {
+                file.delete()
+            }
+            
+            compressedFile
+        } catch (e: Exception) {
+            println("❌ Error compressing image: ${e.message}")
+            e.printStackTrace()
+            file // Trả về file gốc nếu lỗi
         }
     }
 }

@@ -104,6 +104,21 @@
                 android:textAllCaps="false"
                 android:text="Đánh giá" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/bt_update"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/bt_review"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginTop="@dimen/_1sdp"
+                app:cornerRadius="@dimen/_8sdp"
+                app:backgroundTint="@color/white"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_10sdp"
+                android:textAllCaps="false"
+                android:text="Cập nhật"
+                android:visibility="gone" />
+
             <ImageView
                 android:id="@+id/iv_star"
                 android:layout_width="wrap_content"

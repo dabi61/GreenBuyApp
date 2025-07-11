@@ -188,22 +188,307 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_approve"
+        android:id="@+id/cl_admin"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/main_color"
-        android:visibility="gone">
+        android:background="@color/backgroundLight"
+        android:visibility="visible">
 
-        <TextView
-            android:id="@+id/tv_admin"
-            android:layout_width="wrap_content"
+        <!-- Toolbar -->
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar_admin"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:textColor="@color/white"
-            android:text="ADMIN"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar_admin"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/main_color"
+                app:title="Quản trị hệ thống"
+                app:titleTextColor="@color/white"
+                app:navigationIconTint="@color/white" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <!-- Admin Dashboard -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/app_bar_admin"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Duyệt đơn hàng -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_order_approval"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/white">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:id="@+id/iv_order_approval"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:padding="@dimen/_4sdp"
+                            android:src="@drawable/ic_approve_order"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_bias="0.454" />
+
+                        <TextView
+                            android:id="@+id/tv_order_approval_title"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Duyệt đơn hàng"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
+                            android:layout_marginStart="16dp"
+                            app:layout_constraintStart_toEndOf="@id/iv_order_approval"
+                            app:layout_constraintTop_toTopOf="@id/iv_order_approval"
+                            app:layout_constraintEnd_toEndOf="parent"/>
+
+
+
+                        <TextView
+                            android:id="@+id/tv_order_approval_subtitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Đơn hàng chờ duyệt"
+                            android:textSize="12sp"
+                            android:textColor="@color/grey_600"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="4dp"
+                            app:layout_constraintStart_toEndOf="@id/iv_order_approval"
+                            app:layout_constraintTop_toBottomOf="@id/tv_order_approval_title"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Duyệt sản phẩm -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_product_approval"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/white">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:id="@+id/iv_product_approval"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:padding="@dimen/_4sdp"
+                            android:src="@drawable/ic_approve_product"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_product_approval_title"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Duyệt sản phẩm"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
+                            android:layout_marginStart="16dp"
+                            app:layout_constraintStart_toEndOf="@id/iv_product_approval"
+                            app:layout_constraintTop_toTopOf="@id/iv_product_approval"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+
+
+                        <TextView
+                            android:id="@+id/tv_product_approval_subtitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Sản phẩm chờ duyệt"
+                            android:textSize="12sp"
+                            android:textColor="@color/grey_600"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="4dp"
+                            app:layout_constraintStart_toEndOf="@id/iv_product_approval"
+                            app:layout_constraintTop_toBottomOf="@id/tv_product_approval_title"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Tạo danh mục -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_create_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/white">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="16dp">
+
+                        <ImageView
+                            android:id="@+id/iv_create_category"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:padding="@dimen/_4sdp"
+                            android:src="@drawable/ic_add_category"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_create_category_title"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Tạo danh mục"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
+                            android:layout_marginStart="16dp"
+                            app:layout_constraintStart_toEndOf="@id/iv_create_category"
+                            app:layout_constraintTop_toTopOf="@id/iv_create_category"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                        <TextView
+                            android:id="@+id/tv_create_category_subtitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Quản lý danh mục sản phẩm"
+                            android:textSize="12sp"
+                            android:textColor="@color/grey_600"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="4dp"
+                            app:layout_constraintStart_toEndOf="@id/iv_create_category"
+                            app:layout_constraintTop_toBottomOf="@id/tv_create_category_title"
+                            app:layout_constraintEnd_toEndOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Thống kê tổng quan -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_admin_stats"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/white">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Thống kê tổng quan"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/black"
+                            android:layout_marginBottom="12dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+
+                            <!-- Tổng đơn hàng -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:padding="12dp"
+                                android:layout_marginEnd="8dp">
+
+                                <TextView
+                                    android:id="@+id/tv_total_orders"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="156"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/main_color" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Tổng đơn hàng"
+                                    android:textSize="10sp"
+                                    android:textColor="@color/grey_600"
+                                    android:layout_marginTop="4dp" />
+
+                            </LinearLayout>
+
+                            <!-- Tổng sản phẩm -->
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical"
+                                android:gravity="center"
+                                android:padding="12dp"
+                                android:layout_marginStart="8dp">
+
+                                <TextView
+                                    android:id="@+id/tv_total_products"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="89"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@color/green_600" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Tổng sản phẩm"
+                                    android:textSize="10sp"
+                                    android:textColor="@color/grey_600"
+                                    android:layout_marginTop="4dp" />
+
+                            </LinearLayout>
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -212,7 +497,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/backgroundLight"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <!-- Toolbar -->
         <com.google.android.material.appbar.AppBarLayout
@@ -261,7 +546,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toEndOf="@id/iv_avatar_dashboard"
                     app:layout_constraintTop_toTopOf="@id/iv_avatar_dashboard"
-                    app:layout_constraintEnd_toStartOf="@id/bt_shop_dashboard"
+                    app:layout_constraintEnd_toStartOf="@id/bt_lock_shop"
                     android:layout_marginStart="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_4sdp"
                     android:textColor="@color/black"
@@ -277,12 +562,12 @@
                     app:layout_constraintTop_toBottomOf="@id/tv_name_dashboard"
                     app:layout_constraintStart_toStartOf="@id/tv_name_dashboard"
                     android:textColor="@color/grey_600"
-                    app:layout_constraintEnd_toStartOf="@id/bt_shop_dashboard"
+                    app:layout_constraintEnd_toStartOf="@id/bt_lock_shop"
                     android:text="greenbuy.site/name"
                     />
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/bt_shop_dashboard"
+                    android:id="@+id/bt_lock_shop"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
@@ -402,7 +687,7 @@
                             app:layout_constraintEnd_toEndOf="@id/tv_item_2"
                             android:textColor="@color/grey_700"
                             android:textSize="@dimen/_8sdp"
-                            android:text="Chờ lấy hàng"/>
+                            android:text="Chờ xác nhận"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -487,7 +772,7 @@
                             android:textColor="@color/grey_700"
                             android:textSize="@dimen/_8sdp"
                             android:textAlignment="center"
-                            android:text="Tổng số đơn hàng"/>
+                            android:text="Đã giao"/>
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
 
@@ -553,7 +838,7 @@
                     android:id="@+id/iv_func_item_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_smile_star"
+                    android:src="@drawable/ic_my_product"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -566,7 +851,7 @@
                     android:id="@+id/iv_func_item_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_smile_star"
+                    android:src="@drawable/ic_my_finance"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@id/iv_func_item_1"
                     app:layout_constraintBottom_toBottomOf="@id/iv_func_item_1"
@@ -576,7 +861,7 @@
                     android:id="@+id/iv_func_item_3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_smile_star"
+                    android:src="@drawable/ic_effect_sold"
                     app:layout_constraintStart_toEndOf="@id/iv_func_item_2"
                     app:layout_constraintTop_toTopOf="@id/iv_func_item_2"
                     app:layout_constraintBottom_toBottomOf="@id/iv_func_item_2"

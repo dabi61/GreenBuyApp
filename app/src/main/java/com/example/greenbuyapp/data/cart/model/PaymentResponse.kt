@@ -10,5 +10,5 @@ data class PaymentResponse(
     val status: String,
     val amount: Double,
     val message: String,
-    val redirect_url: String
+    val redirect_url: String? = null
 )

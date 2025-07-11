@@ -73,7 +73,7 @@ class CustomerInformationViewModel(
         avatar: Uri?,
         firstName: String,
         lastName: String,
-        phone: Int,
+        phone: String,
         birthDate: String,
     ) {
         viewModelScope.launch {

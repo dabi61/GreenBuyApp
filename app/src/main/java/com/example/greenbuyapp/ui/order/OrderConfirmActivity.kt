@@ -3,7 +3,12 @@ package com.example.greenbuyapp.ui.order
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -16,9 +21,14 @@ import com.example.greenbuyapp.databinding.ActivityOrderConfirmBinding
 import com.example.greenbuyapp.ui.base.BaseActivity
 import com.example.greenbuyapp.ui.cart.CartShopAdapter
 import com.example.greenbuyapp.ui.cart.CartViewModel
+import com.example.greenbuyapp.ui.cart.PaymentUiState
+import com.example.greenbuyapp.ui.main.MainActivity
 import com.example.greenbuyapp.ui.profile.ProfileViewModel
+import com.example.greenbuyapp.ui.shop.addProduct.AddProductUiState
+import com.example.greenbuyapp.ui.shop.productManagement.EditProductVariantActivity
 import com.example.greenbuyapp.util.Result
 import com.example.greenbuyapp.util.loadAvatar
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.text.NumberFormat
@@ -30,6 +40,8 @@ class OrderConfirmActivity : BaseActivity<ActivityOrderConfirmBinding>() {
     private var items: List<CartShop> = emptyList()
     override val viewModel: CartViewModel by viewModel()
     private val viewModelProfile: ProfileViewModel by viewModel()
+
+
     override val binding: ActivityOrderConfirmBinding by lazy {
         ActivityOrderConfirmBinding.inflate(layoutInflater)
     }
@@ -63,6 +75,61 @@ class OrderConfirmActivity : BaseActivity<ActivityOrderConfirmBinding>() {
     override fun observeViewModel() {
         super.observeViewModel()
         observeProfile()
+        observePayment()
+    }
+
+    private fun observePayment() {
+        // ✅ Observe edit product state
+        lifecycleScope.launch {
+            viewModel.paymentState.collect { state ->
+                when (state) {
+                    is PaymentUiState.Loading -> {
+                        binding.btnCheckout.isEnabled = false
+                        binding.btnCheckout.text = "Đang đặt hàng..."
+                    }
+                    is PaymentUiState.Success -> {
+                        binding.btnCheckout.isEnabled = true
+                        binding.btnCheckout.text = "Đặt hàng"
+                        Toast.makeText(this@OrderConfirmActivity, "✅ Lưu sản phẩm thành công!", Toast.LENGTH_SHORT).show()
+                        showLoadingWithAnimation()
+                    }
+                    is PaymentUiState.Error -> {
+                        binding.btnCheckout.isEnabled = true
+                        binding.btnCheckout.text = "Đặt hàng"
+                        Toast.makeText(this@OrderConfirmActivity, "❌ ${state.message}", Toast.LENGTH_LONG).show()
+                    }
+                    else -> {
+                        binding.btnCheckout.isEnabled = true
+                        binding.btnCheckout.text = "Đặt hàng"
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showLoadingWithAnimation() {
+
+        // Ẩn content chính
+        binding.clParent.animate()
+            .alpha(0f)
+            .setDuration(500)
+            .start()
+
+        binding.clParent.visibility = View.GONE
+        binding.successLayout.visibility = View.VISIBLE
+        binding.successLayout.animate()
+            .alpha(1f)
+            .setDuration(500)
+            .withEndAction {
+                // Sau khi animation kết thúc, delay 1.5s rồi chuyển activity
+                lifecycleScope.launch {
+                    delay(1500)
+                    val intent = Intent(this@OrderConfirmActivity, MainActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
+                }
+            }.start()
     }
 
     private fun observeProfile() {
@@ -203,6 +270,8 @@ class OrderConfirmActivity : BaseActivity<ActivityOrderConfirmBinding>() {
             )
         }
     }
+
+
 
     fun getFormattedTotalAmount(price: Double): String {
         val formatter = NumberFormat.getCurrencyInstance(Locale("vi", "VN"))
