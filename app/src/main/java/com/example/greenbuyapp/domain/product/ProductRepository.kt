@@ -24,6 +24,7 @@ import com.example.greenbuyapp.data.product.model.ProductAttribute
 
 class ProductRepository(
     private val productService: ProductService,
+    private val shopService: com.example.greenbuyapp.data.shop.ShopService,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
@@ -464,6 +465,27 @@ class ProductRepository(
                 approval_note = reason
             )
             productService.rejectProduct(productId, requestBody)
+        }
+    }
+
+    /**
+     * ✅ Lấy danh sách sản phẩm chờ duyệt
+     * @return Result<List<PendingApprovalProduct>> danh sách sản phẩm chờ duyệt
+     */
+    suspend fun getPendingApprovalProducts(): Result<List<com.example.greenbuyapp.data.product.model.PendingApprovalProduct>> {
+        return safeApiCall(dispatcher) {
+            productService.getPendingApprovalProducts()
+        }
+    }
+
+    /**
+     * ✅ Lấy thông tin shop theo ID
+     * @param shopId ID của shop
+     * @return Result<Shop> thông tin shop
+     */
+    suspend fun getShopById(shopId: Int): Result<com.example.greenbuyapp.data.shop.model.Shop> {
+        return safeApiCall(dispatcher) {
+            shopService.getShopById(shopId)
         }
     }
 
