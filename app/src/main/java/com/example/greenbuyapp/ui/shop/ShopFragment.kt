@@ -30,6 +30,8 @@ import android.os.Handler
 import android.os.Looper
 import com.example.greenbuyapp.ui.admin.approve.product.ApproveProductActivity
 import com.example.greenbuyapp.ui.shop.myShopDetail.MyShopDetailActivity
+import com.example.greenbuyapp.ui.shop.shopDetail.ShopDetailActivity
+import com.example.greenbuyapp.ui.social.shopReview.ShopReviewActivity
 
 /**
  * Fragment hiển thị màn hình shop
@@ -90,8 +92,14 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
 
     private fun onClickLockShop() {
         binding.btLockShop.setOnClickListener {
-            val intent = Intent(requireActivity(), MyShopDetailActivity::class.java)
-            startActivity(intent)
+            val shopId = viewModel.shopInfo.value?.id
+
+            if (shopId != null && shopId > 0) {
+                val intent = ShopDetailActivity.createIntent(requireContext(), shopId)
+                startActivity(intent)
+            } else {
+                Toast.makeText(context, "❌ Không thể mở chi tiết shop (thiếu shopId)", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -148,15 +156,17 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
 
             // Đánh giá (position 3 - DELIVERED)
             cvItem4.setOnClickListener {
-                // ✅ Null check trước khi start activity
-                if (isAdded && activity != null) {
+                val shopId = viewModel.shopInfo.value?.id
+                if (isAdded && activity != null && shopId != null && shopId > 0) {
                     try {
-                        val intent = ShopDashboardDetailActivity.createIntent(requireActivity(), 3)
+                        val intent = ShopReviewActivity.createIntent(requireActivity(), shopId)
                         startActivity(intent)
-                        println("✅ Opened ShopDashboardDetail with position 3 (Đã giao)")
+                        println("✅ Opened ShopReviewActivity for shopId=$shopId")
                     } catch (e: Exception) {
-                        println("❌ Error opening shop dashboard: ${e.message}")
+                        println("❌ Error opening ShopReviewActivity: ${e.message}")
                     }
+                } else {
+                    Toast.makeText(context, "❌ Không thể mở đánh giá (thiếu shopId)", Toast.LENGTH_SHORT).show()
                 }
             }
         }
