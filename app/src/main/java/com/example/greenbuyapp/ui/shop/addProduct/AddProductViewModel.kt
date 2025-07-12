@@ -100,7 +100,7 @@ class AddProductViewModel(
         viewModelScope.launch {
             _subCategoriesLoading.value = true
             
-            when (val result = categoryRepository.getSubCategories()) {
+            when (val result = categoryRepository.getAllSubCategories()) {
                 is Result.Success -> {
                     _subCategories.value = result.value
                     println("✅ Loaded ${result.value.size} subcategories")

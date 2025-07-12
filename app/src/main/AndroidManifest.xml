@@ -31,6 +31,9 @@
             android:name=".ui.admin.approve.product.ApproveProductActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.admin.category.CategoryManagementActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.admin.approve.order.ApproveOrderActivity"
             android:exported="false" />
         <activity

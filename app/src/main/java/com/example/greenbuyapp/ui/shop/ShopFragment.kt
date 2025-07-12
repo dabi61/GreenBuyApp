@@ -30,6 +30,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import com.example.greenbuyapp.ui.admin.approve.product.ApproveProductActivity
+import com.example.greenbuyapp.ui.admin.category.CategoryManagementActivity
 import com.example.greenbuyapp.ui.shop.myShopDetail.MyShopDetailActivity
 import com.example.greenbuyapp.ui.shop.shopDetail.ShopDetailActivity
 import com.example.greenbuyapp.ui.social.shopReview.ShopReviewActivity
@@ -81,6 +82,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
             setupBanner()
             setupProductManagement()
             onClickApproveProduct()
+            onClickCreateCategory()
             onClickLockShop()
             viewModel.getMyShopStats()
             viewModel.loadBannerItems()
@@ -108,6 +110,21 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
         binding.cvProductApproval.setOnClickListener {
             val intent = Intent(requireActivity(), ApproveProductActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private fun onClickCreateCategory() {
+        binding.cvCreateCategory.setOnClickListener {
+            // ✅ Null check trước khi start activity
+            if (isAdded && activity != null) {
+                try {
+                    val intent = CategoryManagementActivity.createIntent(requireActivity())
+                    startActivity(intent)
+                    println("✅ Opened CategoryManagementActivity")
+                } catch (e: Exception) {
+                    println("❌ Error opening category management: ${e.message}")
+                }
+            }
         }
     }
 

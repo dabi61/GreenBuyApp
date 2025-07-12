@@ -1,27 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/constraintLayoutBackground"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:background="@drawable/background_item_pokemon"
-    android:clickable="true"
-    android:clipToPadding="false"
-    android:focusable="true"
-    android:padding="8dp"
-    tools:backgroundTint="@color/main_color">
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
 
-    <TextView
-        android:id="@+id/tv_category_name"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        android:text="Áo thun"/>
+        android:orientation="vertical"
+        android:padding="16dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/ivExpand"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_keyboard_arrow_down_24"
+                android:layout_marginEnd="8dp"
+                app:tint="@color/green_600" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvCategoryName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"
+                    tools:text="Quần áo" />
+
+                <TextView
+                    android:id="@+id/tvCategoryDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:textColor="@color/grey_600"
+                    android:layout_marginTop="4dp"
+                    tools:text="Quần áo xịn" />
+
+                <TextView
+                    android:id="@+id/tvCategoryCreatedAt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="12sp"
+                    android:textColor="@color/grey_500"
+                    android:layout_marginTop="4dp"
+                    tools:text="Tạo lúc: 2025-06-21T14:59:42.551487" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageButton
+                    android:id="@+id/btnAddSubCategory"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_add_24"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:layout_marginEnd="4dp"
+                    app:tint="@color/green_600" />
+
+                <ImageButton
+                    android:id="@+id/btnEditCategory"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_edit_24"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:layout_marginEnd="4dp"
+                    app:tint="@color/blue_600" />
+
+                <ImageButton
+                    android:id="@+id/btnDeleteCategory"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_delete_24"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="@color/red_600" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
