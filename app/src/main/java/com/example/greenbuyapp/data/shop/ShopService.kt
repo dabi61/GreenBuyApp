@@ -1,14 +1,17 @@
 package com.example.greenbuyapp.data.shop
 
+import com.example.greenbuyapp.data.shop.model.AdminOrderDetail
 import com.example.greenbuyapp.data.shop.model.AdminOrderResponse
 import com.example.greenbuyapp.data.shop.model.OrderDetail
 import com.example.greenbuyapp.data.shop.model.OrderStats
 import com.example.greenbuyapp.data.shop.model.Shop
 import com.example.greenbuyapp.data.shop.model.ShopOrderResponse
+import com.example.greenbuyapp.data.shop.model.UpdateOrderStatusRequest
 import com.example.greenbuyapp.data.shop.model.UpdateShopResponse
 import com.example.greenbuyapp.data.user.model.UpdateUserProfileResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
@@ -99,6 +102,23 @@ interface ShopService {
         @Part("is_online") isOnline: RequestBody?,
         @Part avatar: MultipartBody.Part?
     ): UpdateShopResponse
+
+    /**
+     * ✅ Lấy chi tiết đơn hàng admin
+     */
+    @GET("api/order/admin/orders/{order_id}")
+    suspend fun getAdminOrderDetail(
+        @Path("order_id") orderId: Int
+    ): AdminOrderDetail
+
+    /**
+     * ✅ Cập nhật trạng thái đơn hàng admin với request body
+     */
+    @PATCH("api/order/admin/orders/{order_id}/status")
+    suspend fun updateAdminOrderStatus(
+        @Path("order_id") orderId: Int,
+        @Body request: UpdateOrderStatusRequest
+    ): AdminOrderDetail
 
     /**
      * Cập nhật trạng thái đơn hàng

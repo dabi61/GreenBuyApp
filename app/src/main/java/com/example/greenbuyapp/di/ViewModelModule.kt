@@ -27,6 +27,7 @@ import com.example.greenbuyapp.ui.profile.editProfile.address.AddressUpdateViewM
 import com.example.greenbuyapp.ui.profile.editProfile.infomation.CustomerInformationViewModel
 import com.example.greenbuyapp.ui.admin.approve.product.ApproveProductViewModel
 import com.example.greenbuyapp.ui.admin.category.CategoryManagementViewModel
+import com.example.greenbuyapp.ui.admin.order.AdminOrderDetailViewModel
 import com.example.greenbuyapp.ui.admin.order.AdminOrderViewModel
 import com.example.greenbuyapp.ui.mall.MallViewModel
 import com.example.greenbuyapp.ui.shop.shopDetail.EditShopViewModel
@@ -70,6 +71,7 @@ val viewModelModule = module {
     viewModel { ApproveProductViewModel(get()) }
     viewModel { CategoryManagementViewModel(get()) }
     viewModel { AdminOrderViewModel(get()) }
+    viewModel { AdminOrderDetailViewModel(get()) }
     viewModel { EditShopViewModel(get()) }
     viewModel { MallViewModel(get(), get(), get(), get()) }
 

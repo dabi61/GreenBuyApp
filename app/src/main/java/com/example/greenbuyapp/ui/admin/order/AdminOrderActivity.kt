@@ -82,9 +82,8 @@ class AdminOrderActivity : BaseActivity<ActivityAdminOrderBinding>() {
             onOrderClick = { order ->
                 // ✅ Handle order click - mở chi tiết đơn hàng
                 println("🔍 Order clicked: ${order.orderNumber}")
-                // TODO: Mở OrderDetailActivity
-                // val intent = OrderDetailActivity.createIntent(this, order.id)
-                // startActivity(intent)
+                val intent = AdminOrderDetailActivity.createIntent(this, order.id)
+                startActivity(intent)
             },
             onStatusClick = { order ->
                 // ✅ Handle status change click

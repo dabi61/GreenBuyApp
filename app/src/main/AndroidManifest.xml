@@ -38,6 +38,10 @@
             android:name=".ui.admin.order.AdminOrderActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.admin.order.AdminOrderDetailActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.admin.order.AdminOrderActivity" />
+        <activity
             android:name=".ui.admin.approve.order.ApproveOrderActivity"
             android:exported="false" />
         <activity

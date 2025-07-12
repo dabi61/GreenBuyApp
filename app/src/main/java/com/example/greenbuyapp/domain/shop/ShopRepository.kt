@@ -4,10 +4,12 @@ import android.content.Context
 import android.net.Uri
 import com.example.greenbuyapp.data.product.model.Product
 import com.example.greenbuyapp.data.shop.ShopService
+import com.example.greenbuyapp.data.shop.model.AdminOrderDetail
 import com.example.greenbuyapp.data.shop.model.OrderDetail
 import com.example.greenbuyapp.data.shop.model.OrderStats
 import com.example.greenbuyapp.data.shop.model.Shop
 import com.example.greenbuyapp.data.shop.model.ShopOrderResponse
+import com.example.greenbuyapp.data.shop.model.UpdateOrderStatusRequest
 import com.example.greenbuyapp.data.shop.model.UpdateShopResponse
 import com.example.greenbuyapp.data.user.UserService
 import com.example.greenbuyapp.data.user.model.ChangeRoleRequest
@@ -216,5 +218,32 @@ class ShopRepository(
         }
     }
 
+    /**
+     * ✅ Lấy chi tiết đơn hàng admin
+     */
+    suspend fun getAdminOrderDetail(orderId: Int): Result<AdminOrderDetail> {
+        return safeApiCall(dispatcher) {
+            shopService.getAdminOrderDetail(orderId)
+        }
+    }
+
+    /**
+     * ✅ Cập nhật trạng thái đơn hàng admin
+     */
+    suspend fun updateAdminOrderStatus(
+        orderId: Int,
+        status: Int,
+        internalNotes: String? = null,
+        notifyCustomer: Boolean = true
+    ): Result<AdminOrderDetail> {
+        return safeApiCall(dispatcher) {
+            val request = UpdateOrderStatusRequest(
+                status = status,
+                internalNotes = internalNotes,
+                notifyCustomer = notifyCustomer
+            )
+            shopService.updateAdminOrderStatus(orderId, request)
+        }
+    }
 
 }
