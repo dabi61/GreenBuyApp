@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    
+    <!-- Background Circle -->
+    <path
+        android:fillColor="@color/green_600"
+        android:pathData="M60,10 C82.09,10 100,27.91 100,50 L100,70 C100,92.09 82.09,110 60,110 C37.91,110 20,92.09 20,70 L20,50 C20,27.91 37.91,10 60,10 Z" />
+    
+    <!-- Shopping Bag -->
+    <path
+        android:fillColor="@color/white"
+        android:pathData="M45,35 L75,35 C76.1,35 77,35.9 77,37 L77,75 C77,76.1 76.1,77 75,77 L45,77 C43.9,77 43,76.1 43,75 L43,37 C43,35.9 43.9,35 45,35 Z" />
+    
+    <!-- Bag Handles -->
+    <path
+        android:fillColor="@color/white"
+        android:strokeColor="@color/green_600"
+        android:strokeWidth="2"
+        android:pathData="M50,35 L50,30 C50,27.24 52.24,25 55,25 C57.76,25 60,27.24 60,30 L60,35" />
+    
+    <path
+        android:fillColor="@color/white"
+        android:strokeColor="@color/green_600"
+        android:strokeWidth="2"
+        android:pathData="M60,35 L60,30 C60,27.24 62.24,25 65,25 C67.76,25 70,27.24 70,30 L70,35" />
+    
+    <!-- Leaf Design on Bag -->
+    <path
+        android:fillColor="@color/green_600"
+        android:pathData="M60,45 C55,45 50,50 50,55 C50,60 55,65 60,65 C65,65 70,60 70,55 C70,50 65,45 60,45 Z" />
+    
+    <!-- Leaf Vein -->
+    <path
+        android:strokeColor="@color/green_200"
+        android:strokeWidth="1"
+        android:pathData="M60,45 L60,65" />
+    
+    <!-- Small Leaves -->
+    <path
+        android:fillColor="@color/green_500"
+        android:pathData="M45,50 C43,50 41,52 41,54 C41,56 43,58 45,58 C47,58 49,56 49,54 C49,52 47,50 45,50 Z" />
+    
+    <path
+        android:fillColor="@color/green_500"
+        android:pathData="M75,50 C73,50 71,52 71,54 C71,56 73,58 75,58 C77,58 79,56 79,54 C79,52 77,50 75,50 Z" />
+    
+</vector> 

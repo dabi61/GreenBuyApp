@@ -12,6 +12,12 @@ data class Category(
     val description: String,
     val created_at: String
 )
+
+@JsonClass(generateAdapter = true)
+data class CategoryResponse(
+    val items: List<Category>
+)
+
 @JsonClass(generateAdapter = true)
 data class SubCategory(
     val id: Int,

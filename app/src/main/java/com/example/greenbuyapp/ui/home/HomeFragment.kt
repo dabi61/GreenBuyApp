@@ -32,7 +32,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     override val viewModel: HomeViewModel by viewModel()
     
     private lateinit var productAdapter: ProductAdapter
-    private lateinit var categoryAdapter: CategoryAdapter
+    private lateinit var categoryAdapter: SimpleCategoryAdapter
     private lateinit var trendingAdapter: TrendingAdapter
     private lateinit var bannerAdapter: BannerAdapter
     
@@ -65,7 +65,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             setupSearchView()
 
             // Load categories khi init
-            viewModel.loadCategories()
+            // viewModel.loadCategories()
+            
+            // Tạm thời sử dụng test data để kiểm tra UI
+            println("📂 HomeFragment: Loading test categories...")
+            viewModel.loadCategoriesTest()
             
             // Load products với StateFlow architecture
             println("🚀 Triggering product loading...")
@@ -115,10 +119,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             println("✅ ProductActivity started")
         }
         
-        categoryAdapter = CategoryAdapter { category ->
+        categoryAdapter = SimpleCategoryAdapter { category ->
             // Handle category click
-            println("Category clicked: ${category.name}")
-            viewModel.updateCategoryId(category.id)
+            if (category != null) {
+                println("Category clicked: ${category.name}")
+                viewModel.updateCategoryId(category.id)
+                categoryAdapter.updateSelectedCategory(category.id)
+            } else {
+                println("Category unselected -> showing all products")
+                viewModel.updateCategoryId(null)
+                categoryAdapter.updateSelectedCategory(null)
+            }
         }
 
         trendingAdapter = TrendingAdapter { trendingProduct ->
@@ -164,6 +175,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             // ✅ Performance optimizations
             setLayerType(android.view.View.LAYER_TYPE_HARDWARE, null)
             overScrollMode = android.view.View.OVER_SCROLL_NEVER
+            
+            println("📂 Category RecyclerView setup completed")
+            println("📂 RecyclerView visibility: ${visibility}")
+            println("📂 RecyclerView adapter: ${adapter}")
+            println("📂 RecyclerView layout manager: ${layoutManager}")
         }
 
         // ✅ Setup trending RecyclerView với horizontal orientation
@@ -413,7 +429,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         // Observe categories data using StateFlow
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.categories.collect { categories ->
-                categoryAdapter.submitList(categories)
+                println("📂 UI: Submitting ${categories.size} categories to adapter")
+                categories.forEachIndexed { index, category ->
+                    println("📂 Category [$index]: ${category.name} (ID: ${category.id})")
+                }
+                
+                // Check if adapter is initialized
+                if (::categoryAdapter.isInitialized) {
+                    categoryAdapter.submitList(categories)
+                    println("✅ Categories submitted to adapter successfully")
+                } else {
+                    println("❌ Category adapter not initialized!")
+                }
                 
                 // Tạm thời log để test
                 println("Categories loaded: ${categories.size}")

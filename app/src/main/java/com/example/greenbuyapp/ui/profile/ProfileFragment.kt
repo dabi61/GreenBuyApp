@@ -11,6 +11,7 @@ import com.example.greenbuyapp.data.social.model.FollowStatsResponse
 import com.example.greenbuyapp.databinding.FragmentProfileBinding
 import com.example.greenbuyapp.data.user.model.UserMe
 import com.example.greenbuyapp.ui.base.BaseFragment
+import com.example.greenbuyapp.ui.cart.CartActivity
 import com.example.greenbuyapp.ui.login.LoginActivity
 import com.example.greenbuyapp.ui.main.MainActivity
 import com.example.greenbuyapp.ui.profile.editProfile.EditProfileActivity
@@ -51,7 +52,12 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding, ProfileViewModel>()
             setupClickListeners()
             setupLogoutAction()
             viewModel.loadUtilProfile()
-            
+            // Setup cart button click
+            binding.icCart.setOnClickListener {
+                val intent = CartActivity.createIntent(requireContext())
+                startActivity(intent)
+                println("🛒 Opening CartActivity")
+            }
             // Kiểm tra auth status và load user profile
             viewModel.checkAuthStatus()
         }

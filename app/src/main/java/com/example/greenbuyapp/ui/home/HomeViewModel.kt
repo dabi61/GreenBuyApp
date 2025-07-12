@@ -354,6 +354,11 @@ class HomeViewModel(
     fun updateCategoryId(categoryId: Int?) {
         if (_categoryId.value != categoryId) {
             _categoryId.value = categoryId
+            if (categoryId != null) {
+                println("📂 ViewModel: Category filter set to ID: $categoryId")
+            } else {
+                println("📂 ViewModel: Category filter removed -> showing all products")
+            }
             refreshProducts()
         }
     }
@@ -409,17 +414,26 @@ class HomeViewModel(
             _categoriesLoading.value = true
             _categoriesError.value = null
             
+            println("📂 ViewModel: Starting to load categories...")
+            
             when (val result = categoryRepository.getCategories()) {
                 is Result.Success -> {
+                    println("📂 ViewModel: Categories loaded successfully: ${result.value.size} items")
+                    result.value.forEachIndexed { index, category ->
+                        println("📂 ViewModel: Category [$index]: ${category.name} (ID: ${category.id})")
+                    }
                     _categories.value = result.value
                 }
                 is Result.Error -> {
+                    println("📂 ViewModel: Categories error: ${result.error}")
                     _categoriesError.value = result.error ?: "Lỗi tải danh mục"
                 }
                 is Result.NetworkError -> {
+                    println("📂 ViewModel: Categories network error")
                     _categoriesError.value = "Không có kết nối mạng"
                 }
                 else -> {
+                    println("📂 ViewModel: Categories unknown error")
                     _categoriesError.value = "Lỗi không xác định"
                 }
             }
@@ -430,6 +444,32 @@ class HomeViewModel(
     
     fun retryLoadCategories() {
         loadCategories()
+    }
+
+    fun loadCategoriesTest() {
+        viewModelScope.launch {
+            _categoriesLoading.value = true
+            _categoriesError.value = null
+            
+            println("📂 ViewModel: Loading test categories...")
+            
+            // Tạo test data
+            val testCategories = listOf(
+                Category(1, "Thời trang", "Quần áo, giày dép", "2024-01-01"),
+                Category(2, "Điện tử", "Điện thoại, laptop", "2024-01-02"),
+                Category(3, "Thể thao", "Giày thể thao, đồ tập", "2024-01-03"),
+                Category(4, "Sách", "Sách giáo khoa, tiểu thuyết", "2024-01-04"),
+                Category(5, "Gia dụng", "Đồ gia dụng, nội thất", "2024-01-05")
+            )
+            
+            println("📂 ViewModel: Test categories created: ${testCategories.size} items")
+            testCategories.forEachIndexed { index, category ->
+                println("📂 ViewModel: Test Category [$index]: ${category.name} (ID: ${category.id})")
+            }
+            
+            _categories.value = testCategories
+            _categoriesLoading.value = false
+        }
     }
 
     /**

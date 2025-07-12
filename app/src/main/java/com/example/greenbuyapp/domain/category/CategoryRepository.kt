@@ -14,7 +14,8 @@ class CategoryRepository(
 ) {
     suspend fun getCategories(): Result<List<Category>> {
         return safeApiCall(dispatcher) {
-            categoryService.getCategories()
+            val response = categoryService.getCategories()
+            response.items
         }
     }
     

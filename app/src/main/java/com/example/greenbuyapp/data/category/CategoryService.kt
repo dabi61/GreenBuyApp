@@ -6,7 +6,7 @@ import retrofit2.http.*
 
 interface CategoryService {
     @GET("api/category")
-    suspend fun getCategories(): List<Category>
+    suspend fun getCategories(): CategoryResponse
     
     @GET("api/category/{category_id}/subcategories")
     suspend fun getSubCategories(@Path("category_id") categoryId: Int): List<SubCategory>

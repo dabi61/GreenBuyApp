@@ -6,14 +6,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.greenbuyapp.data.category.model.Category
-import com.example.greenbuyapp.databinding.ItemCategoryBinding
+import com.example.greenbuyapp.databinding.ItemHomeCategoryBinding
 
 class CategoryAdapter(
     private val onCategoryClick: (Category) -> Unit = {}
 ) : ListAdapter<Category, CategoryAdapter.CategoryViewHolder>(CategoryDiffCallback()) {
 
+    private var selectedCategoryId: Int? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
-        val binding = ItemCategoryBinding.inflate(
+        val binding = ItemHomeCategoryBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -26,19 +28,35 @@ class CategoryAdapter(
         holder.bind(category, onCategoryClick)
     }
 
-    class CategoryViewHolder(
-        private val binding: ItemCategoryBinding
+    fun updateSelectedCategory(categoryId: Int?) {
+        selectedCategoryId = categoryId
+        notifyDataSetChanged()
+    }
+
+    inner class CategoryViewHolder(
+        private val binding: ItemHomeCategoryBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(category: Category, onCategoryClick: (Category) -> Unit) {
             binding.apply {
                 // Set category name
-                tvCategoryName.text = category.name
-//                tvCategoryDescription.text = category.description
+                chipCategory.text = category.name
+                
+                // Set selected state
+                chipCategory.isChecked = selectedCategoryId == category.id
                 
                 // Set click listener
-                root.setOnClickListener {
-                    onCategoryClick(category)
+                chipCategory.setOnClickListener {
+                    if (chipCategory.isChecked) {
+                        // Nếu đang được chọn, bỏ chọn
+                        selectedCategoryId = null
+                        onCategoryClick(category)
+                    } else {
+                        // Chọn category mới
+                        selectedCategoryId = category.id
+                        onCategoryClick(category)
+                    }
+                    updateSelectedCategory(selectedCategoryId)
                 }
             }
         }
