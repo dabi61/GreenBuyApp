@@ -58,6 +58,7 @@ class ShopRepository(
      * Tạo shop mới với avatar file
      */
     suspend fun createShop(
+        context: Context,
         name: String,
         phoneNumber: String,
         avatarFile: File?
@@ -69,7 +70,7 @@ class ShopRepository(
             val isOnlinePart = MultipartUtils.createTextPart("true")  // ✅ Default online
             val avatarPart = avatarFile?.let { 
                 MultipartUtils.createImagePart("avatar", it) 
-            }
+            } ?: MultipartUtils.createDummyImagePart(context, "avatar")
             
             shopService.createShop(
                 name = namePart,
@@ -97,7 +98,7 @@ class ShopRepository(
             val isOnlinePart = MultipartUtils.createTextPart("true")  // ✅ Default online
             val avatarPart = avatarUri?.let { 
                 MultipartUtils.createImagePart(context, "avatar", it) 
-            }
+            } ?: MultipartUtils.createDummyImagePart(context, "avatar")
             
             shopService.createShop(
                 name = namePart,
@@ -144,21 +145,27 @@ class ShopRepository(
         avatarUri: Uri?,
         name: String,
         phoneNumber: String,
+        description: String? = null,
+        address: String? = null,
         isActive: Boolean = true,
         isOnline: Boolean = true
     ): Result<UpdateShopResponse> {
         return safeApiCall(dispatcher) {
             val namePart = MultipartUtils.createTextPart(name)
             val phonePart = MultipartUtils.createTextPart(phoneNumber)
+            val descriptionPart = description?.let { MultipartUtils.createTextPart(it) }
+            val addressPart = address?.let { MultipartUtils.createTextPart(it) }
             val isActivePart = MultipartUtils.createTextPart(isActive.toString())
             val isOnlinePart = MultipartUtils.createTextPart(isOnline.toString())
             val avatarPart = avatarUri?.let {
                 MultipartUtils.createImagePart(context, "avatar", it)
             }
 
-            shopService.updateMyShop(
+            shopService.updateShop(
                 name = namePart,
-                phone = phonePart,
+                phoneNumber = phonePart,
+                description = descriptionPart,
+                address = addressPart,
                 isActive = isActivePart,
                 isOnline = isOnlinePart,
                 avatar = avatarPart
@@ -166,6 +173,48 @@ class ShopRepository(
         }
     }
 
+    /**
+     * ✅ Lấy danh sách đơn hàng admin với pagination
+     */
+    suspend fun getAdminOrders(
+        page: Int = 1,
+        limit: Int = 10,
+        status: String? = null,
+        paymentStatus: String? = null,
+        dateFrom: String? = null,
+        dateTo: String? = null,
+        customerSearch: String? = null,
+        orderNumber: String? = null,
+        minAmount: Double? = null,
+        maxAmount: Double? = null
+    ): Result<com.example.greenbuyapp.data.shop.model.AdminOrderResponse> {
+        return safeApiCall(dispatcher) {
+            shopService.getAdminOrders(
+                page = page,
+                limit = limit,
+                status = status,
+                paymentStatus = paymentStatus,
+                dateFrom = dateFrom,
+                dateTo = dateTo,
+                customerSearch = customerSearch,
+                orderNumber = orderNumber,
+                minAmount = minAmount,
+                maxAmount = maxAmount
+            )
+        }
+    }
+
+    /**
+     * ✅ Cập nhật trạng thái đơn hàng
+     */
+    suspend fun updateOrderStatus(
+        orderId: Int,
+        status: String
+    ): Result<com.example.greenbuyapp.data.shop.model.OrderDetail> {
+        return safeApiCall(dispatcher) {
+            shopService.updateOrderStatus(orderId, status)
+        }
+    }
 
 
 }

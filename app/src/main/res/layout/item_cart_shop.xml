@@ -54,7 +54,7 @@
                 android:layout_height="36dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="Xóa shop"
-                android:src="@drawable/ic_close"
+                android:src="@drawable/ic_delete_24"
                 android:layout_marginEnd="@dimen/_4sdp"
                 app:tint="@color/red_500" />
 

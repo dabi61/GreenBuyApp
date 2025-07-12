@@ -217,8 +217,8 @@ class CategoryManagementViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             
-            val request = CreateSubCategoryRequest(name, description)
-            when (val result = categoryRepository.createSubCategory(categoryId, request)) {
+            val request = CreateSubCategoryRequest(categoryId, name, description)
+            when (val result = categoryRepository.createSubCategory(request)) {
                 is Result.Success -> {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,

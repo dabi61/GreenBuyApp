@@ -15,29 +15,28 @@ interface CategoryService {
     suspend fun getAllSubCategories(): List<SubCategory>
     
     @POST("api/category")
-    suspend fun createCategory(@Body request: CreateCategoryRequest): MessageResponse
+    suspend fun createCategory(@Body request: CreateCategoryRequest): Category
     
     @PUT("api/category/{category_id}")
     suspend fun updateCategory(
         @Path("category_id") categoryId: Int,
         @Body request: UpdateCategoryRequest
-    ): MessageResponse
+    ): Category
     
     @DELETE("api/category/{category_id}")
-    suspend fun deleteCategory(@Path("category_id") categoryId: Int): MessageResponse
+    suspend fun deleteCategory(@Path("category_id") categoryId: Int): Category
     
-    @POST("api/category/{category_id}/subcategory")
+    @POST("api/sub_category")
     suspend fun createSubCategory(
-        @Path("category_id") categoryId: Int,
         @Body request: CreateSubCategoryRequest
-    ): MessageResponse
+    ): SubCategory
     
-    @PUT("api/subcategory/{subcategory_id}")
+    @PUT("api/sub_category/{subcategory_id}")
     suspend fun updateSubCategory(
         @Path("subcategory_id") subcategoryId: Int,
         @Body request: UpdateSubCategoryRequest
-    ): MessageResponse
+    ): SubCategory
     
-    @DELETE("api/subcategory/{subcategory_id}")
+    @DELETE("api/sub_category/{subcategory_id}")
     suspend fun deleteSubCategory(@Path("subcategory_id") subcategoryId: Int): MessageResponse
 }

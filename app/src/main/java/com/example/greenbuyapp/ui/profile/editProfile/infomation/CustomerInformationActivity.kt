@@ -188,10 +188,6 @@ class CustomerInformationActivity : BaseActivity<ActivityCustomerInformationBind
             binding.edtPhone.error = "Số điện thoại không được để trống"
             return
         }
-        if (phone.matches(Regex("^\\d{10}$"))){
-            binding.edtPhone.error = "Số điện thoại không hợp lệ"
-            return
-        }
         if (selectedBirthDate.isNullOrEmpty()) {
             Toast.makeText(this, "Vui lòng chọn ngày sinh", Toast.LENGTH_SHORT).show()
             return

@@ -55,13 +55,9 @@ class AddEditCategoryDialog : DialogFragment() {
         when (dialogType) {
             DialogType.ADD_CATEGORY -> {
                 binding.tvTitle.text = "Thêm danh mục mới"
-                binding.etName.hint = "Tên danh mục"
-                binding.etDescription.hint = "Mô tả danh mục"
             }
             DialogType.EDIT_CATEGORY -> {
                 binding.tvTitle.text = "Sửa danh mục"
-                binding.etName.hint = "Tên danh mục"
-                binding.etDescription.hint = "Mô tả danh mục"
                 category?.let {
                     binding.etName.setText(it.name)
                     binding.etDescription.setText(it.description)
@@ -69,13 +65,9 @@ class AddEditCategoryDialog : DialogFragment() {
             }
             DialogType.ADD_SUBCATEGORY -> {
                 binding.tvTitle.text = "Thêm danh mục con"
-                binding.etName.hint = "Tên danh mục con"
-                binding.etDescription.hint = "Mô tả danh mục con"
             }
             DialogType.EDIT_SUBCATEGORY -> {
                 binding.tvTitle.text = "Sửa danh mục con"
-                binding.etName.hint = "Tên danh mục con"
-                binding.etDescription.hint = "Mô tả danh mục con"
                 subCategory?.let {
                     binding.etName.setText(it.name)
                     binding.etDescription.setText(it.description)

@@ -82,6 +82,7 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
             setupBanner()
             setupProductManagement()
             onClickApproveProduct()
+            onClickApproveOrder()
             onClickCreateCategory()
             onClickLockShop()
             viewModel.getMyShopStats()
@@ -110,6 +111,21 @@ class ShopFragment : BaseFragment<FragmentShopBinding, ShopViewModel>() {
         binding.cvProductApproval.setOnClickListener {
             val intent = Intent(requireActivity(), ApproveProductActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private fun onClickApproveOrder() {
+        binding.cvOrderApproval.setOnClickListener {
+            // ✅ Null check trước khi start activity
+            if (isAdded && activity != null) {
+                try {
+                    val intent = com.example.greenbuyapp.ui.admin.order.AdminOrderActivity.createIntent(requireActivity())
+                    startActivity(intent)
+                    println("✅ Opened AdminOrderActivity")
+                } catch (e: Exception) {
+                    println("❌ Error opening admin order activity: ${e.message}")
+                }
+            }
         }
     }
 

@@ -30,31 +30,31 @@ class CategoryRepository(
         }
     }
     
-    suspend fun createCategory(request: CreateCategoryRequest): Result<MessageResponse> {
+    suspend fun createCategory(request: CreateCategoryRequest): Result<Category> {
         return safeApiCall(dispatcher) {
             categoryService.createCategory(request)
         }
     }
     
-    suspend fun updateCategory(categoryId: Int, request: UpdateCategoryRequest): Result<MessageResponse> {
+    suspend fun updateCategory(categoryId: Int, request: UpdateCategoryRequest): Result<Category> {
         return safeApiCall(dispatcher) {
             categoryService.updateCategory(categoryId, request)
         }
     }
     
-    suspend fun deleteCategory(categoryId: Int): Result<MessageResponse> {
+    suspend fun deleteCategory(categoryId: Int): Result<Category> {
         return safeApiCall(dispatcher) {
             categoryService.deleteCategory(categoryId)
         }
     }
     
-    suspend fun createSubCategory(categoryId: Int, request: CreateSubCategoryRequest): Result<MessageResponse> {
+    suspend fun createSubCategory(request: CreateSubCategoryRequest): Result<SubCategory> {
         return safeApiCall(dispatcher) {
-            categoryService.createSubCategory(categoryId, request)
+            categoryService.createSubCategory(request)
         }
     }
     
-    suspend fun updateSubCategory(subcategoryId: Int, request: UpdateSubCategoryRequest): Result<MessageResponse> {
+    suspend fun updateSubCategory(subcategoryId: Int, request: UpdateSubCategoryRequest): Result<SubCategory> {
         return safeApiCall(dispatcher) {
             categoryService.updateSubCategory(subcategoryId, request)
         }

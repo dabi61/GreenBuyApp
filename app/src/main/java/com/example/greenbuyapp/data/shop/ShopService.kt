@@ -1,5 +1,6 @@
 package com.example.greenbuyapp.data.shop
 
+import com.example.greenbuyapp.data.shop.model.AdminOrderResponse
 import com.example.greenbuyapp.data.shop.model.OrderDetail
 import com.example.greenbuyapp.data.shop.model.OrderStats
 import com.example.greenbuyapp.data.shop.model.Shop
@@ -42,6 +43,23 @@ interface ShopService {
     ): ShopOrderResponse
 
     /**
+     * ✅ Lấy danh sách đơn hàng admin
+     */
+    @GET("api/order/admin/orders")
+    suspend fun getAdminOrders(
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 10,
+        @Query("status") status: String? = null,
+        @Query("payment_status") paymentStatus: String? = null,
+        @Query("date_from") dateFrom: String? = null,
+        @Query("date_to") dateTo: String? = null,
+        @Query("customer_search") customerSearch: String? = null,
+        @Query("order_number") orderNumber: String? = null,
+        @Query("min_amount") minAmount: Double? = null,
+        @Query("max_amount") maxAmount: Double? = null
+    ): AdminOrderResponse
+
+    /**
      * Lấy chi tiết đơn hàng theo ID
      */
     @GET("api/order/{order_id}")
@@ -64,19 +82,32 @@ interface ShopService {
         @Part("phone_number") phoneNumber: RequestBody,
         @Part("is_active") isActive: RequestBody,
         @Part("is_online") isOnline: RequestBody,
-        @Part avatar: MultipartBody.Part?
+        @Part avatar: MultipartBody.Part
     ): Shop
 
     /**
-     * Cập nhật shop của tôi
+     * Cập nhật thông tin shop
      */
     @Multipart
     @PUT("api/shops/me")
-    suspend fun updateMyShop(
-        @Part("name") name: RequestBody,
-        @Part("phone_number") phone: RequestBody,
-        @Part("is_active") isActive: RequestBody,
-        @Part("is_online") isOnline: RequestBody,
-        @Part avatar: MultipartBody.Part?,
+    suspend fun updateShop(
+        @Part("name") name: RequestBody?,
+        @Part("phone_number") phoneNumber: RequestBody?,
+        @Part("description") description: RequestBody?,
+        @Part("address") address: RequestBody?,
+        @Part("is_active") isActive: RequestBody?,
+        @Part("is_online") isOnline: RequestBody?,
+        @Part avatar: MultipartBody.Part?
     ): UpdateShopResponse
+
+    /**
+     * Cập nhật trạng thái đơn hàng
+     * @param orderId ID đơn hàng
+     * @param status Trạng thái mới
+     */
+    @PATCH("api/order/{order_id}/status")
+    suspend fun updateOrderStatus(
+        @Path("order_id") orderId: Int,
+        @Query("status") status: String
+    ): OrderDetail
 }

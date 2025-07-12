@@ -11,14 +11,13 @@ import com.example.greenbuyapp.data.category.model.Category
 import com.example.greenbuyapp.data.category.model.SubCategory
 import com.example.greenbuyapp.databinding.ItemCategoryBinding
 import com.example.greenbuyapp.databinding.ItemSubcategoryBinding
+import com.example.greenbuyapp.util.DateUtils
 
 class CategoryAdapter(
     private val onCategoryClick: (Category) -> Unit,
     private val onEditCategory: (Category) -> Unit,
-    private val onDeleteCategory: (Category) -> Unit,
     private val onAddSubCategory: (Category) -> Unit,
     private val onEditSubCategory: (SubCategory) -> Unit,
-    private val onDeleteSubCategory: (SubCategory) -> Unit
 ) : ListAdapter<CategoryItem, RecyclerView.ViewHolder>(CategoryDiffCallback()) {
 
     companion object {
@@ -76,7 +75,7 @@ class CategoryAdapter(
             binding.apply {
                 tvCategoryName.text = category.name
                 tvCategoryDescription.text = category.description
-                tvCategoryCreatedAt.text = "Tạo lúc: ${category.created_at}"
+                tvCategoryCreatedAt.text = "Tạo lúc: ${DateUtils.formatDateTime(category.created_at)}"
                 
                 // Set expand/collapse icon
                 ivExpand.setImageResource(
@@ -91,10 +90,6 @@ class CategoryAdapter(
 
                 btnEditCategory.setOnClickListener {
                     onEditCategory(category)
-                }
-
-                btnDeleteCategory.setOnClickListener {
-                    onDeleteCategory(category)
                 }
 
                 btnAddSubCategory.setOnClickListener {
@@ -112,16 +107,13 @@ class CategoryAdapter(
             binding.apply {
                 tvSubCategoryName.text = subCategory.name
                 tvSubCategoryDescription.text = subCategory.description
-                tvSubCategoryCreatedAt.text = "Tạo lúc: ${subCategory.created_at}"
+                tvSubCategoryCreatedAt.text = "Tạo lúc: ${DateUtils.formatDateTime(subCategory.created_at)}"
 
                 // Click listeners
                 btnEditSubCategory.setOnClickListener {
                     onEditSubCategory(subCategory)
                 }
 
-                btnDeleteSubCategory.setOnClickListener {
-                    onDeleteSubCategory(subCategory)
-                }
             }
         }
     }

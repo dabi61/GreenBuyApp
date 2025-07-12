@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.greenbuyapp.R
@@ -37,6 +38,7 @@ class CategoryManagementActivity : BaseActivity<ActivityCategoryManagementBindin
         setupToolbar()
         setupRecyclerView()
         setupClickListeners()
+        window.statusBarColor = ContextCompat.getColor(this, R.color.main_color)
     }
 
     override fun observeViewModel() {
@@ -100,18 +102,12 @@ class CategoryManagementActivity : BaseActivity<ActivityCategoryManagementBindin
             onEditCategory = { category ->
                 showEditCategoryDialog(category)
             },
-            onDeleteCategory = { category ->
-                showDeleteCategoryDialog(category)
-            },
             onAddSubCategory = { category ->
                 showAddSubCategoryDialog(category)
             },
             onEditSubCategory = { subCategory ->
                 showEditSubCategoryDialog(subCategory)
             },
-            onDeleteSubCategory = { subCategory ->
-                showDeleteSubCategoryDialog(subCategory)
-            }
         )
 
         binding.recyclerView.apply {

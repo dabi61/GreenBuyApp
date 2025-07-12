@@ -152,7 +152,7 @@
         android:layout_height="36dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="Xóa sản phẩm"
-        android:src="@drawable/ic_close"
+        android:src="@drawable/ic_delete_24"
         app:tint="@color/red_500" />
 
 </LinearLayout> 
