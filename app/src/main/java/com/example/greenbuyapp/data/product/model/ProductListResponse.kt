@@ -29,3 +29,12 @@ data class TrendingProductResponse(
     val has_next: Boolean,
     val has_prev: Boolean
 )
+
+/**
+ * ✅ Model cho API response từ /api/product/featured
+ */
+@JsonClass(generateAdapter = true)
+data class FeaturedProductsResponse(
+    val items: List<Product>,
+    val count: Int
+)

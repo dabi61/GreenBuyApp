@@ -50,6 +50,27 @@ class CartRepository(
     }
     
     /**
+     * Thêm sản phẩm vào giỏ hàng với AddToCartRequest
+     */
+    suspend fun addToCart(request: AddToCartRequest): Result<AddToCartResponse> = withContext(Dispatchers.IO) {
+        try {
+            val response = cartService.addToCart(request)
+            if (response.isSuccessful) {
+                val result = response.body()
+                if (result != null) {
+                    Result.Success(result)
+                } else {
+                    Result.Error(null, "Phản hồi rỗng từ server")
+                }
+            } else {
+                Result.Error(response.code(), "Lỗi thêm vào giỏ hàng: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Result.NetworkError
+        }
+    }
+    
+    /**
      * Cập nhật số lượng sản phẩm
      */
     suspend fun updateCartItem(attributeId: Int, quantity: Int): Result<UpdateCartResponse> = withContext(Dispatchers.IO) {

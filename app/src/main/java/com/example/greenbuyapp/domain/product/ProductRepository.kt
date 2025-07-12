@@ -19,6 +19,7 @@ import com.example.greenbuyapp.util.safeApiCall
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import com.example.greenbuyapp.data.product.model.ApproveProductRequest
+import com.example.greenbuyapp.data.product.model.FeaturedProductsResponse
 import kotlinx.coroutines.withTimeout
 import com.example.greenbuyapp.data.product.model.ProductAttribute
 
@@ -486,6 +487,17 @@ class ProductRepository(
     suspend fun getShopById(shopId: Int): Result<com.example.greenbuyapp.data.shop.model.Shop> {
         return safeApiCall(dispatcher) {
             shopService.getShopById(shopId)
+        }
+    }
+
+    /**
+     * ✅ Lấy danh sách sản phẩm nổi bật
+     * @param limit Số lượng sản phẩm (mặc định 20)
+     * @return Result<FeaturedProductsResponse> danh sách sản phẩm nổi bật
+     */
+    suspend fun getFeaturedProducts(limit: Int = 20): Result<FeaturedProductsResponse> {
+        return safeApiCall(dispatcher) {
+            productService.getFeaturedProducts(limit)
         }
     }
 

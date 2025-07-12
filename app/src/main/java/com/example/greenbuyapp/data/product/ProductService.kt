@@ -14,6 +14,7 @@ import com.example.greenbuyapp.data.product.model.CreateProductResponse
 import com.example.greenbuyapp.data.product.model.CreateAttributeResponse
 import com.example.greenbuyapp.data.product.model.ApproveProductRequest
 import com.example.greenbuyapp.data.product.model.PendingApprovalProduct
+import com.example.greenbuyapp.data.product.model.FeaturedProductsResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import com.example.greenbuyapp.domain.product.ProductRepository
@@ -220,5 +221,13 @@ interface ProductService {
      */
     @GET("api/product/pending-approval")
     suspend fun getPendingApprovalProducts(): List<PendingApprovalProduct>
+
+    /**
+     * ✅ Lấy danh sách sản phẩm nổi bật (featured products)
+     */
+    @GET("api/product/featured")
+    suspend fun getFeaturedProducts(
+        @Query("limit") limit: Int = 50
+    ): FeaturedProductsResponse
 
 }

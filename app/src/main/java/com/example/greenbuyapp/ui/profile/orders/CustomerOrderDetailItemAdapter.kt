@@ -85,7 +85,7 @@ class CustomerOrderDetailItemAdapter(
                                             placeholder = R.drawable.pic_item_product,
                                             error = R.drawable.pic_item_product
                                         )
-                                    } else {
+                    } else {
                                         // Fallback to product image
                                         loadFallbackImage(item)
                                     }
@@ -114,14 +114,14 @@ class CustomerOrderDetailItemAdapter(
                     println("   Image priority: ${if (!item.attributeImage.isNullOrEmpty()) "attribute_image" else if (!item.productImage.isNullOrEmpty()) "product_image" else "none"}")
                     
                     if (!imageUrl.isNullOrEmpty()) {
-                        ivProductImage.loadUrl(
-                            imageUrl = imageUrl,
-                            placeholder = R.drawable.pic_item_product,
-                            error = R.drawable.pic_item_product
-                        )
-                    } else {
+                    ivProductImage.loadUrl(
+                        imageUrl = imageUrl,
+                        placeholder = R.drawable.pic_item_product,
+                        error = R.drawable.pic_item_product
+                    )
+                } else {
                         println("   Using placeholder image")
-                        ivProductImage.setImageResource(R.drawable.pic_item_product)
+                    ivProductImage.setImageResource(R.drawable.pic_item_product)
                     }
                 }
                 
